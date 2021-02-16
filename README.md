@@ -33,7 +33,7 @@ Insert code here
 * **Berend van den Berg** - *insert work done* - [vdBerg93](https://github.com/vdBerg93)
 * **Kunal Iyer** - *insert work done* - [KunalASD](https://github.com/KunalASD)
 * **Markos Papadimitriou** - *insert work done* - [Markos0896](https://github.com/Markos0896)
-* **Yash Khetan** - *insert work done* - yashkhetan1994(https://github.com/yashkhetan1994)
+* **Yash Khetan** - *insert work done* - [yashkhetan1994](https://github.com/yashkhetan1994)
 
 
 
