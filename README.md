@@ -29,7 +29,7 @@ Insert code here
 * **Abhishek Balakrishna Bhat** - *insert work done* - [Abhishek0895](https://github.com/Abhishek0895)
 * **Alireza Moayyedi** - *insert work done* - [A-Moayyedi](https://github.com/A-Moayyedi)
 * **Arjun Pradeep Kumar** - *insert work done* - [ArjunPradeepGit](https://github.com/ArjunPradeepGit)
-* **Arsel Hasan** - *insert work done* - arselhasan(https://github.com/arselhasan)
+* **Arsel Hasan** - *insert work done* - [arselhasan](https://github.com/arselhasan)
 * **Berend van den Berg** - *insert work done* - [vdBerg93](https://github.com/vdBerg93)
 * **Kunal Iyer** - *insert work done* - [KunalASD](https://github.com/KunalASD)
 * **Markos Papadimitriou** - *insert work done* - [Markos0896](https://github.com/Markos0896)
