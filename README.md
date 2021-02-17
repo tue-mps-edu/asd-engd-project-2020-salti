@@ -2,6 +2,7 @@
 Semi-Automatic Labelling of Thermal Images
 
 ## Contents
+* [Documentation WIKI](https://github.com/tue-mps-edu/asd-pdeng-project-2020-developer/wiki/Home)
 * [Documentation](project_documentation/)
 * [Source code](src/)
 
