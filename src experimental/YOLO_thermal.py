@@ -6,6 +6,8 @@ from localFunctions import find_digits, find_objects_and_write, read_and_display
 
 print('check for ARjun and AbhiSHAAAAK')
 
+print('lets check')
+
 # Image numbers
 start = 0
 end = start+200
