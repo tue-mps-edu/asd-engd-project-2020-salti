@@ -6,6 +6,7 @@ from localFunctions import find_digits, find_objects_and_write, read_and_display
 
 print('Test for github')
 print("Berend can also run this!")
+print('double check from ali')
 
 # Image numbers
 start = 0
