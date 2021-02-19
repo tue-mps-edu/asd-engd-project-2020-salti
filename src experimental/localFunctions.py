@@ -1,3 +1,4 @@
+
 import numpy as np
 import cv2
 import pandas as pd
@@ -23,6 +24,7 @@ def find_digits(i):
                 d2 = int(((i - d1) / 10) % 10)
                 d3 = int(((((i - d1) / 10) - d2) / 10) % 10)
                 d4 = int((((((i - d1) / 10) - d2) / 10) - d3) / 10)
+
     return d4,d3,d2,d1
 
 

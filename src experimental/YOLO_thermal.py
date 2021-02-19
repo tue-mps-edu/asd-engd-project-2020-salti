@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+
 import pandas as pd
 from localFunctions import find_digits, find_objects_and_write, read_and_display_boxes, resize_image,create_archive
 
@@ -45,12 +46,12 @@ while i <= end:
     img_rgb = cv2.imread(path_rgb_resized+file_type[0])
     img_thermal = cv2.imread(path_thermal_resized+file_type[0])
 
-
     whT = 320
     confThreshold = 0.5
     nmsThreshold = 0.3  # lower ==> less number of boxes
 
     classesFile = 'Yolo_config/coco.names'
+
     classNames = []
     with open(classesFile, 'r') as f:                       # using WITH function takes away the need to use CLOSE file function
         classNames = f.read().rstrip('\n').split('\n')      # rstrip strips off the ("content here") and split splits off for("content here")
@@ -63,7 +64,7 @@ while i <= end:
     net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
     blob = cv2.dnn.blobFromImage(img_rgb, 1/255,(whT, whT), [0,0,0],1,False)
-
+  
     net.setInput(blob)
 
     layerNames = net.getLayerNames()
