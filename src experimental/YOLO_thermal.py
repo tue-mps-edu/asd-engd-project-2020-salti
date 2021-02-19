@@ -4,10 +4,6 @@ import numpy as np
 import pandas as pd
 from localFunctions import find_digits, find_objects_and_write, read_and_display_boxes, resize_image,create_archive
 
-print('Test for github')
-print("Berend can also run this!")
-print('double check from ali')
-
 # Image numbers
 start = 0
 end = start+200
