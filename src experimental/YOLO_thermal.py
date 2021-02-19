@@ -18,7 +18,7 @@ desired_height=400
 desired_width=600
 
 #Creating an archive df
-df_whole=create_archive('Yolo_config/coco.names')
+df_whole=create_archive()
 
 # Look into folders and choose
 dataset = "V0"  # V0 - day, V1 - night
@@ -75,12 +75,12 @@ while i <= end:
 
     outputs = net.forward(outputNames)
 
-    df=find_objects_and_write(outputs, img_rgb, img_thermal, classNames, confThreshold, nmsThreshold, path_thermal, file_type[1],df_whole)
+    #find_objects_and_write(outputs, img_rgb, img_thermal, classNames, confThreshold, nmsThreshold, path_thermal, file_type[1])
 
-    find_objects_and_write(outputs, img_rgb, img_thermal, classNames, confThreshold, nmsThreshold, path_thermal_resized,
-                           file_type[1],df_whole)
+    df=find_objects_and_write(outputs, img_rgb, img_thermal, classNames, confThreshold, nmsThreshold, path_thermal_resized,
+                           file_type[1])
 
-    df_whole.append(df, ignore_index=True)
+    df_whole=df_whole.append(df, ignore_index=True)
 
     cv2.imshow("Color ", img_rgb)
     cv2.imshow("Thermal (corresponding) ", img_thermal)

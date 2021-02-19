@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import pandas as pd
 from PIL import Image
+import os
 
 def find_digits(i):
     d1 = i
@@ -28,7 +29,7 @@ def find_digits(i):
     return d4,d3,d2,d1
 
 
-def find_objects_and_write(outputs, img_rgb, img_therm, classNames, confThreshold, nmsThreshold, path_thermal, file_type, df_whole):
+def find_objects_and_write(outputs, img_rgb, img_therm, classNames, confThreshold, nmsThreshold, path_thermal, file_type):
     hT, wT, cT = img_rgb.shape
     bbox = []
     classIds = []
@@ -48,25 +49,10 @@ def find_objects_and_write(outputs, img_rgb, img_therm, classNames, confThreshol
 
     indices = cv2.dnn.NMSBoxes(bbox,confs,confThreshold,nmsThreshold)  # Non maximum suppression, will give indices to keep
 
-    CL = classNames.copy()
-    CL.insert(0, "Box")
-    CL.insert(1, "xc")
-    CL.insert(2, "yc")
-    CL.insert(3, "w")
-    CL.insert(4, "h")
+    #Preparing a blank dataframe for each picture's results
+    CL = ["Image","Box", "xc", "yc", "w", "h", "Category", "Confidence"]
     df = pd.DataFrame(columns=CL)
     j = 0
-
-    #Under development for creating a global csv file containing all the images' results
-    # CL_whole=classNames.copy()
-    # CL_whole.insert(0, "Image")
-    # CL_whole.insert(1, "Box")
-    # CL_whole.insert(2, "xc")
-    # CL_whole.insert(3, "yc")
-    # CL_whole.insert(4, "w")
-    # CL_whole.insert(5, "h")
-    # df_whole=pd.DataFrame(columns=CL_whole)
-    # jj=0
 
 
     for i in indices:
@@ -81,35 +67,23 @@ def find_objects_and_write(outputs, img_rgb, img_therm, classNames, confThreshol
         cv2.putText(img_therm, f'{classNames[classIds[i]].upper()} {int(confs[i] * 100)}%',
                     (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
 
+        #Storing each picture's results in its dataframe
         df = df.append(pd.Series(0, index=df.columns), ignore_index=True)
-        df[CL[0]][j] = j+1
-        df[CL[1]][j] = x
-        df[CL[2]][j] = y
-        df[CL[3]][j] = w
-        df[CL[4]][j] = h
-        df[classNames[classIds[i]]][j] = confs[i]
+        df.at[j,CL[0]] = os.path.basename(path_thermal)
+        df.at[j,CL[1]] = j+1
+        df.at[j,CL[2]] = x
+        df.at[j,CL[3]] = y
+        df.at[j,CL[4]] = w
+        df.at[j,CL[5]] = h
+        df.at[j,CL[6]]=classNames[classIds[i]]
+        df.at[j,CL[7]]=confs[i]
         j += 1
 
-        #under development
-        # archive_results(path_thermal[-4:],jj,x,y,w,h,confs[i])
-        # df_whole = df_whole.append(pd.Series(0, index=df_whole.columns), ignore_index=True)
-        # df_whole[CL_whole[0]][j] = path_thermal[-4:]
-        # df_whole[CL_whole[1]][j] = jj+1
-        # df_whole[CL_whole[2]][j] = x
-        # df_whole[CL_whole[3]][j] = y
-        # df_whole[CL_whole[4]][j] = w
-        # df_whole[CL_whole[5]][j] = h
-        # df_whole[classNames[classIds[i]]][j] = confs[i]
-        # jj += 1
-
-
+    #Exporting each picture's results to its specific csv file
     df.to_csv(path_thermal + file_type, index=False)
 
-
-    #TEST
     return df
-    # df_whole.append(df,ignore_index=True)
-    # df.to_csv('Archive.csv')
+
 
 
 
@@ -133,43 +107,11 @@ def resize_image(path,file_type,desired_width,desired_height,path_resized):
     resized_image.save(path_resized+file_type)
     return resized_image
 
-#Function to save all the results in one file
-def create_archive(classesFileName):
-    classesFile = classesFileName #'coco.names'
-    classNames = []
-    with open(classesFile, 'r') as f:                       # using WITH function takes away the need to use CLOSE file function
-        classNames = f.read().rstrip('\n').split('\n')      # rstrip strips off the ("content here") and split splits off for("content here")
-    CL_whole = classNames.copy()
-    CL_whole.insert(0, "Image")
-    CL_whole.insert(1, "Box")
-    CL_whole.insert(2, "xc")
-    CL_whole.insert(3, "yc")
-    CL_whole.insert(4, "w")
-    CL_whole.insert(5, "h")
-    df_whole = pd.DataFrame(columns=CL_whole)
+#Function to create a data frame that saves all the results in one file
+def create_archive():
+    CL = ["Image", "Box", "xc", "yc", "w", "h", "Category", "Confidence"]
+    df_whole = pd.DataFrame(columns=CL)
     return df_whole
 
-    # if Archive == True:
-    #     CL_whole = classNames.copy()
-    #     CL_whole.insert(0, "Image")
-    #     CL_whole.insert(1, "Box")
-    #     CL_whole.insert(2, "xc")
-    #     CL_whole.insert(3, "yc")
-    #     CL_whole.insert(4, "w")
-    #     CL_whole.insert(5, "h")
-    #     df_whole = pd.DataFrame(columns=CL_whole)
-    #     return df_whole
-
-# def archive_results(df_whole,df):
-#     #df_whole = df_whole.append(pd.Series(0, index=df_whole.columns), ignore_index=True)
-#     df_whole.append(df,ignore_index=True)
 
 
-    # df_whole[CL_whole[0]][j] = path_thermal[-4:]
-    # df_whole[CL_whole[1]][j] = jj+1
-    # df_whole[CL_whole[2]][j] = x
-    # df_whole[CL_whole[3]][j] = y
-    # df_whole[CL_whole[4]][j] = w
-    # df_whole[CL_whole[5]][j] = h
-    # df_whole[classNames[classIds[i]]][j] = confs[i]
-    # jj += 1
