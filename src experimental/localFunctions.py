@@ -11,7 +11,6 @@ def get_classes(classes_file_dir):
         classNames = f.read().rstrip('\n').split('\n')      # rstrip strips off the ("content here") and split splits off for("content here")
     return classNames
 
-
 def get_objects(outputs, img_rgb, classNames, cfg):
     hT, wT, cT = img_rgb.shape
     bboxs = []
