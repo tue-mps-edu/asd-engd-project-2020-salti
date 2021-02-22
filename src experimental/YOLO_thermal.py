@@ -14,10 +14,6 @@ steps = 50
 import os
 
 def label_all_in_folder():
-    # Define the absolute paths
-    path_rgb = dir_dataset+dir_sub_rgb
-    path_thermal = dir_dataset+dir_sub_thermal
-
     # Define the network
     net = cv2.dnn.readNetFromDarknet(yolo_cfg.dir_cfg,yolo_cfg.dir_weights)
     net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
@@ -28,18 +24,18 @@ def label_all_in_folder():
     objects_dataframe = pd.DataFrame(columns=objects_classlist)
 
     # Loop over viles in the RGB directory
-    for filename in os.listdir(path_rgb):
+    for filename in os.listdir(dir_rgb):
         # Skip everything that is the wrong format
         if not filename.endswith(image_format):
             continue
         # Label the rest of the files
         file_name = os.path.splitext(filename)[0]
         file_ext = os.path.splitext(filename)[1]
-        print('dir= '+path_rgb+', name= '+file_name+', ext= '+file_ext)
+        print('dir= '+dir_rgb+', name= '+file_name+', ext= '+file_ext)
 
         # Read the images
-        img_rgb = cv2.imread(path_rgb+file_name+file_ext)
-        img_thermal = cv2.imread(path_thermal+file_name+file_ext)
+        img_rgb = cv2.imread(os.path.join(dir_rgb,file_name+file_ext))
+        img_thermal = cv2.imread(os.path.join(dir_thermal,file_name+file_ext))
 
         # Get classes
         classNames = get_classes(yolo_cfg.dir_classes)
@@ -53,7 +49,7 @@ def label_all_in_folder():
 
         outputs = net.forward(outputNames)
 
-        #df=find_objects_and_write(outputs, img_rgb, img_thermal, classNames, yolo_cfg.confThreshold, yolo_cfg.nmsThreshold, path_thermal_resized,  file_type[1])
+        #df=find_objects_and_write(outputs, img_rgb, img_thermal, classNames, yolo_cfg.confThreshold, yolo_cfg.nmsThreshold, dir_thermal_resized,  file_type[1])
 
         #df_whole=df_whole.append(df, ignore_index=True)
 
@@ -71,40 +67,36 @@ def label_all_in_folder():
         cv2.waitKey(100) #miliseconds of pause between different pictures
 
         # Save the objects in csv file
-        save_objects(objects_dataframe, objects_classlist, path_thermal, file_name, file_ext, bboxs_fil, confs_fil, classIds_fil, classNames)
+        save_objects(objects_dataframe, objects_classlist, dir_thermal, file_name, file_ext, bboxs_fil, confs_fil, classIds_fil, classNames)
 
     #objects_dataframe.to_csv('Archive.csv')
 
 label_all_in_folder()
-
-
-
-label_all_in_folder(dataset_dir)
 
 # file_type = [".jpg",".csv"]
 # i = start
 # while i <= end:
 #     d4,d3,d2,d1 = find_digits(i)
 #     path_rgb = "Data/Dataset_"+dataset+"/images/set00/"+subdataset+"/visible/I0"+str(d4)+str(d3)+str(d2)+str(d1)
-#     path_thermal = "Data/Dataset_" + dataset + "/images/set00/" + subdataset + "/thermal/I0" + str(d4) + str(d3) + str(d2) + str(d1)
+#     dir_thermal = "Data/Dataset_" + dataset + "/images/set00/" + subdataset + "/thermal/I0" + str(d4) + str(d3) + str(d2) + str(d1)
 #     i += steps
 #
 #     #Giving as input original images to cv2
 #     # img_rgb = cv2.imread(path_rgb+file_type[0])
-#     # img_thermal = cv2.imread(path_thermal+file_type[0])
+#     # img_thermal = cv2.imread(dir_thermal+file_type[0])
 #
 #     #Giving a path for saving resized rgb and thermal images with a directory similar to original ones but in a _resized folder
 #     path_rgb_resized = "Data/Dataset_" + dataset + "_resized/images/set00/" + subdataset + "/visible/I0" + str(d4) + str(d3) + str(d2) + str(
 #         d1) + "_resized"
-#     path_thermal_resized = "Data/Dataset_" + dataset + "_resized/images/set00/" + subdataset + "/thermal/I0" + str(d4) + str(d3) + str(
+#     dir_thermal_resized = "Data/Dataset_" + dataset + "_resized/images/set00/" + subdataset + "/thermal/I0" + str(d4) + str(d3) + str(
 #         d2) + str(d1) + "_resized"
 #     #Calling the resize_image functions that takes the original images' paths and file type and the desired width and height
 #     #and path for saving the resized pictures
 #     resize_image(path_rgb,file_type[0],desired_width,desired_height,path_rgb_resized)
-#     resize_image(path_thermal,file_type[0],desired_width,desired_height,path_thermal_resized)
+#     resize_image(dir_thermal,file_type[0],desired_width,desired_height,dir_thermal_resized)
 #     #giving as input resized images to cv2
 #     img_rgb = cv2.imread(path_rgb_resized+file_type[0])
-#     img_thermal = cv2.imread(path_thermal_resized+file_type[0])
+#     img_thermal = cv2.imread(dir_thermal_resized+file_type[0])
 #
 #     classesFile = 'Yolo_config/coco.names'
 #
@@ -128,9 +120,9 @@ label_all_in_folder(dataset_dir)
 #
 #     outputs = net.forward(outputNames)
 #
-#     #find_objects_and_write(outputs, img_rgb, img_thermal, classNames, confThreshold, nmsThreshold, path_thermal, file_type[1])
+#     #find_objects_and_write(outputs, img_rgb, img_thermal, classNames, confThreshold, nmsThreshold, dir_thermal, file_type[1])
 #
-#     df=find_objects_and_write(outputs, img_rgb, img_thermal, classNames, confThreshold, nmsThreshold, path_thermal_resized,
+#     df=find_objects_and_write(outputs, img_rgb, img_thermal, classNames, confThreshold, nmsThreshold, dir_thermal_resized,
 #                            file_type[1])
 #
 #     df_whole=df_whole.append(df, ignore_index=True)
@@ -139,6 +131,6 @@ label_all_in_folder(dataset_dir)
 #     cv2.imshow("Thermal (corresponding) ", img_thermal)
 #     cv2.waitKey(100) #miliseconds of pause between different pictures
 #
-#     #read_and_display_boxes(path_thermal)
+#     #read_and_display_boxes(dir_thermal)
 #
 # df_whole.to_csv('Archive.csv')

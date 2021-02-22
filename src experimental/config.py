@@ -1,11 +1,16 @@
 #desired height and weight for resizing the image
 desired_height=400
 desired_width=600
+import os, errno
 
-dir_dataset = r"C:\Github\asd-pdeng-project-2020-developer\src experimental\Data\Dataset_V0\images\set00\V000"
-dir_sub_thermal = r'\\thermal\\'
-dir_sub_rgb = r"\\visible\\"
-dir_classes = r'Yolo_config/coco.names'
+# Define image locations
+dir_dataset = os.path.join(os.getcwd(),'Data\Dataset_V0\images\set00\V000')
+dir_thermal = os.path.join(dir_dataset,'thermal')
+dir_rgb = os.path.join(dir_dataset,'visible')
+dir_thermal_resized = os.path.join(dir_dataset,'thermal_resized')
+dir_rgb_resized = os.path.join(dir_dataset,'rgb_resized')
+dir_classes = os.path.join(os.getcwd(),'Yolo_config\coco.names')
+
 image_format = ".jpg"
 
 class YoloConfig:
@@ -17,3 +22,19 @@ class YoloConfig:
     dir_weights = 'Yolo_config/yolov3.weights'
 
 yolo_cfg = YoloConfig()
+
+# Create folders for resized images
+try:
+    os.mkdir(dir_thermal_resized)
+except OSError as exc:
+    if exc.errno != errno.EEXIST:
+        raise
+    pass
+try:
+    os.mkdir(dir_rgb_resized)
+except OSError as exc:
+    if exc.errno != errno.EEXIST:
+        raise
+    pass
+
+
