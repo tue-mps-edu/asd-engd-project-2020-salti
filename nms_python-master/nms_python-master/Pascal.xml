@@ -1,0 +1,38 @@
+<annotation>
+	<folder>visible</folder>
+	<filename>I00000.jpg</filename>
+	<path>C:\Users\20181049\Downloads\Arjun v1.0\Dataset_V0\images\set00\V000\visible\I00000.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>512</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>372</xmin>
+			<ymin>224</ymin>
+			<xmax>405</xmax>
+			<ymax>249</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>270</xmin>
+			<ymin>225</ymin>
+			<xmax>335</xmax>
+			<ymax>270</ymax>
+		</bndbox>
+	</object>
+</annotation>
