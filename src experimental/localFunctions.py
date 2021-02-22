@@ -4,6 +4,7 @@ import cv2
 import pandas as pd
 from PIL import Image
 import os
+import matplotlib.pyplot as plt
 
 def get_classes(classes_file_dir):
     classNames = []
@@ -165,27 +166,31 @@ def create_archive():
     df_whole = pd.DataFrame(columns=CL)
     return df_whole
 
+#Function to give insights about the results
+def analyze_results(df_whole,path):
+    plt.figure()
+    plt.hist(df_whole['Category'],)
+    plt.ylabel('Number of detections')
+    plt.xticks(df_whole.Category.unique(),rotation='vertical')
+    #plt.savefig('Histogram of Labelled Categories')
+    plt.savefig(os.path.join(path,'Cats'))
+
+    plt.figure()
+    plt.hist(df_whole['Confidence'])
+    plt.ylabel('Number of detections')
+    plt.xlabel('Confidence level')
+    #plt.savefig('Histogram of Confidence levels')
+    plt.savefig(os.path.join(path,'Confidence levels'))
+    #plt.figure()
+    #plt.show()
+
+    labels=df_whole.Category.unique()
+    for item in labels:
+        confidence_per_item=pd.Series(df_whole['Confidence'][df_whole['Category']==item])
+        plt.figure()
+        plt.hist(confidence_per_item)
+        plt.ylabel('Detections')
+        plt.title(item)
+        plt.savefig(os.path.join(path,item))
 
 
-# def find_digits(i):
-#     d1 = i
-#     d2 = 0
-#     d3 = 0
-#     d4 = 0
-#     if i >= 10:
-#         d1 = i % 10
-#         d2 = int((i - d1) / 10)
-#         d3 = 0
-#         d4 = 0
-#         if i >= 100:
-#             d1 = i % 10
-#             d2 = int(((i - d1) / 10) % 10)
-#             d3 = int((((i - d1) / 10) - d2) / 10)
-#             d4 = 0
-#             if i >= 1000:
-#                 d1 = i % 10
-#                 d2 = int(((i - d1) / 10) % 10)
-#                 d3 = int(((((i - d1) / 10) - d2) / 10) % 10)
-#                 d4 = int((((((i - d1) / 10) - d2) / 10) - d3) / 10)
-#
-#     return d4,d3,d2,d1
