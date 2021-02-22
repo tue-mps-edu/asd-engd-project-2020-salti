@@ -33,9 +33,17 @@ def label_all_in_folder():
         file_ext = os.path.splitext(filename)[1]
         print('dir= '+dir_rgb+', name= '+file_name+', ext= '+file_ext)
 
-        # Read the images
-        img_rgb = cv2.imread(os.path.join(dir_rgb,file_name+file_ext))
-        img_thermal = cv2.imread(os.path.join(dir_thermal,file_name+file_ext))
+        # Read the original images
+        #img_rgb = cv2.imread(os.path.join(dir_rgb,file_name+file_ext))
+        #img_thermal = cv2.imread(os.path.join(dir_thermal,file_name+file_ext))
+
+        # Resize the images
+        resize_and_save_image(dir_rgb,dir_rgb_resized,filename,desired_width,desired_height)
+        resize_and_save_image(dir_thermal,dir_thermal_resized,filename,desired_width,desired_height)
+
+        # read resized images
+        img_rgb = cv2.imread(os.path.join(dir_rgb_resized,file_name+file_ext))
+        img_thermal = cv2.imread(os.path.join(dir_thermal_resized,file_name+file_ext))
 
         # Get classes
         classNames = get_classes(yolo_cfg.dir_classes)
@@ -48,8 +56,6 @@ def label_all_in_folder():
         outputNames = [layerNames[i[0]-1] for i in net.getUnconnectedOutLayers()]
 
         outputs = net.forward(outputNames)
-
-        #df=find_objects_and_write(outputs, img_rgb, img_thermal, classNames, yolo_cfg.confThreshold, yolo_cfg.nmsThreshold, dir_thermal_resized,  file_type[1])
 
         #df_whole=df_whole.append(df, ignore_index=True)
 
