@@ -35,9 +35,11 @@ def get_objects(outputs, img_rgb, classNames, cfg):
 def filter_objects(bboxs, confs, classIds, cfg):
     # Non maximum suppression, will give indices to keep
     indices = cv2.dnn.NMSBoxes(bboxs,confs,cfg.confThreshold,cfg.nmsThreshold)
-    assert(len(indices)!=0)
     to_filter = [i[0] for i in indices]
     bboxs_fil, confs_fil, classIds_fil = [], [], []
+    if (len(indices)==0):
+        return bboxs_fil, confs_fil, classIds_fil
+    #assert(len(indices)!=0)
     for i in range(len(bboxs)):
         if i in to_filter:
             bboxs_fil.append(bboxs[i])

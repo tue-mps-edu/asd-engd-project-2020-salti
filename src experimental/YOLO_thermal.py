@@ -24,7 +24,11 @@ def label_all_in_folder():
     objects_dataframe = pd.DataFrame(columns=objects_classlist)
 
     # Loop over viles in the RGB directory
+    i = 0;
     for filename in os.listdir(dir_rgb):
+        i = i + 1
+        if i%25!=0:
+            continue
         # Skip everything that is the wrong format
         if not filename.endswith(image_format):
             continue
