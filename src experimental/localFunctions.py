@@ -4,6 +4,7 @@ import cv2
 import pandas as pd
 from PIL import Image
 import os
+import matplotlib.pyplot as plt
 
 def find_digits(i):
     d1 = i
@@ -112,6 +113,31 @@ def create_archive():
     CL = ["Image", "Box", "xc", "yc", "w", "h", "Category", "Confidence"]
     df_whole = pd.DataFrame(columns=CL)
     return df_whole
+
+#Function to give insights about the results
+def analyze_results(df_whole):
+    plt.figure()
+    plt.hist(df_whole['Category'],)
+    plt.ylabel('Number of detections')
+    plt.xticks(df_whole.Category.unique(),rotation='vertical')
+    plt.savefig('Histogram of Labelled Categories')
+
+    plt.figure()
+    plt.hist(df_whole['Confidence'])
+    plt.ylabel('Number of detections')
+    plt.xlabel('Confidence level')
+    plt.savefig('Histogram of Confidence levels')
+    #plt.figure()
+    #plt.show()
+
+    labels=df_whole.Category.unique()
+    for item in labels:
+        confidence_per_item=pd.Series(df_whole['Confidence'][df_whole['Category']==item])
+        plt.figure()
+        plt.hist(confidence_per_item)
+        plt.ylabel('Detections')
+        plt.title(item)
+        plt.savefig(item)
 
 
 

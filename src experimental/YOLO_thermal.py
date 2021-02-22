@@ -2,16 +2,12 @@ import cv2
 import numpy as np
 
 import pandas as pd
-from localFunctions import find_digits, find_objects_and_write, read_and_display_boxes, resize_image,create_archive
-
-print('check for ARjun and AbhiSHAAAAK')
-
-print('lets check')
+from localFunctions import find_digits, find_objects_and_write, read_and_display_boxes, resize_image,create_archive,analyze_results
 
 # Image numbers
 start = 0
-end = start+200
-steps = 50
+end = start+2245
+steps = 500
 
 #desired height and weight for resizing the image
 desired_height=400
@@ -50,7 +46,7 @@ while i <= end:
     img_thermal = cv2.imread(path_thermal_resized+file_type[0])
 
     whT = 320
-    confThreshold = 0.5
+    confThreshold = 0.2
     nmsThreshold = 0.3  # lower ==> less number of boxes
 
     classesFile = 'Yolo_config/coco.names'
@@ -84,8 +80,12 @@ while i <= end:
 
     cv2.imshow("Color ", img_rgb)
     cv2.imshow("Thermal (corresponding) ", img_thermal)
-    cv2.waitKey(100) #miliseconds of pause between different pictures
+    cv2.waitKey(5) #miliseconds of pause between different pictures
 
     #read_and_display_boxes(path_thermal)
 
+#Saving the final results into a csv file
 df_whole.to_csv('Archive.csv')
+#showing some useful figures about final results
+analyze_results(df_whole)
+
