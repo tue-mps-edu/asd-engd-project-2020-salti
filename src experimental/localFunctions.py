@@ -55,11 +55,11 @@ def draw_bboxs(img, bboxs, confs, classIds, classNames):
         cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,255),2)
         cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10),cv2.FONT_HERSHEY_SIMPLEX,0.6,(255,0,255),2)
 
-def save_objects(df, CL, path, file_name, file_ext, bboxs, confs, classIds, classNames):
+def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames):
     #Preparing a blank dataframe for each picture's results
 
-    objects_classlist = ["Image","Box", "xc", "yc", "w", "h", "Category", "Confidence"]
-    df = pd.DataFrame(columns=objects_classlist)
+    CL = ["Image","Box", "xc", "yc", "w", "h", "Category", "Confidence"]
+    df = pd.DataFrame(columns=CL)
     j = 0
     for i in range(len(bboxs)):
         box, conf, name = bboxs[i], confs[i], classIds[i]
@@ -78,7 +78,8 @@ def save_objects(df, CL, path, file_name, file_ext, bboxs, confs, classIds, clas
         j += 1
 
     #Exporting each picture's results to its specific csv file
-    df.to_csv(path + file_name + '.csv', index=False)
+#    df.to_csv(path + file_name + '.csv', index=False)
+    return df
 
 #
 # def find_objects_and_write(outputs, img_rgb, img_therm, classNames, confThreshold, nmsThreshold, path_thermal, file_type):
