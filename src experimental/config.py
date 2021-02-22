@@ -13,7 +13,7 @@ dir_classes = os.path.join(os.getcwd(),'Yolo_config\coco.names')
 
 image_format = ".jpg"
 
-class YoloConfig:
+class YoloConfigRGB:
     whT = 320
     confThreshold = 0.5
     nmsThreshold = 0.3  # lower ==> less number of boxes
@@ -21,7 +21,7 @@ class YoloConfig:
     dir_cfg = 'Yolo_config/yolov3.cfg'
     dir_weights = 'Yolo_config/yolov3.weights'
 
-yolo_cfg = YoloConfig()
+yolo_cfg = YoloConfigRGB()
 
 # Create folders for resized images
 try:

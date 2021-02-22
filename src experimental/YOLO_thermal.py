@@ -4,11 +4,6 @@ from config import *
 #from localFunctions import find_digits, find_objects_and_write, read_and_display_boxes, resize_image,create_archive
 from localFunctions import *
 
-# Image numbers
-start = 0
-end = start+200
-steps = 50
-
 # Iterate over directory
 # https://stackoverflow.com/questions/10377998/how-can-i-iterate-over-files-in-a-given-directory
 import os
@@ -19,9 +14,7 @@ def label_all_in_folder():
     net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
     net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
-    # Create structure for saving data
-    objects_classlist = ["Image","Box", "xc", "yc", "w", "h", "Category", "Confidence"]
-    objects_dataframe = pd.DataFrame(columns=objects_classlist)
+    df_whole = create_archive()
 
     # Loop over viles in the RGB directory
     i = 0;
@@ -61,9 +54,6 @@ def label_all_in_folder():
 
         outputs = net.forward(outputNames)
 
-        #df_whole=df_whole.append(df, ignore_index=True)
-
-
         # Get all objects from the outputs
         bboxs, classIds, confs = get_objects(outputs, img_rgb, classNames, yolo_cfg)
         # Filter out those that are below configured threshold
@@ -77,9 +67,12 @@ def label_all_in_folder():
         cv2.waitKey(100) #miliseconds of pause between different pictures
 
         # Save the objects in csv file
-        save_objects(objects_dataframe, objects_classlist, dir_thermal, file_name, file_ext, bboxs_fil, confs_fil, classIds_fil, classNames)
+        df = save_objects(dir_thermal, file_name, file_ext, bboxs_fil, confs_fil, classIds_fil, classNames)
+        df.to_csv(os.path.join(dir_thermal,file_name + '.csv'), index=False)
+        df_whole=df_whole.append(df, ignore_index=True)
+        df_whole.to_csv('Archive.csv')
 
-    #objects_dataframe.to_csv('Archive.csv')
+
 
 label_all_in_folder()
 
