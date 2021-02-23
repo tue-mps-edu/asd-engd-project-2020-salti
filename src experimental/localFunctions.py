@@ -84,9 +84,9 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames):
 
     return df
 
-def read_and_display_boxes(file_path):
-    df = pd.read_csv(file_path+".csv")
-    img_thermal = cv2.imread(file_path + ".jpg")
+def read_and_display_boxes(file_path, file):
+    df = pd.read_csv(os.path.join(file_path, file+".csv"))
+    img_thermal = cv2.imread(os.path.join(file_path, file+".jpg"))
     for i in df.index:
         x, y, w, h = df['xc'][i], df['yc'][i], df['w'][i], df['h'][i]
         df_class = df.drop(['Box','xc','yc','w','h'], axis = 1)

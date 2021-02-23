@@ -1,6 +1,11 @@
+import numpy as np
+from config import *
+from localFunctions import *
+
 file_path = "Data\Dataset_V0\images\set00\V000\YOLO-GUI"
-filename_yolo = "I00000"
-filename_gui = "GOPR0376_frame_000001_rgb_anon"
+filename_yolo = "I02199"
+filename_gui = "I02199"
+
 def UserValidation(file_path, filname_yolo, filename_gui):
     import pandas as pd
     import os
@@ -17,4 +22,10 @@ def UserValidation(file_path, filname_yolo, filename_gui):
     b['filename'] = os.path.basename(file_path + "/"+ filename_gui + ".txt")
     print(b)
 
+    # maths:
+    #print(b.values)
+
+
 UserValidation(file_path, filename_yolo,filename_gui)
+
+#read_and_display_boxes(dir_thermal_resized,"I00199")
