@@ -1,3 +1,12 @@
+from localFunctions import *
+from config import *
+
+# def BoxForUser(df):
+#     df_for_user=df.
+
+
+
+
 
 def UserValidation(variables):
     import pandas as pd
@@ -14,4 +23,7 @@ def UserValidation(variables):
     # pd.DataFrame("GOPR0376_frame_000001_rgb_anon")
 
     print(a)
+
+read_and_display_boxes(dir_Validation, 'I00799')
+
 

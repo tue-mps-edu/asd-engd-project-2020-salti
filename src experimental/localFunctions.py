@@ -58,6 +58,10 @@ def draw_bboxs(img, bboxs, confs, classIds, classNames):
 
 def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames):
 
+    #For GUI
+    CL_GUI=["Category","xc","yc","w","h"]
+    df_GUI=pd.DataFrame(columns=CL_GUI)
+
     #Preparing a blank dataframe for each picture's results
     CL = ["Image","Box", "xc", "yc", "w", "h", "Category", "Confidence"]
     df = pd.DataFrame(columns=CL)
@@ -78,21 +82,27 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames):
         df.at[j,CL[7]]=confs[i]
         j += 1
 
+        #For GUI
+        df_GUI = df_GUI.append(pd.Series([classIds[i],x,y,w,h], index=df_GUI.columns), ignore_index=True)
+
     #Exporting each picture's results to its specific csv file
     df.to_csv(os.path.join(path, file_name + '.csv'), index=False)
+    # df.to_csv()
 
 
     return df
 
-def read_and_display_boxes(file_path):
-    df = pd.read_csv(file_path+".csv")
-    img_thermal = cv2.imread(file_path + ".jpg")
+
+def read_and_display_boxes(file_path, file):
+    df = pd.read_csv(os.path.join(file_path, file + ".csv"))
+    img_thermal = cv2.imread(os.path.join(file_path, file + ".jpg"))
     for i in df.index:
-        x, y, w, h = df['xc'][i], df['yc'][i], df['w'][i], df['h'][i]
-        df_class = df.drop(['Box','xc','yc','w','h'], axis = 1)
-        className = df_class.idxmax(axis=1)[i]
+        x, y, w, h, className, confidence = df['xc'][i], df['yc'][i], df['w'][i], df['h'][i], df['Category'][i],df['Confidence'][i]
+        #df_class = df.drop(['Box','xc','yc','w','h'], axis = 1)
+        #className = df_class.idxmax(axis=1)[i]
+        #className=df['Category'][i]
         cv2.rectangle(img_thermal, (x, y), (x + w, y + h), (255, 0, 255), 2)
-        cv2.putText(img_thermal, f'{className} {int(df[className][i] * 100)}%',
+        cv2.putText(img_thermal, f'{className} {int(confidence * 100)}%',
                     (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
     cv2.imshow("Thermal image with boxes ", img_thermal)
     cv2.waitKey(0)
