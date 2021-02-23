@@ -10,6 +10,7 @@ dir_rgb = os.path.join(dir_dataset,'visible')
 dir_thermal_resized = os.path.join(dir_dataset,'thermal_resized')
 dir_rgb_resized = os.path.join(dir_dataset,'rgb_resized')
 dir_classes = os.path.join(os.getcwd(),'Yolo_config\coco.names')
+dir_PostAnalysis=os.path.join(os.getcwd(),'Post_Analysis')
 
 image_format = ".jpg"
 
@@ -32,6 +33,14 @@ except OSError as exc:
     pass
 try:
     os.mkdir(dir_rgb_resized)
+except OSError as exc:
+    if exc.errno != errno.EEXIST:
+        raise
+    pass
+
+#Create folder for post analysis results
+try:
+    os.mkdir(dir_PostAnalysis)
 except OSError as exc:
     if exc.errno != errno.EEXIST:
         raise
