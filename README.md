@@ -1,6 +1,10 @@
 # Project SALTI
 Semi-Automatic Labelling of Thermal Images
 
+<img src="../documentation/images/concept-1.JPG">
+
+![concept1](documentation/images/concept-1.JPG)
+
 ## Quick reference
 * [Documentation WIKI](https://github.com/tue-mps-edu/asd-pdeng-project-2020-developer/wiki/Home) (Installation & project documentation)
 * [Source code](src/)
