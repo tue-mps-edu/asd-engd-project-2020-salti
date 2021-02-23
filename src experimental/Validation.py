@@ -29,7 +29,7 @@ def UserValidation(file_path, filname_yolo, filename_gui):
     #print(b.values)
 
 
-UserValidation(dir_Validation, filename_yolo,filename_gui)
+#UserValidation(dir_Validation, filename_yolo,filename_gui)
 
 
 read_and_display_boxes(dir_Validation, 'I00799')
