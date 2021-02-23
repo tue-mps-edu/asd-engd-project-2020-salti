@@ -1,8 +1,6 @@
 # Project SALTI
 Semi-Automatic Labelling of Thermal Images
 
-<img src="../documentation/images/concept-1.JPG">
-
 ![concept1](documentation/images/concept-1.JPG)
 
 ## Quick reference
