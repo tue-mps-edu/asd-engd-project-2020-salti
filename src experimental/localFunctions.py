@@ -80,6 +80,10 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames):
 
     #Exporting each picture's results to its specific csv file
     df.to_csv(os.path.join(path, file_name + '.csv'), index=False)
+
+    #For user validation
+    a=df.
+
     return df
 
 def read_and_display_boxes(file_path):
