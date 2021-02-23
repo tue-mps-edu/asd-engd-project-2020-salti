@@ -5,7 +5,7 @@ from localFunctions import *
 # def BoxForUser(df):
 #     df_for_user=df.
 
-file_path = "Data\Dataset_V0\images\set00\V000\YOLO-GUI"
+file_path = "Data\Dataset_V0\images\set00\V000\Validation"
 filename_yolo = "I02199"
 filename_gui = "I02199"
 
@@ -29,8 +29,8 @@ def UserValidation(file_path, filname_yolo, filename_gui):
     #print(b.values)
 
 
-#UserValidation(dir_Validation, filename_yolo,filename_gui)
+UserValidation(dir_Validation, filename_yolo,filename_gui)
 
 
-read_and_display_boxes(dir_Validation, 'I00799')
+read_and_display_boxes(dir_Validation, 'I02199')
 
