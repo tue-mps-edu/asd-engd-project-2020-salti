@@ -67,7 +67,7 @@ def label_all_in_folder():
         cv2.waitKey(100) #miliseconds of pause between different pictures
 
         # Save the objects in csv file
-        df = save_objects(dir_thermal_resized, file_name, file_ext, bboxs_fil, confs_fil, classIds_fil, classNames)
+        df = save_objects(dir_thermal_resized, file_name, file_ext, bboxs_fil, confs_fil, classIds_fil, classNames,desired_width,desired_height)
         df_whole=df_whole.append(df, ignore_index=True)
 
     df_whole.to_csv(os.path.join(dir_PostAnalysis, 'Archive.csv'))
