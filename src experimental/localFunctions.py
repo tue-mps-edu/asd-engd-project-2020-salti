@@ -56,7 +56,7 @@ def draw_bboxs(img, bboxs, confs, classIds, classNames):
         cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,255),2)
         cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10),cv2.FONT_HERSHEY_SIMPLEX,0.6,(255,0,255),2)
 
-def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames):
+def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,desired_width,desired_height):
 
     #For GUI
     CL_GUI=["Category","xc","yc","w","h"]
@@ -83,12 +83,12 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames):
         j += 1
 
         #For GUI
-        df_GUI = df_GUI.append(pd.Series([classIds[i],x,y,w,h], index=df_GUI.columns), ignore_index=True)
+        df_GUI = df_GUI.append(pd.Series([classIds[i],x/desired_width,y/desired_height,w,h], index=df_GUI.columns), ignore_index=True)
 
     #Exporting each picture's results to its specific csv file
     df.to_csv(os.path.join(path, file_name + '.csv'), index=False)
-    # df.to_csv()
-
+    #Saving to gui readable format
+    df_GUI.to_csv(os.path.join(path,file_name+'.txt'), header=None, index=None, sep=' ')
 
     return df
 
