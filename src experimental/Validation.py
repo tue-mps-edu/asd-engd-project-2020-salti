@@ -13,17 +13,17 @@ def UserValidation(file_path, filename_yolo, filename_gui):
     #this is code for reading output files from YOlO and from the GUI
     #GUI
 
-    a = pd.read_csv(os.path.join(file_path,filename_gui + ".txt"), delim_whitespace=True,
+    GU = pd.read_csv(os.path.join(file_path,filename_gui + ".txt"), delim_whitespace=True,
                     names=["classes", "x_c", "y_c", "w", "h"])
     #a['filename'] = os.path.basename(file_path + "/" + filename_gui + ".txt")
-    a['filename'] = filename_gui
-    print(a)
+    GU['filename'] = filename_gui
+    print(GU)
 
     #Yolo
-    b = pd.read_csv(os.path.join(file_path,filename_yolo + ".txt"), delim_whitespace=True,
+    YO = pd.read_csv(os.path.join(file_path,filename_yolo + ".txt"), delim_whitespace=True,
                     names=["classes", "x_c", "y_c", "w", "h"])
-    b['filename'] = filename_yolo
-    print(b)
+    YO['filename'] = filename_yolo
+    print(YO)
 
 
     # maths:
@@ -31,24 +31,24 @@ def UserValidation(file_path, filename_yolo, filename_gui):
     #print(a['x_c'][0])
 
 
-    for index_a in range(a.shape[0]): #0 to 2 (along columns of gui)
-        distances = np.zeros(b.shape[0])
-        for index_b in range(b.shape[0]): # 0 to 3 (along columns of yolo)
+    for index_GU in range(GU.shape[0]): #0 to 2 (along columns of gui)
+        distances = np.zeros(YO.shape[0])
+        for index_YO in range(YO.shape[0]): # 0 to 3 (along columns of yolo)
             #centroid_distances = np.add(a['x_c'][index_a], b['x_c'][index_b])
-            centroid_distances = np.sqrt( (a['x_c'][index_a]-b['x_c'][index_b])**2 + (a['y_c'][index_a]-b['y_c'][index_b])**2)
-            distances[index_b] = centroid_distances
-
-        print('Distances of a {} from b {} is {}'.format(index_a,index_b,distances))
+            centroid_distances = np.sqrt( (GU['x_c'][index_GU]-YO['x_c'][index_YO])**2 + (GU['y_c'][index_GU]-YO['y_c'][index_YO])**2)
+            distances[index_YO] = centroid_distances
+        #print('Distances of a {} from YO are {}'.format(index_GU,distances))
 
 
         #find the minimum
-        #minElement,index = np.amin(distances)
-        #print(f'this is the min distance between first GUI and all YOLO {minElement}')
+        minElement = np.amin(distances)
+        ind = np.argmin(distances)
+        print('The min distance between GU {} from YO is {} at index {}'.format(index_GU,minElement,ind))
 
         #compare the minimum with diameter of the larger box
-        box1 = np.sqrt( (a['w'][index_a]) **2 + (a['h'][index_a]) **2 )
-        #print(f'this is distance of the GUI box {box1}')
-        box2 = np.sqrt( (b['w'][index_b]) **2 + (b['h'][index_b]) **2 )
+        box1 = np.sqrt( (GU['w'][index_GU]) **2 + (GU['h'][index_GU]) **2 )
+        print(f'this is distance of the GUI box {box1}')
+        box2 = np.sqrt( (YO['w'][ind]) **2 + (YO['h'][ind]) **2 )
         #print(f'this is distance of the YOLO box {box2}')
         #boddim = np.amax(box1, box2)
 
