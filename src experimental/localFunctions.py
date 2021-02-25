@@ -83,7 +83,7 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,d
         j += 1
 
         #For GUI
-        df_GUI = df_GUI.append(pd.Series([classIds[i],x/desired_width,y/desired_height,w,h], index=df_GUI.columns), ignore_index=True)
+        df_GUI = df_GUI.append(pd.Series([classIds[i],x/desired_width,y/desired_height,w/desired_width,h/desired_height], index=df_GUI.columns), ignore_index=True)
 
     #Exporting each picture's results to its specific csv file
     df.to_csv(os.path.join(path, file_name + '.csv'), index=False)

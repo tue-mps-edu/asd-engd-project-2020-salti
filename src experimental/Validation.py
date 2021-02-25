@@ -5,10 +5,6 @@ import pandas as pd
 import os
 
 
-file_path = "Data\Dataset_V0\images\set00\V000\Validation"
-filename_yolo = "I02199_yolo"
-filename_gui = "I02199_gui"
-
 def UserValidation(file_path, filename_yolo, filename_gui):
     #this is code for reading output files from YOlO and from the GUI
     #GUI
@@ -36,7 +32,7 @@ def UserValidation(file_path, filename_yolo, filename_gui):
             #centroid_distances = np.add(a['x_c'][index_a], b['x_c'][index_b])
             centroid_distances = np.sqrt( (a['x_c'][index_a]-b['x_c'][index_b])**2 + (a['y_c'][index_a]-b['y_c'][index_b])**2)
             distances[index_b] = centroid_distances
-        print('Distances of a {} from b {} is {}'.format(index_a,index_b,distances))
+        print('Distances of a {} from b is {}'.format(index_a,index_b,distances))
 
 
         #find the minimum
