@@ -1,32 +1,30 @@
 import numpy as np
 from config import *
 from localFunctions import *
+import pandas as pd
+import os
 
-# def BoxForUser(df):
-#     df_for_user=df.
 
 file_path = "Data\Dataset_V0\images\set00\V000\Validation"
 filename_yolo = "I02199_yolo"
 filename_gui = "I02199_gui"
 
-def UserValidation(file_path, filname_yolo, filename_gui):
-    import pandas as pd
-    import os
+def UserValidation(file_path, filename_yolo, filename_gui):
     #this is code for reading output files from YOlO and from the GUI
     #GUI
 
-    #a = pd.read_csv(file_path + "/" + filname_yolo + ".csv", names=["classes", "x_c", "ÿ_c", "w", "h"])
-    a = pd.read_csv(file_path + "/" + filename_gui + ".txt", delim_whitespace=True,
+    a = pd.read_csv(os.path.join(file_path,filename_gui + ".txt"), delim_whitespace=True,
                     names=["classes", "x_c", "y_c", "w", "h"])
-    a['filename'] = os.path.basename(filename_gui + ".txt")
-    #print(f'this is the GUI data {a}')
+    #a['filename'] = os.path.basename(file_path + "/" + filename_gui + ".txt")
+    a['filename'] = filename_gui
+    print(a)
 
-    #YOLO
-
-    b = pd.read_csv(file_path + "/" + filename_yolo + ".txt", delim_whitespace=True,
+    #Yolo
+    b = pd.read_csv(os.path.join(file_path,filename_yolo + ".txt"), delim_whitespace=True,
                     names=["classes", "x_c", "y_c", "w", "h"])
-    b['filename'] = os.path.basename(filename_yolo + ".txt")
-    #print(f'this is the YOLO data {b}')
+    b['filename'] = filename_yolo
+    print(b)
+
 
     # maths:
     #print(a.loc[2][1])
@@ -39,7 +37,8 @@ def UserValidation(file_path, filname_yolo, filename_gui):
             #centroid_distances = np.add(a['x_c'][index_a], b['x_c'][index_b])
             centroid_distances = np.sqrt( (a['x_c'][index_a]-b['x_c'][index_b])**2 + (a['y_c'][index_a]-b['y_c'][index_b])**2)
             distances[index_b] = centroid_distances
-        #print(f'all the distances {distances}')
+
+        print('Distances of a {} from b {} is {}'.format(index_a,index_b,distances))
 
 
         #find the minimum
@@ -57,7 +56,7 @@ def UserValidation(file_path, filname_yolo, filename_gui):
         ...
 
 
-UserValidation(dir_Validation, filename_yolo,filename_gui)
+UserValidation(dir_thermal_resized,'I00799_YOLO','I00799')
 
 
 #read_and_display_boxes(dir_Validation, 'I02199')
