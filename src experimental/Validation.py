@@ -1,31 +1,27 @@
 import numpy as np
 from config import *
 from localFunctions import *
+import pandas as pd
+import os
 
-# def BoxForUser(df):
-#     df_for_user=df.
 
 file_path = "Data\Dataset_V0\images\set00\V000\Validation"
 filename_yolo = "I02199_yolo"
 filename_gui = "I02199_gui"
 
-def UserValidation(file_path, filname_yolo, filename_gui):
-    import pandas as pd
-    import os
+def UserValidation(file_path, filename_yolo, filename_gui):
     #this is code for reading output files from YOlO and from the GUI
-    #YOLO
-
-    #a = pd.read_csv(file_path + "/" + filname_yolo + ".csv", names=["classes", "x_c", "ÿ_c", "w", "h"])
-    a = pd.read_csv(file_path + "/" + filename_gui + ".txt", delim_whitespace=True,
+    #GUI
+    a = pd.read_csv(os.path.join(file_path,filename_gui + ".txt"), delim_whitespace=True,
                     names=["classes", "x_c", "y_c", "w", "h"])
-    a['filename'] = os.path.basename(file_path + "/" + filename_gui + ".txt")
+    #a['filename'] = os.path.basename(file_path + "/" + filename_gui + ".txt")
+    a['filename'] = filename_gui
     print(a)
 
-    #GUI
-
-    b = pd.read_csv(file_path + "/" + filename_yolo + ".txt", delim_whitespace=True,
+    #Yolo
+    b = pd.read_csv(os.path.join(file_path,filename_yolo + ".txt"), delim_whitespace=True,
                     names=["classes", "x_c", "y_c", "w", "h"])
-    b['filename'] = os.path.basename(file_path + "/"+ filename_yolo + ".txt")
+    b['filename'] = filename_yolo
     print(b)
 
     # maths:
@@ -40,7 +36,7 @@ def UserValidation(file_path, filname_yolo, filename_gui):
             #centroid_distances = np.add(a['x_c'][index_a], b['x_c'][index_b])
             centroid_distances = np.sqrt( (a['x_c'][index_a]-b['x_c'][index_b])**2 + (a['y_c'][index_a]-b['y_c'][index_b])**2)
             distances[index_b] = centroid_distances
-        print(distances)
+        print('Distances of a {} from b {} is {}'.format(index_a,index_b,distances))
 
 
         #find the minimum
@@ -55,7 +51,7 @@ def UserValidation(file_path, filname_yolo, filename_gui):
     #print(b.values)
 
 
-UserValidation(dir_Validation, filename_yolo,filename_gui)
+UserValidation(dir_thermal_resized,'I00799_YOLO','I00799')
 
 
 #read_and_display_boxes(dir_Validation, 'I02199')

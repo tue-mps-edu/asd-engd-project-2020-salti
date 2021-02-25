@@ -89,6 +89,7 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,d
     df.to_csv(os.path.join(path, file_name + '.csv'), index=False)
     #Saving to gui readable format
     df_GUI.to_csv(os.path.join(path,file_name+'.txt'), header=None, index=None, sep=' ')
+    df_GUI.to_csv(os.path.join(path, file_name + '_YOLO.txt'), header=None, index=None, sep=' ')
 
     return df
 
