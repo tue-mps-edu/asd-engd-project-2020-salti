@@ -31,8 +31,8 @@ def UserValidation(file_path, filename_yolo, filename_gui):
     #Creating a dataframe for distances between GUI (in rows) boxes and Yolo (in column) boxes
     distances_df=pd.DataFrame(data=distances_mat)
 
-
-    while distances_df.shape[0] >= 1 and distances_df.shape[1] >= 1:
+    skip_counter=0
+    while distances_df.shape[0] >= 1+skip_counter and distances_df.shape[1] >= 1+skip_counter:
         # To find the indexes of global minimum inside the dataframe
         GUI_min_ind = distances_df.min(axis=1).idxmin()
         YO_min_ind = distances_df.min().idxmin()
@@ -49,8 +49,10 @@ def UserValidation(file_path, filename_yolo, filename_gui):
             else:
                 FP+=1
 
-        # To discard the analyzed row and column
-        distances_df = distances_df.drop(index=[GUI_min_ind], columns=[YO_min_ind])
+            # To discard the analyzed row and column
+            distances_df = distances_df.drop(index=[GUI_min_ind], columns=[YO_min_ind])
+        else:
+            skip_counter+=1
 
 
     FN+=distances_df.shape[0]
