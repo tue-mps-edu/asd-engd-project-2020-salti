@@ -1,0 +1,3 @@
+Image,Box,xc,yc,w,h,Category,Confidence
+I00000.jpg,1,372,224,405,249,car,0.997371435
+I00000.jpg,2,270,225,335,270,car,0.745961964

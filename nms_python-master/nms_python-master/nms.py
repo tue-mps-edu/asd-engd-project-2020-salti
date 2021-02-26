@@ -67,7 +67,7 @@ def non_max_suppression_slow(boxes, overlapThresh):
     # return only the bounding boxes that were picked
     return boxes[pick]
 
-def non_max_suppression_fast(boxes, probs=None, overlapThresh=0.3):
+def non_max_suppression_fast(boxes,labels, probs=None, overlapThresh=0.3):
     
     # if there are no boxes, return an empty list
     if len(boxes) == 0:
@@ -115,7 +115,7 @@ def non_max_suppression_fast(boxes, probs=None, overlapThresh=0.3):
         yy1 = np.maximum(y1[i], y1[idxs[:last]])
         xx2 = np.minimum(x2[i], x2[idxs[:last]])
         yy2 = np.minimum(y2[i], y2[idxs[:last]])
-        print(xx1,yy1,xx2,yy2)
+
 
         # compute the width and height of the bounding box
         w = np.maximum(0, xx2 - xx1 + 1)
@@ -130,4 +130,4 @@ def non_max_suppression_fast(boxes, probs=None, overlapThresh=0.3):
             np.where(overlap > overlapThresh)[0]))) # Do something here for label syncing
 
     # return only the bounding boxes that were picked
-    return boxes[pick].astype("int")
+    return boxes[pick].astype("int"), labels[pick].astype(str)
