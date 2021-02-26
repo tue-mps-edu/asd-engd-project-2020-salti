@@ -70,3 +70,4 @@ UserValidation(dir_thermal_resized,'I00799_YOLO','I00799')
 
 #read_and_display_boxes(dir_Validation, 'I02199')
 
+print('Hello')
