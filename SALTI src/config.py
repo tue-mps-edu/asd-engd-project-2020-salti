@@ -31,9 +31,11 @@ class ConfigThermal:
     whT = 320               # width & height of the image input into YOLO (standard resolution, square)
     confThreshold = 0.5     # Confidence threshold for approval of detection
     nmsThreshold = 0.3      # Non-maximum suppresion threshold (lower = less number)
-    dir_classes = 'Yolo_config/coco-thermal.names'
-    dir_cfg = 'Yolo_config/yolov3-thermal-final.pt'
-    dir_weights = 'Yolo_config/yolov3-thermal.weights'
+    #dir_classes = 'Yolo_config\coco-thermal.names'
+    dir_classes = 'Yolo_config/coco-thermal.data'
+    #dir_classes = 'data/coco.data'
+    dir_cfg = 'Yolo_config/yolov3-spp.cfg'
+    dir_weights = 'Yolo_config\yolov3-thermal.weights'
 
 cfg_C = ConfigRGB()
 cfg_T = ConfigThermal()
