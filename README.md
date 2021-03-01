@@ -3,7 +3,7 @@ Semi-Automatic Labelling of Thermal Images
 
 ## Quick reference
 * [Documentation WIKI](https://github.com/tue-mps-edu/asd-pdeng-project-2020-developer/wiki/Home) (Installation & project documentation)
-* [Source code](SALTI src/)
+* [Source code](SALTI-src/)
 
 ## Authors
 * **Abhishek Balakrishna Bhat** - *insert work done* - [Abhishek0895](https://github.com/Abhishek0895)
