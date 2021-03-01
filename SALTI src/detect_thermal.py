@@ -10,8 +10,19 @@ import sys
 
 from config import *
 
+def initialize():
 
-def detect(save_txt=False, save_img=False):
+
+    # return model
+
+
+def detect(model, image):
+
+
+    # return bbox, conf, etc
+
+
+def detect_old(save_txt=False, save_img=False):
     parser = argparse.ArgumentParser()
     parser.add_argument('--cfg', type=str, default=cfg_T.dir_cfg, help='cfg file path')
     parser.add_argument('--data', type=str, default=cfg_T.dir_classes, help='coco.data file path')
@@ -204,4 +215,4 @@ def detect(save_txt=False, save_img=False):
 
         print('Done. (%.3fs)' % (time.time() - t0))
 
-detect()
+detect_old()
