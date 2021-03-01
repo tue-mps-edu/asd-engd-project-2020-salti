@@ -3,7 +3,8 @@ from config import *
 from functions import *
 import detect_rgb as netrgb
 import detect_thermal as nettherm
-import tf
+import tensorflow as tf
+
 
 def get_name_ext(filename):
     return os.path.splitext(filename)[0], os.path.splitext(filename)[1]
@@ -30,10 +31,12 @@ def label_single():
 
 
     # TEST THERMAL YOLO
-    # change image from ndarray D=3 to tensor D=3.
     net_T, classnames_T, opt = nettherm.initialize()
+
+    # change image from ndarray D=3 to tensor D=3.
     #img_tens = tf.convert_to_tensor(img)
-    nettherm.detect(net_T, img, opt)
+    img_tens = tf.image.convert_image_dtype(img, dtype=tf.float16, saturate=False)
+    nettherm.detect(net_T, img_tens, opt)
 
     print("Insert thermal here")
 
