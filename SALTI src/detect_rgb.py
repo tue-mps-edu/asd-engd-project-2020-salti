@@ -30,13 +30,10 @@ def detect(net,classnames,image):
     # Do non-maximum suppression for remaining boxes
     boxes, classes, confidences = nms(boxes, confidences, classes, cfg_C.confThreshold, cfg_C.nmsThreshold)
 
-    # Add Bounding Boxes to image
-    draw_bboxs(image, boxes, confidences, classes, classnames)
-
     # Store in container
-    det = Detections(boxes, classes, confidences)
+    #det = Detections(boxes, classes, confidences)
 
-    return det, image
+    return boxes, confidences, classes
 
 def getclasses(classes_file_dir):
     classNames = []

@@ -9,6 +9,7 @@ import pandas as pd
 import sys
 
 from config import *
+from functions import *
 
 def initialize():
     parser = argparse.ArgumentParser()
@@ -104,16 +105,14 @@ def convertImage(img0, device, opt):
 
 def detect(model, img, opt, device):
     # Run inference
-    #t0 = time.time()
-
     with torch.no_grad():
-        #t = time.time()
-
         # Get detections
         img = convertImage(img,device, opt)
-        print("check if image is right format")
+
+        #print("check if image is right format")
         if img.ndimension() == 3:
             img = img.unsqueeze(0)
+
         pred = model(img)[0]
 
         if opt.half:
@@ -121,9 +120,9 @@ def detect(model, img, opt, device):
 
         # Apply NMS
         pred = non_max_suppression(pred, opt.conf_thres, opt.nms_thres)
-
-
-    return pred
+        bboxs, confs, classes = getlists(pred)
+        #det = Detections(bboxs, classes,confs)
+    return bboxs, confs, classes
 
 #
 def detect_old(save_txt=False, save_img=False):

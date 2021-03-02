@@ -32,7 +32,15 @@ def nms(boxes, confidences, classes, conf_threshold=0.5, nms_threshold=0.3 ):
     to_keep = [i[0] for i in indices]
     return [boxes[i] for i in to_keep], [classes[i] for i in to_keep], [confidences[i] for i in to_keep]
 
-
+def getlists(preds):
+    bboxs, confs, classes = [], [], []
+    for i, det in enumerate(preds):
+        for *xyxy, conf, _, cls in det:
+            t = np.squeeze(xyxy)
+            bboxs.append([int(i) for i in t])
+            confs.append(float(conf))
+            classes.append(int(cls))
+    return bboxs, confs, classes
 
 def draw_bboxs(img, bboxs, confs, classIds, classNames):
 
