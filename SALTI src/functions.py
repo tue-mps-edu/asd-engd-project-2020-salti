@@ -5,7 +5,7 @@ import pandas as pd
 from PIL import Image
 import os
 import matplotlib.pyplot as plt
-
+from utils.utils import *
 
 '''
 Class for storing all detections
@@ -32,15 +32,30 @@ def nms(boxes, confidences, classes, conf_threshold=0.5, nms_threshold=0.3 ):
     to_keep = [i[0] for i in indices]
     return [boxes[i] for i in to_keep], [classes[i] for i in to_keep], [confidences[i] for i in to_keep]
 
-def getlists(preds):
+# def getlists(preds):
+#     bboxs, confs, classes = [], [], []
+#     for i, det in enumerate(preds):
+#         for *xyxy, conf, _, cls in det:
+#             t = np.squeeze(xyxy)
+#             bboxs.append([int((t[0]+t[2])/2),int((t[1]+t[3])/2),int(abs(t[0]-t[2])),int(abs(t[1]-t[3]))])
+#             confs.append(float(conf))
+#             classes.append(int(cls))
+#     return bboxs, confs, classes
+
+def getlists(preds, img, im0):
     bboxs, confs, classes = [], [], []
     for i, det in enumerate(preds):
+        if det is not None and len(det):
+            # Rescale boxes from img_size to im0 size
+            det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
         for *xyxy, conf, _, cls in det:
             t = np.squeeze(xyxy)
-            bboxs.append([int(i) for i in t])
+            bboxs.append([int((t[0]+t[2])/2),int((t[1]+t[3])/2),int(abs(t[0]-t[2])),int(abs(t[1]-t[3]))])
             confs.append(float(conf))
             classes.append(int(cls))
     return bboxs, confs, classes
+
+
 
 def draw_bboxs(img, bboxs, confs, classIds, classNames):
 

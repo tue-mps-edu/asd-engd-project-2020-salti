@@ -95,19 +95,22 @@ def convertImage(img0, device, opt):
     img = letterbox(img0, new_shape=opt.img_size)[0]
 
     # Normalize RGB
+    #img = img0
     img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB
     img = np.ascontiguousarray(img, dtype=np.float16 if opt.half else np.float32)  # uint8 to fp16/fp32
     img /= 255.0  # 0 - 255 to 0.0 - 1.0
 
     img = torch.from_numpy(img).to(device)
+    print('original'+str(img0.shape))
+    print('resized'+str(img.shape))
 
-    return img
+    return img, img0
 
 def detect(model, img, opt, device):
     # Run inference
     with torch.no_grad():
         # Get detections
-        img = convertImage(img,device, opt)
+        img, img0 = convertImage(img,device, opt)
 
         #print("check if image is right format")
         if img.ndimension() == 3:
@@ -120,7 +123,7 @@ def detect(model, img, opt, device):
 
         # Apply NMS
         pred = non_max_suppression(pred, opt.conf_thres, opt.nms_thres)
-        bboxs, confs, classes = getlists(pred)
+        bboxs, confs, classes = getlists(pred, img, img0)
         #det = Detections(bboxs, classes,confs)
     return bboxs, confs, classes
 

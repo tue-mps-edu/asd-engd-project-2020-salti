@@ -5,6 +5,7 @@ import detect_rgb as netrgb
 import detect_thermal as nettherm
 import tensorflow as tf
 import torch
+from preprocess import *
 
 
 def get_name_ext(filename):
@@ -17,9 +18,16 @@ def label_single():
     Then it runs the rgb yolo detection, which returns detection for single image
     :return:
     '''
+
+
+    #RESIZE THE PICTURES
+    #resize_and_save_image(dir_thermal,dir_thermal_resized,"I00000.jpg",416, 256)
+    # dir_thermal_test_image = r"Data\Dataset_V0\images\set00\V000\thermal_resized\I00000.jpg"
+
     # TEST RGB YOLO
     dir_rgb_test_image = r"Data\Dataset_V0\images\set00\V000\visible\I00000.jpg"
     dir_thermal_test_image = r"Data\Dataset_V0\images\set00\V000\thermal\I00000.jpg"
+
     img_C = cv2.imread(dir_rgb_test_image)
     img_T = cv2.imread(dir_thermal_test_image)
     img_M = img_T.copy()
@@ -48,9 +56,8 @@ def label_single():
     boxes, classes, confs = nms(boxes_C + boxes_T, confs_C+confs_T, classes_C+classes_T, cfg_T.confThreshold, cfg_T.nmsThreshold)
 
     # Add Bounding Boxes to image
-
-    draw_bboxs(img_T, boxes, confs, classes, classnames_RGB)
-    cv2.imshow("MERGED", img_T)
+    draw_bboxs(img_M, boxes, confs, classes, classnames_RGB)
+    cv2.imshow("MERGED", img_M)
 
     #(boxes, confidences, classes, conf_threshold=0.5, nms_threshold=0.3 ):
 
