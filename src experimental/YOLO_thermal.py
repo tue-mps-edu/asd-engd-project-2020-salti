@@ -54,8 +54,7 @@ def label_all_in_folder():
 
         outputs = net.forward(outputNames)
 
-        # Get all objects from the outputs
-        bboxs, classIds, confs = get_objects(outputs, img_rgb, classNames, yolo_cfg)
+
         # Filter out those that are below configured threshold
         bboxs_fil, confs_fil, classIds_fil = filter_objects(bboxs, confs, classIds, yolo_cfg)
         # Add the bboxes to the images
