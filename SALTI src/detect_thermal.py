@@ -29,6 +29,7 @@ def initialize():
 
     with torch.no_grad():
         img_size = (320, 192) if ONNX_EXPORT else opt.img_size  # (320, 192) or (416, 256) or (608, 352) for (height, width)
+        print("detect_thermal.py, line 32 update config")
         out, source, weights, half, view_img = opt.output, opt.source, opt.weights, opt.half, opt.view_img
         webcam = source == '0' or source.startswith('rtsp') or source.startswith('http') or source.endswith('.txt')
 
@@ -88,18 +89,13 @@ def initialize():
 
     #return model, classes
 
-def converImage(img0, device):
-
-    im_size = img0.shape
-    img_size = (im_size[1], im_size[0])
-
+def convertImage(img0, device, opt):
     # Padded resize
-    img = letterbox(img0, new_shape=img_size)[0]
+    img = letterbox(img0, new_shape=opt.img_size)[0]
 
     # Normalize RGB
     img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB
-    do_half = False
-    img = np.ascontiguousarray(img, dtype=np.float16 if do_half else np.float32)  # uint8 to fp16/fp32
+    img = np.ascontiguousarray(img, dtype=np.float16 if opt.half else np.float32)  # uint8 to fp16/fp32
     img /= 255.0  # 0 - 255 to 0.0 - 1.0
 
     img = torch.from_numpy(img).to(device)
@@ -110,21 +106,21 @@ def detect(model, img, opt, device):
     # Run inference
     #t0 = time.time()
 
+    with torch.no_grad():
+        #t = time.time()
 
-    #t = time.time()
+        # Get detections
+        img = convertImage(img,device, opt)
+        print("check if image is right format")
+        if img.ndimension() == 3:
+            img = img.unsqueeze(0)
+        pred = model(img)[0]
 
-    # Get detections
-    img = converImage(img,device)
-    print("check if image is right format")
-    if img.ndimension() == 3:
-        img = img.unsqueeze(0)
-    pred = model(img)[0]
+        if opt.half:
+            pred = pred.float()
 
-    if opt.half:
-        pred = pred.float()
-
-    # Apply NMS
-    pred = non_max_suppression(pred, opt.conf_thres, opt.nms_thres)
+        # Apply NMS
+        pred = non_max_suppression(pred, opt.conf_thres, opt.nms_thres)
 
 
     return pred
