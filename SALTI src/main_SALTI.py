@@ -47,6 +47,9 @@ def label_single():
     assert(type(boxes_C)==type(boxes_T))
     boxes, classes, confs = nms(boxes_C + boxes_T, confs_C+confs_T, classes_C+classes_T, cfg_T.confThreshold, cfg_T.nmsThreshold)
 
+    #Exporting the results
+    df=save_objects(r"Data\Dataset_V0\images\set00\V000\thermal", "I00000", ".jpg", boxes, confs, classes, classnames_T, 640, 512)
+
     # Add Bounding Boxes to image
 
     draw_bboxs(img_T, boxes, confs, classes, classnames_RGB)
