@@ -4,6 +4,7 @@ from functions import *
 import detect_rgb as netrgb
 import detect_thermal as nettherm
 import tensorflow as tf
+import torch
 
 
 def get_name_ext(filename):
@@ -20,22 +21,28 @@ def label_single():
     dir_test_image = r"Data\Dataset_V0\images\set00\V000\thermal\I00000.jpg"
     img = cv2.imread(dir_test_image)
     net_RGB, classnames_RGB = netrgb.initialize()
-    det_RGB, img_RGB = netrgb.detect(net_RGB, classnames_RGB, img)
-    cv2.imshow("RGB YOLO", img_RGB)
+    #det_RGB, img_RGB = netrgb.detect(net_RGB, classnames_RGB, img)
+    #cv2.imshow("RGB YOLO", img_RGB)
 
 
     # TEST THERMAL YOLO
-    net_T, classnames_T, opt = nettherm.initialize()
+    net_T, classnames_T, opt, device = nettherm.initialize()
 
     # change image from ndarray D=3 to tensor D=3.
+    #img_T = torch.from_numpy(img.to(device))
     #img_tens = tf.convert_to_tensor(img)
     #img_tens = tf.image.convert_image_dtype(img, dtype=tf.float16, saturate=False)
-    #nettherm.detect(net_T, img_tens, opt)
+    det_T = nettherm.detect(net_T, img, opt, device)
+    #nettherm.detect_old()
 
     print("Insert thermal here")
 
     # TEST MERGING
+    # det_merged = mergefunction(...)
+    # merged labels = nms(...)
     print("Insert merging")
+
+    # Exporting
 
     # Wait until finished
     cv2.waitKey(1000)
