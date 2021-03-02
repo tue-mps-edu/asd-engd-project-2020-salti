@@ -9,19 +9,13 @@ import tensorflow as tf
 def get_name_ext(filename):
     return os.path.splitext(filename)[0], os.path.splitext(filename)[1]
 
-'''' READING IMAGES
-        # Read the original images
-        #img_rgb = cv2.imread(os.path.join(dir_rgb,file_name+file_ext))
-        #img_thermal = cv2.imread(os.path.join(dir_thermal,file_name+file_ext))
-
-        # Resize the images
-        #resize_and_save_image(dir_rgb,dir_rgb_resized,filename,desired_width,desired_height)
-        #resize_and_save_image(dir_thermal,dir_thermal_resized,filename,desired_width,desired_height)
-        # read resized images
-        #img_rgb = cv2.imread(os.path.join(dir_rgb_resized,file_name+file_ext))
-        #img_thermal = cv2.imread(os.path.join(dir_thermal_resized,file_name+file_ext))
-'''
 def label_single():
+    '''
+    Test script for labelling a single image
+    it runs the RGB yolo deteection, which returns detection for single image
+    Then it runs the rgb yolo detection, which returns detection for single image
+    :return:
+    '''
     # TEST RGB YOLO
     dir_test_image = r"Data\Dataset_V0\images\set00\V000\thermal\I00000.jpg"
     img = cv2.imread(dir_test_image)
@@ -35,8 +29,8 @@ def label_single():
 
     # change image from ndarray D=3 to tensor D=3.
     #img_tens = tf.convert_to_tensor(img)
-    img_tens = tf.image.convert_image_dtype(img, dtype=tf.float16, saturate=False)
-    nettherm.detect(net_T, img_tens, opt)
+    #img_tens = tf.image.convert_image_dtype(img, dtype=tf.float16, saturate=False)
+    #nettherm.detect(net_T, img_tens, opt)
 
     print("Insert thermal here")
 
@@ -49,3 +43,17 @@ def label_single():
 
 label_single()
 
+
+
+'''' READING IMAGES
+        # Read the original images
+        #img_rgb = cv2.imread(os.path.join(dir_rgb,file_name+file_ext))
+        #img_thermal = cv2.imread(os.path.join(dir_thermal,file_name+file_ext))
+
+        # Resize the images
+        #resize_and_save_image(dir_rgb,dir_rgb_resized,filename,desired_width,desired_height)
+        #resize_and_save_image(dir_thermal,dir_thermal_resized,filename,desired_width,desired_height)
+        # read resized images
+        #img_rgb = cv2.imread(os.path.join(dir_rgb_resized,file_name+file_ext))
+        #img_thermal = cv2.imread(os.path.join(dir_thermal_resized,file_name+file_ext))
+'''

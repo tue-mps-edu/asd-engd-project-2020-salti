@@ -4,7 +4,6 @@ INSERT SOURCE HERE
 
 import cv2
 from config import *
-from detections import *
 from functions import *
 import os
 
