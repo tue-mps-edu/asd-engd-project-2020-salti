@@ -5,7 +5,7 @@ Semi-Automatic Labelling of Thermal Images
 * [Documentation WIKI](https://github.com/tue-mps-edu/asd-pdeng-project-2020-developer/wiki/Home) (Installation & project documentation)
 * [Source code](src/)
 
-[test](documentation/images/concept-1.JPG)
+![test](documentation/images/concept-1.JPG)
 
 ## Authors
 * **Abhishek Balakrishna Bhat** - *insert work done* - [Abhishek0895](https://github.com/Abhishek0895)
