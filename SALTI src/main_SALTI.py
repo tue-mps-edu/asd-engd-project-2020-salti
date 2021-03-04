@@ -79,7 +79,7 @@ label_loop(dir_dataset)
         #img_thermal = cv2.imread(os.path.join(dir_thermal_resized,file_name+file_ext))
 '''
 
-def label_single(rgb_im,thermal_im):
+def label_single():
     '''
     Test script for labelling a single image
     it runs the RGB yolo deteection, which returns detection for single image
@@ -93,8 +93,8 @@ def label_single(rgb_im,thermal_im):
     # dir_thermal_test_image = r"Data\Dataset_V0\images\set00\V000\thermal_resized\I00000.jpg"
 
     # TEST RGB YOLO
-    dir_rgb_test_image = rgb_im
-    dir_thermal_test_image = thermal_im
+    dir_rgb_test_image = r"Data\Dataset_V0\images\set00\V000\visible\I01588.jpg"
+    dir_thermal_test_image = r"Data\Dataset_V0\images\set00\V000\thermal\I01588.jpg"
 
     img_C = cv2.imread(dir_rgb_test_image)
     img_T = cv2.imread(dir_thermal_test_image)
@@ -124,8 +124,8 @@ def label_single(rgb_im,thermal_im):
     boxes, classes, confs = nms(boxes_C + boxes_T, confs_C+confs_T, classes_C+classes_T, cfg_T.confThreshold, cfg_T.nmsThreshold)
 
     #Exporting the results
-    df=save_objects(r"Data\Dataset_V0\images\set00\V000\thermal", "I00000", ".jpg", boxes, confs, classes, classnames_T, 640, 512)
-    # read_and_display_boxes(r"Data\Dataset_V0\images\set00\V000\thermal", "I00000")
+    df=save_objects(r"Data\Dataset_V0\images\set00\V000\thermal", "I01588", ".jpg", boxes, confs, classes, classnames_T, 640, 512)
+    # read_and_display_boxes(r"Data\Dataset_V0\images\set00\V000\thermal", "I01588")
 
 
     # Add Bounding Boxes to image
