@@ -1,6 +1,6 @@
 
 import pandas as pd
-from utils.utils import *
+from utils_thermal.utils import *
 
 import cv2
 import numpy as np
