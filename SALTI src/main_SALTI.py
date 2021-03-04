@@ -18,7 +18,6 @@ def label_loop(image_path):
     net_RGB, classnames_RGB = netrgb.initialize()
     net_T, classnames_T, opt, device = nettherm.initialize()
 
-
     df_whole = create_archive()
 
     i = 0
@@ -58,7 +57,7 @@ def label_loop(image_path):
                                             cfg_T.confThreshold, cfg_T.nmsThreshold)
 
                 # Exporting the results
-                df = save_objects(file_name, file_ext, boxes, confs, classes,classnames_T, output_width, output_height)
+                df = save_objects(dir_thermal, file_name, file_ext, boxes, confs, classes,classnames_T, output_width, output_height)
 
                 # Add Bounding Boxes to image
                 draw_bboxs(img_M, boxes, confs, classes, classnames_RGB)
