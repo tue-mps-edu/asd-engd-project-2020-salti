@@ -64,7 +64,6 @@ def draw_bboxs(img, bboxs, confs, classIds, classNames):
         x,y,w,h = box[0],box[1],box[2],box[3]
         cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,255),2) #rectangle(starting point which is top left, ending point which is bottom right, color , thickness)
         cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10),cv2.FONT_HERSHEY_SIMPLEX,0.6,(255,0,255),2)
-
 def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,desired_width,desired_height):
 
     #For GUI
@@ -98,7 +97,7 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,d
     df.to_csv(os.path.join(path, file_name + '.csv'), index=False)
     #Saving to gui readable format
     df_GUI.to_csv(os.path.join(path,file_name+'.txt'), header=None, index=None, sep=' ')
-    df_GUI.to_csv(os.path.join(path, file_name + '_YOLO.txt'), header=None, index=None, sep=' ')
+    df_GUI.to_csv(os.path.join(path, file_name + '_VAL.txt'), header=None, index=None, sep=' ')
 
     return df
 
