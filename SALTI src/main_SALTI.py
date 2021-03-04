@@ -83,25 +83,36 @@ def label_single(rgb_im,thermal_im):
 
 def label_loop(image_path):
 
+    # Initialize the thermal and RGB YOLO
     net_RGB, classnames_RGB = netrgb.initialize()
     net_T, classnames_T, opt, device = nettherm.initialize()
 
+    i = 0
     for filename_rgb in os.listdir(dir_rgb):
+        i = i+1
+        if i%200!=0:
+            continue
         for filename_thermal in os.listdir(dir_thermal):
             if filename_thermal == filename_rgb:
+                print('Filename=  '+str(filename_thermal))
                 rgb_image_path = os.path.join(dir_rgb,filename_rgb)
                 thermal_image_path = os.path.join(dir_thermal,filename_thermal)
                 img_C = cv2.imread(rgb_image_path)
                 img_T = cv2.imread(thermal_image_path)
                 img_M = img_T.copy()
+
+                # Perform detection
                 boxes_C, confs_C, classes_C = netrgb.detect(net_RGB, classnames_RGB, img_C)
                 boxes_T, confs_T, classes_T = nettherm.detect(net_T, img_T, opt, device)
+
                 # Add Bounding Boxes to image
                 draw_bboxs(img_C, boxes_C, confs_C, classes_C, classnames_RGB)
                 cv2.imshow("RGB YOLO", img_C)
+
                 # Add Bounding Boxes to image
                 draw_bboxs(img_T, boxes_T, confs_T, classes_T, classnames_RGB)
                 cv2.imshow("THERMAL", img_T)
+
                 # TEST MERGING
                 assert (type(boxes_C) == type(boxes_T))
                 boxes, classes, confs = nms(boxes_C + boxes_T, confs_C + confs_T, classes_C + classes_T,

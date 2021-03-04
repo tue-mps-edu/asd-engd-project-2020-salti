@@ -48,11 +48,11 @@ def getlists(preds, img, im0):
         if det is not None and len(det):
             # Rescale boxes from img_size to im0 size
             det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
-        for *xyxy, conf, _, cls in det:  # Save the bounding box coordinates [Top left coordinates, width, height]
-            t = np.squeeze(xyxy) #xyxy is x_topLeft,y_topLeft,x_bottomRight,y_bottomRight
-            bboxs.append([int(t[0]),int(t[1]),int(abs(t[0]-t[2])),int(abs(t[1]-t[3]))])
-            confs.append(float(conf)) # Confidence factor
-            classes.append(int(cls))  # Class names
+            for *xyxy, conf, _, cls in det:  # Save the bounding box coordinates [Top left coordinates, width, height]
+                t = np.squeeze(xyxy) #xyxy is x_topLeft,y_topLeft,x_bottomRight,y_bottomRight
+                bboxs.append([int(t[0]),int(t[1]),int(abs(t[0]-t[2])),int(abs(t[1]-t[3]))])
+                confs.append(float(conf)) # Confidence factor
+                classes.append(int(cls))  # Class names
     return bboxs, confs, classes
 
 
