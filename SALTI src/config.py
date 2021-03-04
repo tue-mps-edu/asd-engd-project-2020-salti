@@ -1,8 +1,8 @@
 DEBUG_MODE = True
 
 #desired height and weight for resizing the image
-desired_height=400
-desired_width=600
+output_height=512
+output_width=640
 import os, errno
 
 # Define image locations
