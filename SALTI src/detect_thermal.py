@@ -1,12 +1,8 @@
 import argparse
-from sys import platform
-
 from models_thermal import *  # set ONNX_EXPORT in models.py
 from utils_thermal.datasets import *
 from utils_thermal.utils import *
 
-import pandas as pd
-import sys
 
 from config import *
 from functions import *
