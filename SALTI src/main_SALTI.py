@@ -75,7 +75,6 @@ def label_single():
     key = cv2.waitKey(0)
     if key == 27:
         cv2.destroyAllWindows()
-    # cv2.waitKey(1000)
     input("Press Enter to finish test...")
 
 label_single()
