@@ -1,10 +1,7 @@
-import argparse
 from config import *
 from functions import *
 import detect_rgb as netrgb
 import detect_thermal as nettherm
-import tensorflow as tf
-import torch
 from preprocess import *
 
 
@@ -21,48 +18,50 @@ def label_loop(image_path):
     df_whole = create_archive()
 
     i = 0
-    for filename_rgb in os.listdir(dir_rgb):
+    for filename_thermal in os.listdir(dir_thermal):
         i = i+1
         if i%200!=0:
             continue
-        for filename_thermal in os.listdir(dir_thermal):
-            if filename_thermal == filename_rgb:
-                # Bookkeeping
-                file_name = os.path.splitext(filename_thermal)[0]
-                file_ext = os.path.splitext(filename_thermal)[1]
 
-                print('Filename=  '+str(file_name))
-                print('Filename=  ' + str(file_ext))
-                rgb_image_path = os.path.join(dir_rgb,filename_rgb)
-                thermal_image_path = os.path.join(dir_thermal,filename_thermal)
-                img_C = cv2.imread(rgb_image_path)
-                img_T = cv2.imread(thermal_image_path)
-                img_M = img_T.copy()
+        # Skip everything that is the wrong format
+        if not filename_thermal.endswith(image_format):
+            continue
 
-                # Perform detection
-                boxes_C, confs_C, classes_C = netrgb.detect(net_RGB, classnames_RGB, img_C)
-                boxes_T, confs_T, classes_T = nettherm.detect(net_T, img_T, opt, device)
+        file_name = os.path.splitext(filename_thermal)[0]
+        file_ext = os.path.splitext(filename_thermal)[1]
 
-                # Add Bounding Boxes to image
-                draw_bboxs(img_C, boxes_C, confs_C, classes_C, classnames_RGB)
-                cv2.imshow("RGB YOLO", img_C)
+        print('Filename=  '+str(file_name))
+        print('Filename=  ' + str(file_ext))
+        rgb_image_path = os.path.join(dir_rgb,filename_thermal)
+        thermal_image_path = os.path.join(dir_thermal,filename_thermal)
+        img_C = cv2.imread(rgb_image_path)
+        img_T = cv2.imread(thermal_image_path)
+        img_M = img_T.copy()
 
-                # Add Bounding Boxes to image
-                draw_bboxs(img_T, boxes_T, confs_T, classes_T, classnames_RGB)
-                cv2.imshow("THERMAL", img_T)
+        # Perform detection
+        boxes_C, confs_C, classes_C = netrgb.detect(net_RGB, classnames_RGB, img_C)
+        boxes_T, confs_T, classes_T = nettherm.detect(net_T, img_T, opt, device)
 
-                # TEST MERGING
-                assert (type(boxes_C) == type(boxes_T))
-                boxes, classes, confs = nms(boxes_C + boxes_T, confs_C + confs_T, classes_C + classes_T,
-                                            cfg_T.confThreshold, cfg_T.nmsThreshold)
+        # Add Bounding Boxes to image
+        draw_bboxs(img_C, boxes_C, confs_C, classes_C, classnames_RGB)
+        cv2.imshow("RGB YOLO", img_C)
 
-                # Exporting the results
-                df = save_objects(dir_thermal, file_name, file_ext, boxes, confs, classes,classnames_T, output_width, output_height)
+        # Add Bounding Boxes to image
+        draw_bboxs(img_T, boxes_T, confs_T, classes_T, classnames_RGB)
+        cv2.imshow("THERMAL", img_T)
 
-                # Add Bounding Boxes to image
-                draw_bboxs(img_M, boxes, confs, classes, classnames_RGB)
-                cv2.imshow("MERGED", img_M)
-                cv2.waitKey(1)
+        # TEST MERGING
+        assert (type(boxes_C) == type(boxes_T))
+        boxes, classes, confs = nms(boxes_C + boxes_T, confs_C + confs_T, classes_C + classes_T,
+                                    cfg_T.confThreshold, cfg_T.nmsThreshold)
+
+        # Exporting the results
+        df = save_objects(dir_thermal, file_name, file_ext, boxes, confs, classes,classnames_T, output_width, output_height)
+
+        # Add Bounding Boxes to image
+        draw_bboxs(img_M, boxes, confs, classes, classnames_RGB)
+        cv2.imshow("MERGED", img_M)
+        cv2.waitKey(1)
 
 label_loop(dir_dataset)
 

@@ -1,30 +1,10 @@
 
-import numpy as np
-import cv2
 import pandas as pd
-from PIL import Image
-import os
-import matplotlib.pyplot as plt
 from utils.utils import *
 
-'''
-Class for storing all detections
-'''
 import cv2
 import numpy as np
 
-
-class Detections():
-    def __init__(self, boundingBoxes, classes, confidences):
-        self.bboxs = boundingBoxes
-        self.classIds = classes
-        self.confs = confidences
-
-# def nms(boxes, confidences, classes, conf_threshold=0.5, nms_threshold=0.3 ):
-#     # Non maximum suppression, will give indices to keep
-#     indices = cv2.dnn.NMSBoxes(boxes,confidences,conf_threshold,nms_threshold)
-#     indices = indices.reshape((-1,))
-#     return boxes[indices], confidences[indices], classes[indices]
 
 def nms(boxes, confidences, classes, conf_threshold=0.5, nms_threshold=0.3 ):
     # Non maximum suppression, will give indices to keep
@@ -32,15 +12,6 @@ def nms(boxes, confidences, classes, conf_threshold=0.5, nms_threshold=0.3 ):
     to_keep = [i[0] for i in indices]
     return [boxes[i] for i in to_keep], [classes[i] for i in to_keep], [confidences[i] for i in to_keep]
 
-# def getlists(preds):
-#     bboxs, confs, classes = [], [], []
-#     for i, det in enumerate(preds):
-#         for *xyxy, conf, _, cls in det:
-#             t = np.squeeze(xyxy)
-#             bboxs.append([int((t[0]+t[2])/2),int((t[1]+t[3])/2),int(abs(t[0]-t[2])),int(abs(t[1]-t[3]))])
-#             confs.append(float(conf))
-#             classes.append(int(cls))
-#     return bboxs, confs, classes
 
 def getlists(preds, img, im0):
     bboxs, confs, classes = [], [], []
