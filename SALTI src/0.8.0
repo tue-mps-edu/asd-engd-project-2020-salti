@@ -1,0 +1,10 @@
+Collecting torchvision
+  Using cached torchvision-0.5.0-cp38-cp38-win_amd64.whl (1.2 MB)
+  Using cached torchvision-0.2.2.post3-py2.py3-none-any.whl (64 kB)
+Requirement already satisfied: six in c:\users\20204914\anaconda3\envs\salti_2021\lib\site-packages (from torchvision) (1.15.0)
+Requirement already satisfied: numpy in c:\users\20204914\anaconda3\envs\salti_2021\lib\site-packages (from torchvision) (1.20.1)
+Requirement already satisfied: pillow>=4.1.1 in c:\users\20204914\anaconda3\envs\salti_2021\lib\site-packages (from torchvision) (8.1.1)
+Requirement already satisfied: torch in c:\users\20204914\anaconda3\envs\salti_2021\lib\site-packages (from torchvision) (1.7.1)
+Requirement already satisfied: typing-extensions in c:\users\20204914\anaconda3\envs\salti_2021\lib\site-packages (from torch->torchvision) (3.7.4.3)
+Installing collected packages: torchvision
+Successfully installed torchvision-0.2.2.post3

@@ -1,6 +1,8 @@
 '''
 This file contains all the functions that are used for preprocessing the images
 '''
+import os
+from PIL import Image
 
 #function to take an input image, resize it according to the desired height and width and save it to a specific directory
 def resize_and_save_image(path,path_resized,file,desired_width,desired_height):
