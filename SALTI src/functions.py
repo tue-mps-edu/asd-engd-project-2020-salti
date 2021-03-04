@@ -5,48 +5,57 @@ import pandas as pd
 from PIL import Image
 import os
 import matplotlib.pyplot as plt
+from utils.utils import *
 
-def get_classes(classes_file_dir):
-    classNames = []
-    with open(classes_file_dir, 'r') as f:                       # using WITH function takes away the need to use CLOSE file function
-        classNames = f.read().rstrip('\n').split('\n')      # rstrip strips off the ("content here") and split splits off for("content here")
-    return classNames
+'''
+Class for storing all detections
+'''
+import cv2
+import numpy as np
 
-def get_objects(outputs, img_rgb, classNames, cfg):
-    hT, wT, cT = img_rgb.shape
-    bboxs = []
-    classIds = []
-    confs = []
 
-    for output in outputs:
-        for det in output:
-            scores = det[5:]
-            classId = np.argmax(scores)
-            confidence = scores[classId]
-            if confidence > cfg.confThreshold:
-                w,h = int(det[2]*wT), int(det[3]*hT)
-                x,y = int((det[0]*wT) - w/2), int((det[1]*hT)-h/2)
-                bboxs.append([x,y,w,h])
-                classIds.append(classId)
-                confs.append(float(confidence))
+class Detections():
+    def __init__(self, boundingBoxes, classes, confidences):
+        self.bboxs = boundingBoxes
+        self.classIds = classes
+        self.confs = confidences
 
-    return bboxs, classIds, confs
+# def nms(boxes, confidences, classes, conf_threshold=0.5, nms_threshold=0.3 ):
+#     # Non maximum suppression, will give indices to keep
+#     indices = cv2.dnn.NMSBoxes(boxes,confidences,conf_threshold,nms_threshold)
+#     indices = indices.reshape((-1,))
+#     return boxes[indices], confidences[indices], classes[indices]
 
-def filter_objects(bboxs, confs, classIds, cfg):
+def nms(boxes, confidences, classes, conf_threshold=0.5, nms_threshold=0.3 ):
     # Non maximum suppression, will give indices to keep
-    indices = cv2.dnn.NMSBoxes(bboxs,confs,cfg.confThreshold,cfg.nmsThreshold)
-    to_filter = [i[0] for i in indices]
-    bboxs_fil, confs_fil, classIds_fil = [], [], []
-    if (len(indices)==0):
-        return bboxs_fil, confs_fil, classIds_fil
-    #assert(len(indices)!=0)
-    for i in range(len(bboxs)):
-        if i in to_filter:
-            bboxs_fil.append(bboxs[i])
-            confs_fil.append(confs[i])
-            classIds_fil.append(classIds[i])
+    indices = cv2.dnn.NMSBoxes(boxes,confidences,conf_threshold,nms_threshold)
+    to_keep = [i[0] for i in indices]
+    return [boxes[i] for i in to_keep], [classes[i] for i in to_keep], [confidences[i] for i in to_keep]
 
-    return bboxs_fil, confs_fil, classIds_fil
+# def getlists(preds):
+#     bboxs, confs, classes = [], [], []
+#     for i, det in enumerate(preds):
+#         for *xyxy, conf, _, cls in det:
+#             t = np.squeeze(xyxy)
+#             bboxs.append([int((t[0]+t[2])/2),int((t[1]+t[3])/2),int(abs(t[0]-t[2])),int(abs(t[1]-t[3]))])
+#             confs.append(float(conf))
+#             classes.append(int(cls))
+#     return bboxs, confs, classes
+
+def getlists(preds, img, im0):
+    bboxs, confs, classes = [], [], []
+    for i, det in enumerate(preds):
+        if det is not None and len(det):
+            # Rescale boxes from img_size to im0 size
+            det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
+        for *xyxy, conf, _, cls in det:
+            t = np.squeeze(xyxy)
+            bboxs.append([int(t[0]),int(t[1]),int(abs(t[0]-t[2])),int(abs(t[1]-t[3]))])
+            confs.append(float(conf))
+            classes.append(int(cls))
+    return bboxs, confs, classes
+
+
 
 def draw_bboxs(img, bboxs, confs, classIds, classNames):
 
@@ -68,14 +77,14 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,d
     j = 0
     for i in range(len(bboxs)):
         box, conf, name = bboxs[i], confs[i], classIds[i]
-        x,y,w,h = box[0],box[1],box[2],box[3]
+        x,y,w,h = box[0]+box[2]/2,box[1]+box[3]/2,box[2],box[3] #Bounding box is X_topleft,Y_topleft,width (horizontal), height (vertical)
 
         #Storing each picture's results in its dataframe
         df = df.append(pd.Series(0, index=df.columns), ignore_index=True)
         df.at[j,CL[0]] = os.path.basename(path+file_name+file_ext)
         df.at[j,CL[1]] = j+1
-        df.at[j,CL[2]] = x
-        df.at[j,CL[3]] = y
+        df.at[j,CL[2]] = x #X_centroid for GUI
+        df.at[j,CL[3]] = y #y_centroid for GUI
         df.at[j,CL[4]] = w
         df.at[j,CL[5]] = h
         df.at[j,CL[6]]=classNames[classIds[i]]
@@ -105,11 +114,7 @@ def read_and_display_boxes(file_path, file):
     cv2.imshow("Thermal image with boxes ", img_thermal)
     cv2.waitKey(0)
 
-#function to take an input image, resize it according to the desired height and width and save it to a specific directory
-def resize_and_save_image(path,path_resized,file,desired_width,desired_height):
-    original_image = Image.open(os.path.join(path,file))
-    resized_image = original_image.resize((desired_width,desired_height), Image.ANTIALIAS)
-    resized_image.save(os.path.join(path_resized,file))
+
 
 #Function to create a data frame that saves all the results in one file
 def create_archive():

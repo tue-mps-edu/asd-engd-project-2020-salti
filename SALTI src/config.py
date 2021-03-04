@@ -1,3 +1,5 @@
+DEBUG_MODE = True
+
 #desired height and weight for resizing the image
 desired_height=400
 desired_width=600
@@ -15,15 +17,33 @@ dir_Validation=os.path.join(dir_dataset,'Validation')
 
 image_format = ".jpg"
 
-class YoloConfigRGB:
-    whT = 320
-    confThreshold = 0.5
-    nmsThreshold = 0.3  # lower ==> less number of boxes
-    dir_classes = 'Yolo_config/coco.names'
-    dir_cfg = 'Yolo_config/yolov3.cfg'
-    dir_weights = 'Yolo_config/yolov3.weights'
+class ConfigRGB:
+    # Configuration of YOLO color detection algorithm
+    whT = 320               # width & height of the image input into YOLO (standard resolution, square)
+    confThreshold = 0.5     # Confidence threshold for approval of detection
+    nmsThreshold = 0.3      # Non-maximum suppresion threshold (lower = less number)
+    dir_classes = 'Yolo_config/coco-rgb.names'
+    dir_cfg = 'Yolo_config/yolov3-rgb.cfg'
+    dir_weights = 'Yolo_config/yolov3-rgb.weights'
 
-yolo_cfg = YoloConfigRGB()
+class ConfigThermal:
+    # Configuration of YOLO thermal detection algorithm
+    whT = 320               # width & height of the image input into YOLO (standard resolution, square)
+    confThreshold = 0.5     # Confidence threshold for approval of detection
+    nmsThreshold = 0.3      # Non-maximum suppresion threshold (lower = less number)
+    #dir_classes = 'Yolo_config\coco-thermal.names'
+    dir_classes = 'Yolo_config/coco-thermal.data'
+    #dir_classes = 'data/coco.data'
+    dir_cfg = 'Yolo_config/yolov3-spp.cfg'
+    dir_weights = 'Yolo_config\yolov3-thermal.weights'
+
+cfg_C = ConfigRGB()
+cfg_T = ConfigThermal()
+
+
+
+
+
 
 # Create folders for resized images
 try:
