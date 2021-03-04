@@ -20,7 +20,7 @@ def label_loop(image_path):
     i = 0
     for filename_thermal in os.listdir(dir_thermal):
         i = i+1
-        if i%200!=0:
+        if i%50!=0:
             continue
 
         # Skip everything that is the wrong format
@@ -30,8 +30,9 @@ def label_loop(image_path):
         file_name = os.path.splitext(filename_thermal)[0]
         file_ext = os.path.splitext(filename_thermal)[1]
 
-        print('Filename=  '+str(file_name))
-        print('Filename=  ' + str(file_ext))
+        print('Processing file: '+str(os.path.join(dir_rgb,filename_thermal)))
+        print('Processing file: '+str(os.path.join(dir_thermal,filename_thermal)))
+
         rgb_image_path = os.path.join(dir_rgb,filename_thermal)
         thermal_image_path = os.path.join(dir_thermal,filename_thermal)
         img_C = cv2.imread(rgb_image_path)
@@ -53,7 +54,7 @@ def label_loop(image_path):
         # TEST MERGING
         assert (type(boxes_C) == type(boxes_T))
         boxes, classes, confs = nms(boxes_C + boxes_T, confs_C + confs_T, classes_C + classes_T,
-                                    cfg_T.confThreshold, cfg_T.nmsThreshold)
+                                    conf_threshold_ensemble, nms_threshold_ensemble)
 
         # Exporting the results
         df = save_objects(dir_thermal, file_name, file_ext, boxes, confs, classes,classnames_T, output_width, output_height)
@@ -61,7 +62,7 @@ def label_loop(image_path):
         # Add Bounding Boxes to image
         draw_bboxs(img_M, boxes, confs, classes, classnames_RGB)
         cv2.imshow("MERGED", img_M)
-        cv2.waitKey(1)
+        cv2.waitKey(5000)
 
 label_loop(dir_dataset)
 

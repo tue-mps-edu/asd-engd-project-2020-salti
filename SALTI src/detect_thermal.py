@@ -1,8 +1,6 @@
 import argparse
 from models_thermal import *  # set ONNX_EXPORT in models.py
 from utils_thermal.datasets import *
-from utils_thermal.utils import *
-
 
 from config import *
 from functions import *
@@ -22,7 +20,8 @@ def initialize():
     parser.add_argument('--device', default='', help='device id (i.e. 0 or 0,1) or cpu')
     parser.add_argument('--view-img', action='store_true', help='display results')
     opt = parser.parse_args()
-    print(opt)
+    if DEBUG_MODE:
+        print(opt)
 
     with torch.no_grad():
         img_size = (320, 192) if ONNX_EXPORT else opt.img_size  # (320, 192) or (416, 256) or (608, 352) for (height, width)
@@ -35,8 +34,6 @@ def initialize():
         if os.path.exists(out):
             shutil.rmtree(out)  # delete output folder
         os.makedirs(out)  # make new output folder
-
-        # Convert image
 
         # Initialize model
         model = Darknet(opt.cfg, img_size)
@@ -84,21 +81,20 @@ def initialize():
 
     return model, classes, opt, device
 
-    #return model, classes
-
 def convertImage(img0, device, opt):
     # Padded resize
     img = letterbox(img0, new_shape=opt.img_size)[0]
 
     # Normalize RGB
-    #img = img0
     img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB
     img = np.ascontiguousarray(img, dtype=np.float16 if opt.half else np.float32)  # uint8 to fp16/fp32
     img /= 255.0  # 0 - 255 to 0.0 - 1.0
 
     img = torch.from_numpy(img).to(device)
-    print('original'+str(img0.shape))
-    print('resized'+str(img.shape))
+
+    if DEBUG_MODE:
+        print('original'+str(img0.shape))
+        print('resized'+str(img.shape))
 
     return img, img0
 
@@ -108,7 +104,6 @@ def detect(model, img, opt, device):
         # Get detections
         img, img0 = convertImage(img,device, opt)
 
-        #print("check if image is right format")
         if img.ndimension() == 3:
             img = img.unsqueeze(0)
 
@@ -120,5 +115,5 @@ def detect(model, img, opt, device):
         # Apply NMS
         pred = non_max_suppression(pred, opt.conf_thres, opt.nms_thres)
         bboxs, confs, classes = getlists(pred, img, img0)
-        #det = Detections(bboxs, classes,confs)
+
     return bboxs, confs, classes
