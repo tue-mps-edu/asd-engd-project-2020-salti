@@ -57,6 +57,8 @@ def label_single():
 
     #Exporting the results
     df=save_objects(r"Data\Dataset_V0\images\set00\V000\thermal", "I00000", ".jpg", boxes, confs, classes, classnames_T, 640, 512)
+    # read_and_display_boxes(r"Data\Dataset_V0\images\set00\V000\thermal", "I00000")
+
 
     # Add Bounding Boxes to image
     draw_bboxs(img_M, boxes, confs, classes, classnames_RGB)
