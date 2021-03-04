@@ -48,11 +48,11 @@ def getlists(preds, img, im0):
         if det is not None and len(det):
             # Rescale boxes from img_size to im0 size
             det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
-        for *xyxy, conf, _, cls in det:  # Save the bounding box coordinates [Top left coordinates, width, height]
-            t = np.squeeze(xyxy) #xyxy is x_topLeft,y_topLeft,x_bottomRight,y_bottomRight
-            bboxs.append([int(t[0]),int(t[1]),int(abs(t[0]-t[2])),int(abs(t[1]-t[3]))])
-            confs.append(float(conf)) # Confidence factor
-            classes.append(int(cls))  # Class names
+            for *xyxy, conf, _, cls in det:  # Save the bounding box coordinates [Top left coordinates, width, height]
+                t = np.squeeze(xyxy) #xyxy is x_topLeft,y_topLeft,x_bottomRight,y_bottomRight
+                bboxs.append([int(t[0]),int(t[1]),int(abs(t[0]-t[2])),int(abs(t[1]-t[3]))])
+                confs.append(float(conf)) # Confidence factor
+                classes.append(int(cls))  # Class names
     return bboxs, confs, classes
 
 
@@ -77,7 +77,7 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,d
     j = 0
     for i in range(len(bboxs)):
         box, conf, name = bboxs[i], confs[i], classIds[i]
-        x,y,w,h = box[0]+box[2]/2,box[1]+box[3]/2,box[2],box[3] #Bounding box is X_topleft,Y_topleft while we need X_cent, Y_cent for GUI
+        x,y,w,h = int(box[0]+box[2]/2),int(box[1]+box[3]/2),box[2],box[3] #Bounding box is X_topleft,Y_topleft while we need X_cent, Y_cent for GUI
 
         #Storing each picture's results in its dataframe
         df = df.append(pd.Series(0, index=df.columns), ignore_index=True)
@@ -108,11 +108,11 @@ def read_and_display_boxes(file_path, file):
     img_thermal = cv2.imread(os.path.join(file_path, file + ".jpg"))
     for i in df.index:
         x, y, w, h, className, confidence = df['xc'][i], df['yc'][i], df['w'][i], df['h'][i], df['Category'][i],df['Confidence'][i]
-        cv2.rectangle(img_thermal, (x, y), (x + w, y + h), (255, 0, 255), 2)
+        cv2.rectangle(img_thermal, (int(x-w/2), int(y-h/2)), (int(x + w/2), int(y + h/2)), (255, 0, 255), 2)
         cv2.putText(img_thermal, f'{className} {int(confidence * 100)}%',
-                    (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
+                    (int(x-w/2), int(y-h/2) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
     cv2.imshow("Thermal image with boxes ", img_thermal)
-    cv2.waitKey(0)
+    # cv2.waitKey(0)
 
 
 
