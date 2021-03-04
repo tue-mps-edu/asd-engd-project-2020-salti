@@ -11,7 +11,7 @@ from preprocess import *
 def get_name_ext(filename):
     return os.path.splitext(filename)[0], os.path.splitext(filename)[1]
 
-def label_single():
+def label_single(rgb_im,thermal_im):
     '''
     Test script for labelling a single image
     it runs the RGB yolo deteection, which returns detection for single image
@@ -25,8 +25,8 @@ def label_single():
     # dir_thermal_test_image = r"Data\Dataset_V0\images\set00\V000\thermal_resized\I00000.jpg"
 
     # TEST RGB YOLO
-    dir_rgb_test_image = r"Data\Dataset_V0\images\set00\V000\visible\I00000.jpg"
-    dir_thermal_test_image = r"Data\Dataset_V0\images\set00\V000\thermal\I00000.jpg"
+    dir_rgb_test_image = rgb_im
+    dir_thermal_test_image = thermal_im
 
     img_C = cv2.imread(dir_rgb_test_image)
     img_T = cv2.imread(dir_thermal_test_image)
@@ -79,9 +79,44 @@ def label_single():
         cv2.destroyAllWindows()
     input("Press Enter to finish test...")
 
-label_single()
+# label_single()
 
+def label_loop(image_path):
 
+    net_RGB, classnames_RGB = netrgb.initialize()
+    net_T, classnames_T, opt, device = nettherm.initialize()
+
+    for filename_rgb in os.listdir(dir_rgb):
+        for filename_thermal in os.listdir(dir_thermal):
+            if filename_thermal == filename_rgb:
+                rgb_image_path = os.path.join(dir_rgb,filename_rgb)
+                thermal_image_path = os.path.join(dir_thermal,filename_thermal)
+                img_C = cv2.imread(rgb_image_path)
+                img_T = cv2.imread(thermal_image_path)
+                img_M = img_T.copy()
+                boxes_C, confs_C, classes_C = netrgb.detect(net_RGB, classnames_RGB, img_C)
+                boxes_T, confs_T, classes_T = nettherm.detect(net_T, img_T, opt, device)
+                # Add Bounding Boxes to image
+                draw_bboxs(img_C, boxes_C, confs_C, classes_C, classnames_RGB)
+                cv2.imshow("RGB YOLO", img_C)
+                # Add Bounding Boxes to image
+                draw_bboxs(img_T, boxes_T, confs_T, classes_T, classnames_RGB)
+                cv2.imshow("THERMAL", img_T)
+                # TEST MERGING
+                assert (type(boxes_C) == type(boxes_T))
+                boxes, classes, confs = nms(boxes_C + boxes_T, confs_C + confs_T, classes_C + classes_T,
+                                            cfg_T.confThreshold, cfg_T.nmsThreshold)
+
+                # Exporting the results
+                # df = save_objects(r"Data\Dataset_V0\images\set00\V000\thermal", "I00000", ".jpg", boxes, confs, classes,classnames_T, 640, 512)
+                # read_and_display_boxes(r"Data\Dataset_V0\images\set00\V000\thermal", "I00000")
+
+                # Add Bounding Boxes to image
+                draw_bboxs(img_M, boxes, confs, classes, classnames_RGB)
+                cv2.imshow("MERGED", img_M)
+                cv2.waitKey(1)
+
+label_loop(dir_dataset)
 
 '''' READING IMAGES
         # Read the original images
