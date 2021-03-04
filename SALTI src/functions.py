@@ -50,7 +50,7 @@ def getlists(preds, img, im0):
             det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
         for *xyxy, conf, _, cls in det:
             t = np.squeeze(xyxy)
-            bboxs.append([int((t[0]+t[2])/2),int((t[1]+t[3])/2),int(abs(t[0]-t[2])),int(abs(t[1]-t[3]))])
+            bboxs.append([int(t[0]),int(t[1]),int(abs(t[0]-t[2])),int(abs(t[1]-t[3]))])
             confs.append(float(conf))
             classes.append(int(cls))
     return bboxs, confs, classes
@@ -77,14 +77,14 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,d
     j = 0
     for i in range(len(bboxs)):
         box, conf, name = bboxs[i], confs[i], classIds[i]
-        x,y,w,h = box[0],box[1],box[2],box[3]
+        x,y,w,h = box[0]+box[2]/2,box[1]+box[3]/2,box[2],box[3] #Bounding box is X_topleft,Y_topleft,width (horizontal), height (vertical)
 
         #Storing each picture's results in its dataframe
         df = df.append(pd.Series(0, index=df.columns), ignore_index=True)
         df.at[j,CL[0]] = os.path.basename(path+file_name+file_ext)
         df.at[j,CL[1]] = j+1
-        df.at[j,CL[2]] = x
-        df.at[j,CL[3]] = y
+        df.at[j,CL[2]] = x #X_centroid for GUI
+        df.at[j,CL[3]] = y #y_centroid for GUI
         df.at[j,CL[4]] = w
         df.at[j,CL[5]] = h
         df.at[j,CL[6]]=classNames[classIds[i]]
