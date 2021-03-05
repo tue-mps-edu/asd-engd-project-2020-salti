@@ -34,22 +34,19 @@ def get_iou(pred_box, gt_box):
 
     return iou
 
-# def UserValidation(file_path, filename_yolo, filename_gui):
-def UserValidation(Results_directory,img_extention='.jpg'):
+def UserValidation(Results_directory,img_extention):
     #this is code for reading output files from YOlO and from the GUI
-    #img_extention = ['.bmp', '.jpg', '.jpeg', '.png', '.tif', '.dng']
 
     TP_tot = 0
     FP_tot = 0
     FN_tot = 0
 
-    #images = [x for x in os.listdir(validation_dir) if os.path.splitext(x)[-1].lower() in img_formats]
     for file in os.listdir(Results_directory): #loop through directory of images
-        if os.path.splitext(file)[1] != img_extention:
+        if os.path.splitext(file)[1] not in img_extention:
             continue
         print(file)
         file_name = os.path.splitext(file)[0]
-        #for img in images:
+
         # GUI
         GU = pd.read_csv(os.path.join(Results_directory,file_name + ".txt"), delim_whitespace=True,
             names=["classes", "x_c", "y_c", "w", "h"])
@@ -62,11 +59,9 @@ def UserValidation(Results_directory,img_extention='.jpg'):
                     names=["classes", "x_c", "y_c", "w", "h"])
         YO['filename'] = file_name
 
-
         TP=0
         FP=0
         FN=0
-
 
         distances_mat=np.zeros((GU.shape[0],YO.shape[0]))
 
@@ -74,17 +69,18 @@ def UserValidation(Results_directory,img_extention='.jpg'):
             for index_YO in range(YO.shape[0]): # 0 to 3 (along columns of yolo)
                 centroid_distances = np.sqrt( (GU['x_c'][index_GU]-YO['x_c'][index_YO])**2 + (GU['y_c'][index_GU]-YO['y_c'][index_YO])**2)
                 distances_mat[index_GU][index_YO] = centroid_distances
-    #print('Distances matrix of size {} is: \n {}'.format(distances_mat.shape,distances_mat))
+        #print('Distances matrix of size {} is: \n {}'.format(distances_mat.shape,distances_mat))
 
-    #Creating a dataframe for distances between GUI (in rows) boxes and Yolo (in column) boxes
+        #Creating a dataframe for distances between GUI (in rows) boxes and Yolo (in column) boxes
         distances_df=pd.DataFrame(data=distances_mat)
 
         while distances_df.shape[0] >= 1 and distances_df.shape[1] >= 1:
-        # To find the indexes of global minimum inside the dataframe
+
+            # To find the indexes of global minimum inside the dataframe
             GUI_min_ind = distances_df.min(axis=1).idxmin()
             YO_min_ind = distances_df.min().idxmin()
 
-        #calculate the edges of the YOLO and GUI boxes
+            #calculate the edges of the YOLO and GUI boxes
             x_GU_low = GU['x_c'][GUI_min_ind] - (GU['w'][GUI_min_ind])*1/2
             y_GU_low = GU['y_c'][GUI_min_ind] - (GU['h'][GUI_min_ind]) * 1 / 2
             x_GU_high = GU['x_c'][GUI_min_ind] + (GU['w'][GUI_min_ind]) * 1 / 2
@@ -95,7 +91,7 @@ def UserValidation(Results_directory,img_extention='.jpg'):
             x_YO_high = YO['x_c'][YO_min_ind] + (YO['w'][YO_min_ind]) * 1 / 2
             y_YO_high = YO['y_c'][YO_min_ind] + (YO['h'][YO_min_ind]) * 1 / 2
 
-        #Calculate the IoU (predicted YO box vs ground truth GU box) and set threshold
+            #Calculate the IoU (predicted YO box vs ground truth GU box) and set threshold
             IoU = get_iou([x_YO_low,y_YO_low,x_YO_high,y_YO_high], [x_GU_low, y_GU_low, x_GU_high, y_GU_high])
             print('The IoU is {}'.format(IoU))
             threshold = 0.8
@@ -107,7 +103,8 @@ def UserValidation(Results_directory,img_extention='.jpg'):
             #if distances_df[GUI_min_ind][YO_min_ind] < bigger_diameter:
             '''
             if IoU > threshold:
-            #They are the same boxes
+                #They are the same boxes
+
                 if GU['classes'][GUI_min_ind]==YO['classes'][YO_min_ind]:
                     TP+=1
                     TP_tot += 1
@@ -116,7 +113,7 @@ def UserValidation(Results_directory,img_extention='.jpg'):
                     FP+=1
                     FP_tot+=1
 
-            # To discard the analyzed row and column
+                # To discard the analyzed row and column
                 distances_df = distances_df.drop(index=[GUI_min_ind], columns=[YO_min_ind])
             else:
                 FN+=1
@@ -133,10 +130,7 @@ def UserValidation(Results_directory,img_extention='.jpg'):
         FN_tot+=distances_df.shape[0]
         FP_tot+=distances_df.shape[1]
 
-
-        # print('True positive = {}'.format(TP))
-        # print('False positive = {}'.format(FP))
-        # print('False Negative = {}'.format(FN))
+        #metrics calculations
         Precision = TP / (TP + FP)
         Recall = TP / (TP + FN)
         Accuracy = TP / (TP + FP + FN)
@@ -144,6 +138,7 @@ def UserValidation(Results_directory,img_extention='.jpg'):
         print('Image'+file_name+': TP = {}, FP is {}, FN is {}'.format(TP, FP, FN))
         print('Image'+file_name+': Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision, Recall, Accuracy, F1_score))
 
+    #Overall metrics calculations
     Precision_tot = TP_tot / (TP_tot + FP_tot)
     Recall_tot = TP_tot / (TP_tot + FN_tot)
     Accuracy_tot = TP_tot / (TP_tot + FP_tot + FN_tot)
@@ -151,8 +146,8 @@ def UserValidation(Results_directory,img_extention='.jpg'):
     print('Total: TP = {}, FP is {}, FN is {}'.format(TP_tot, FP_tot, FN_tot))
     print('Total: Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision_tot, Recall_tot, Accuracy_tot, F1_score_tot))
 
-# UserValidation(dir_thermal_resized,'I00799_YOLO','I00799')
-UserValidation(dir_Validation)
+img_extention = ['.bmp', '.jpg', '.jpeg', '.png', '.tif', '.dng']
+UserValidation(dir_Validation,img_extention)
 
 
 #read_and_display_boxes(dir_Validation, 'I02199')
