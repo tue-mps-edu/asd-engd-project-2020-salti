@@ -14,6 +14,7 @@ dir_rgb_resized = os.path.join(dir_dataset,'rgb_resized')
 dir_classes = os.path.join(os.getcwd(),'Yolo_config\coco.names')
 dir_PostAnalysis=os.path.join(os.getcwd(),'Post_Analysis')
 dir_Validation=os.path.join(dir_dataset,'Validation')
+dir_Results=os.path.join(os.getcwd(),'Results')
 
 nms_threshold_ensemble = 0.3
 conf_threshold_ensemble = 0.3
@@ -73,6 +74,14 @@ except OSError as exc:
 #Create
 try:
     os.mkdir(dir_Validation)
+except OSError as exc:
+    if exc.errno != errno.EEXIST:
+        raise
+    pass
+
+#Create
+try:
+    os.mkdir(dir_Results)
 except OSError as exc:
     if exc.errno != errno.EEXIST:
         raise
