@@ -51,7 +51,7 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,d
 
         #Storing each picture's results in its dataframe
         df = df.append(pd.Series(0, index=df.columns), ignore_index=True)
-        df.at[j,CL[0]] = os.path.basename(path+file_name+file_ext)
+        df.at[j,CL[0]] = file_name+file_ext
         df.at[j,CL[1]] = j+1
         df.at[j,CL[2]] = x #X_centroid for GUI
         df.at[j,CL[3]] = y #y_centroid for GUI
