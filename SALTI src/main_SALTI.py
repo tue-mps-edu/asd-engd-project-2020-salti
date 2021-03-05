@@ -62,7 +62,7 @@ def label_loop(image_path):
         cv2.imshow("MERGED", img_M)
         cv2.waitKey(5000)
 
-label_loop(dir_dataset)
+#label_loop(dir_dataset)
 
 '''' READING IMAGES
         # Read the original images
@@ -144,5 +144,11 @@ def label_single():
     if key == 27:
         cv2.destroyAllWindows()
     input("Press Enter to finish test...")
+def main():
+    #label_single()
+    resize_and_save_image(r"D:\asd-pdeng-project-2020-developer\SALTI src\Data\Dataset_V0\images\set00\V000\visible",
+        r"D:\asd-pdeng-project-2020-developer\SALTI src\Data", "I00000.jpg", 340, 340)
 
-# label_single()
+
+if __name__ == "__main__":
+    main()

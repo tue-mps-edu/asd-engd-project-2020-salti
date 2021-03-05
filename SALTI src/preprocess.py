@@ -10,6 +10,7 @@ def resize_and_save_image(path,path_resized,file,desired_width,desired_height):
     resized_image = original_image.resize((desired_width,desired_height), Image.ANTIALIAS)
     resized_image.save(os.path.join(path_resized,file))
 
+
 def preprocess(image):
     '''
     Insert the preprocessing code
