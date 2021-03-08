@@ -30,7 +30,8 @@ class YOLOv3_320(ColorDetector):
         super().__init__(classnames,weights)
 
     def detect(self, image):
-        pass
+        #return Detection(boxes, classes, confidences)
+        pass 
 #
 # class YoloJoeHeller(ThermalDetector):
 #     def __init__(self):
