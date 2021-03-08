@@ -113,11 +113,11 @@ def read_and_display_boxes(file_path, file):
     img_thermal = cv2.imread(os.path.join(file_path, file + ".jpg"))
     for i in df.index:
         x, y, w, h, className, confidence = df['xc'][i], df['yc'][i], df['w'][i], df['h'][i], df['Category'][i],df['Confidence'][i]
-        cv2.rectangle(img_thermal, (x, y), (x + w, y + h), (255, 0, 255), 2)
+        cv2.rectangle(img_thermal, (int(x-w/2), int(y-h/2)), (int(x + w/2), int(y + h/2)), (255, 0, 255), 2)
         cv2.putText(img_thermal, f'{className} {int(confidence * 100)}%',
-                    (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
+                    (int(x-w/2), int(y-h/2) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
     cv2.imshow("Thermal image with boxes ", img_thermal)
-    cv2.waitKey(0)
+    # cv2.waitKey(0)
 
 
 

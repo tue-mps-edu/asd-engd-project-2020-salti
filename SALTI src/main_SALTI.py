@@ -84,6 +84,7 @@ label_loop(dir_dataset)
         #img_thermal = cv2.imread(os.path.join(dir_thermal_resized,file_name+file_ext))
 '''
 
+
 # def label_single(rgb_im,thermal_im):
 #     '''
 #     Test script for labelling a single image
@@ -155,3 +156,4 @@ label_loop(dir_dataset)
 #     input("Press Enter to finish test...")
 #
 # label_single(r'D:\Courses\Block 2\Inhouse-project\GIT\asd-pdeng-project-2020-developer\SALTI src\Data\set03_V001\images\set03\V001\visible\I00199.jpg',r'D:\Courses\Block 2\Inhouse-project\GIT\asd-pdeng-project-2020-developer\SALTI src\Data\set03_V001\images\set03\V001\lwir\I00199.jpg')
+
