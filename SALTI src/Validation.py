@@ -3,6 +3,8 @@ from config import *
 #from localFunctions import *
 import pandas as pd
 import os
+# from sklearn import metrics
+import shutil
 
 def get_iou(pred_box, gt_box):
     """
@@ -131,12 +133,22 @@ def UserValidation(Results_directory,img_extention):
         FP_tot+=distances_df.shape[1]
 
         #metrics calculations
-        Precision = TP / (TP + FP)
-        Recall = TP / (TP + FN)
-        Accuracy = TP / (TP + FP + FN)
-        F1_score = (2*(Precision*Recall))/(Precision+Recall)
-        print('Image'+file_name+': TP = {}, FP is {}, FN is {}'.format(TP, FP, FN))
-        print('Image'+file_name+': Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision, Recall, Accuracy, F1_score))
+        if (TP + FP) == 0:
+            Precision = 0
+            F1_score = 0
+        elif (TP + FN) == 0:
+            Recall = 0
+            F1_score = 0
+        elif (TP + FP + FN) == 0:
+            Accuracy = 0
+            F1_score = 0
+        else:
+            Precision = TP / (TP + FP)
+            Recall = TP / (TP + FN)
+            Accuracy = TP / (TP + FP + FN)
+            F1_score = (2*(Precision*Recall))/(Precision+Recall)
+            print('Image'+file_name+': TP = {}, FP is {}, FN is {}'.format(TP, FP, FN))
+            print('Image'+file_name+': Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision, Recall, Accuracy, F1_score))
 
     #Overall metrics calculations
     Precision_tot = TP_tot / (TP_tot + FP_tot)
@@ -145,7 +157,9 @@ def UserValidation(Results_directory,img_extention):
     F1_score_tot = (2*(Precision_tot*Recall_tot))/(Precision_tot+Recall_tot)
     print('Total: TP = {}, FP is {}, FN is {}'.format(TP_tot, FP_tot, FN_tot))
     print('Total: Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision_tot, Recall_tot, Accuracy_tot, F1_score_tot))
-
+    # mAP = metrics.auc(Precision_tot, Recall_tot)
+    # print(mAP)
+    shutil.copy()
 img_extention = ['.bmp', '.jpg', '.jpeg', '.png', '.tif', '.dng']
 UserValidation(dir_Validation,img_extention)
 
