@@ -6,10 +6,10 @@ output_width=640
 import os, errno
 
 # Define image locations
-dir_dataset = os.path.join(os.getcwd(),'Data\set03_V001\images\set03\V001')
-# dir_dataset = os.path.join(os.getcwd(),'Data\Dataset_V1\images\set00\V000')
-dir_thermal = os.path.join(dir_dataset,'lwir')
-# dir_thermal = os.path.join(dir_dataset,'thermal')
+# dir_dataset = os.path.join(os.getcwd(),'Data\set03_V001\images\set03\V001')
+dir_dataset = os.path.join(os.getcwd(),'Data\Dataset_V1\images\set00\V000')
+# dir_thermal = os.path.join(dir_dataset,'lwir')
+dir_thermal = os.path.join(dir_dataset,'thermal')
 dir_rgb = os.path.join(dir_dataset,'visible')
 dir_thermal_resized = os.path.join(dir_dataset,'thermal_resized')
 dir_rgb_resized = os.path.join(dir_dataset,'rgb_resized')
