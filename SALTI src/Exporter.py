@@ -8,28 +8,37 @@ import math
 
 
 class Exporter():
-    def __init__(self,output_path,merged_img_path,detection):
+    def __init__(self,output_path,detection,confs,classNames, desired_width, desired_height):
+
+        # Initialize variables
+
         self.output_path=output_path                  #output path
-        self.merged_img_path=merged_img_path
-        filename = merged_img_path.split('\\')
+        self.confs=confs
+        self.classNames=classNames
+        self.desired_width=desired_width
+        self.desired_height=desired_height
+
+        filename = output_path.split('\\')
         filename = filename[-1].split('.')
         self.filename = filename[0]
-        self.boxes=detection.boxes
+
+        self.boxes=detection.boxes                  
         self.classes=detection.classes
 
+        self.df=self.Output_df(self)
     ### Output Pascal VOC format for GUI
 
-    def Output_Pascal_VOC(df,merg_img,self):
+    def Output_Pascal_VOC(self,merg_img):
 
         # df = Dataframe storing results of the merged bounding boxes and class names
         # merged_img_path = The path of the merged image. Ex: 'D:\Git repos\asd-pdeng-project-2020-developer\SALTI src\Data\Dataset_V0\images\set00\V000\thermal\I00000.jpg'
         # merg_img = The image of interest (In this case: Merged image of the SALTI Program)
         # output_path = Location where pascal voc file needs to be stored. Ex: 'D:\Git repos\asd-pdeng-project-2020-developer\SALTI src\output'
-        output_path=self.output_path
+        df=self.df
         img_sz = np.shape(merg_img)  # Get the size of the image
 
         # Writer(path, width, height) -  adds description about the shape of the image
-        writer = Writer(self.merged_img_path, img_sz[0], img_sz[1], img_sz[2])
+        writer = Writer(self.output_path, img_sz[0], img_sz[1], img_sz[2])
 
         # For loop to iterate over all the rows of the Dataframe
         for index, row in df.iterrows():
@@ -40,42 +49,40 @@ class Exporter():
 
 
         # Save the file to output folder
-        writer.save(output_path + '\\' + self.filename + '.xml')
+        writer.save(self.output_path + '\\' + self.filename + '.xml')
 
 
 
     ### Output Yolo format for GUI
-    def Output_YOLO(self, confs,classNames, desired_width, desired_height):
+    def Output_YOLO(self):
 
         # For GUI
         CL_GUI = ["Category", "xc", "yc", "w", "h"]
         df_GUI = pd.DataFrame(columns=CL_GUI)
         j = 0
         for i in range(len(self.boxes)):
-            box, conf, name = self.boxes[i], confs[i], self.classes[i]
+            box, conf, name = self.boxes[i], self.confs[i], self.classes[i]
             x, y, w, h = int(box[0] + box[2] / 2), int(box[1] + box[3] / 2), box[2], box[
                 3]  # Bounding box is X_topleft,Y_topleft while we need X_cent, Y_cent for GUI
             # For GUI
             df_GUI.at[j, CL_GUI[0]] = name
-            df_GUI.at[j, CL_GUI[1]] = x / desired_width  # X_centroid for GUI
-            df_GUI.at[j, CL_GUI[2]] = y / desired_height  # y_centroid for GUI
-            df_GUI.at[j, CL_GUI[3]] = w / desired_width  # horizontal distance
-            df_GUI.at[j, CL_GUI[4]] = h / desired_height  # Vertical distance
+            df_GUI.at[j, CL_GUI[1]] = x / self.desired_width  # X_centroid for GUI
+            df_GUI.at[j, CL_GUI[2]] = y / self.desired_height  # y_centroid for GUI
+            df_GUI.at[j, CL_GUI[3]] = w / self.desired_width  # horizontal distance
+            df_GUI.at[j, CL_GUI[4]] = h / self.desired_height  # Vertical distance
             j+=1
-        # Saving to gui readable format
-        df_GUI.to_csv(os.path.join(self.path, self.filename + '.txt'), header=None, index=None, sep=' ')
-        df_GUI.to_csv(os.path.join(self.path, self.filename + '_VAL.txt'), header=None, index=None, sep=' ')
 
+        return df_GUI
 
     # In main file do df=Exporter.Output_df() to extract dataframes
-    def Output_df(self,confs,classNames, desired_width, desired_height):
+    def Output_df(self):
 
         # Preparing a blank dataframe for each picture's results
         CL = ["Image", "Box", "xc", "yc", "w", "h", "Category", "Confidence"]
         df = pd.DataFrame(columns=CL)
         j = 0
         for i in range(len(self.boxes)):
-            box, conf, name = self.boxes[i], confs[i], self.classes[i]
+            box, conf, name = self.boxes[i], self.confs[i], self.classes[i]
             x, y, w, h = int(box[0] + box[2] / 2), int(box[1] + box[3] / 2), box[2], box[
                 3]  # Bounding box is X_topleft,Y_topleft while we need X_cent, Y_cent for GUI
 
@@ -87,10 +94,23 @@ class Exporter():
             df.at[j, CL[3]] = y  # y_centroid for GUI
             df.at[j, CL[4]] = w  # horizontal distance
             df.at[j, CL[5]] = h  # Vertical distance
-            df.at[j, CL[6]] = classNames[self.classes[i]]
-            df.at[j, CL[7]] = confs[i]
+            df.at[j, CL[6]] = self.classNames[self.classes[i]]
+            df.at[j, CL[7]] = self.confs[i]
             j += 1
 
+
+        return df
+
+    def df_GUI_csv(self):
+
+        df_GUI=self.Output_YOLO(self)
+
+        # Saving to gui readable format
+        df_GUI.to_csv(os.path.join(self.path, self.filename + '.txt'), header=None, index=None, sep=' ')
+        df_GUI.to_csv(os.path.join(self.path, self.filename + '_VAL.txt'), header=None, index=None, sep=' ')
+
+    def df_csv(self):
+
+        df=self.df
         # Exporting each picture's results to its specific csv file
         df.to_csv(os.path.join(self.path, self.filename + '.csv'), index=False)
-        return df
