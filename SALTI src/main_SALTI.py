@@ -2,12 +2,15 @@ from config import *
 from functions import *
 import detect_rgb as netrgb
 import detect_thermal as nettherm
-from preprocess import *
+import preprocess
 
 
 def get_name_ext(filename):
     return os.path.splitext(filename)[0], os.path.splitext(filename)[1]
 
+def SALTI(dirs, thres):
+
+    net_C = 
 
 def label_loop(image_path):
 

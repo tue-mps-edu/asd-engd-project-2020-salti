@@ -28,5 +28,3 @@ def test_preprocessor():
     img_pp = PP.process(img)
     sz = img_pp.shape
     assert(sz[0]==output_size[0] and sz[1]==output_size[1])
-
-test_preprocessor()

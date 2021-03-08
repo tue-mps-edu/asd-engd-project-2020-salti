@@ -13,10 +13,10 @@ class ColorDetector(Detector):
         super().__init__(classnames,weights)
         pass
 
-# class ThermalDetector(Detector):
-#     def __init__(self):
-#         pass
-#
+class ThermalDetector(Detector):
+    def __init__(self):
+        pass
+
 class YOLOv3_320(ColorDetector):
     def __init__(self,classnames, weights):
         # Define the network
@@ -24,18 +24,18 @@ class YOLOv3_320(ColorDetector):
         net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
         net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
-    # Get classes
-    classNames = getclasses(cfg_C.dir_classes)
+        # Get classes
+        classNames = getclasses(cfg_C.dir_classes)
 
         super().__init__(classnames,weights)
 
     def detect(self, image):
         #return Detection(boxes, classes, confidences)
         pass 
-#
-# class YoloJoeHeller(ThermalDetector):
-#     def __init__(self):
-#         pass
+
+class YoloJoeHeller(ThermalDetector):
+    def __init__(self):
+        pass
 
 det = ColorDetector(1,2)
 
