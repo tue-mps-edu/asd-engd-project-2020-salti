@@ -18,9 +18,9 @@ def label_loop(image_path):
 
     i = 0
     for filename_thermal in os.listdir(dir_thermal):
-        i = i+1
-        if i%100!=0:
-            continue
+        # i = i+1
+        # if i%100!=0:
+        #     continue
 
         # Skip everything that is the wrong format
         if not filename_thermal.endswith(image_format):

@@ -6,7 +6,7 @@ output_width=640
 import os, errno
 
 # Define image locations
-dir_dataset = os.path.join(os.getcwd(),'Data\set03\V001')
+dir_dataset = os.path.join(os.getcwd(),'Data\set04\V000')
 # dir_dataset = os.path.join(os.getcwd(),'Data\Dataset_V1\images\set00\V000')
 dir_thermal = os.path.join(dir_dataset,'lwir')
 # dir_thermal = os.path.join(dir_dataset,'thermal')
