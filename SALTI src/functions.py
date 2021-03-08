@@ -4,10 +4,8 @@ from utils_thermal.utils import *
 
 import cv2
 import numpy as np
-import pandas as pd
-
-import sys
 from pascal_voc_writer import Writer
+import math
 
 
 def nms(boxes, confidences, classes, conf_threshold=0.5, nms_threshold=0.3 ):
@@ -39,6 +37,7 @@ def draw_bboxs(img, bboxs, confs, classIds, classNames):
         x,y,w,h = box[0],box[1],box[2],box[3]
         cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,255),2) #rectangle(starting point which is top left, ending point which is bottom right, color , thickness)
         cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10),cv2.FONT_HERSHEY_SIMPLEX,0.6,(255,0,255),2)
+
 def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,desired_width,desired_height):
 
     #For GUI
@@ -66,7 +65,11 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,d
         j += 1
 
         #For GUI
-        df_GUI = df_GUI.append(pd.Series([classIds[i],x/desired_width,y/desired_height,w/desired_width,h/desired_height], index=df_GUI.columns), ignore_index=True)
+        df_GUI.at[j, CL_GUI[0]] = name
+        df_GUI.at[j, CL_GUI[1]] = x / desired_width  # X_centroid for GUI
+        df_GUI.at[j, CL_GUI[2]] = y / desired_height  # y_centroid for GUI
+        df_GUI.at[j, CL_GUI[3]] = w / desired_width  # horizontal distance
+        df_GUI.at[j, CL_GUI[4]] = h / desired_height  # Vertical distance
 
     #Exporting each picture's results to its specific csv file
     df.to_csv(os.path.join(path, file_name + '.csv'), index=False)
