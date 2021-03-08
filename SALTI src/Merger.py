@@ -14,6 +14,7 @@ class Merger():
                           [detection.classes[i] for i in to_keep],
                           [detection.confidences[i] for i in to_keep])
 
-# b=Detections([1,2],[3,4],[5,6])
-# a=Merger(0.5,0.5)
-# c=a.NMS(b)
+b=Detections([1,2,3,4],[1],[0.7])
+a=Merger(0.5,0.5)
+c=a.NMS(b)
+print('a')

@@ -10,7 +10,7 @@ class Detections():
         self.confidences=self.confidences+other_detection.confidences
         return self
 
-a=Detections([1,2],[3,4],[5,6])
-b=Detections([11,122],[13,14],[15,16])
-c=a.append(b)
-print(c)
+# a=Detections([1,2],[3,4],[5,6])
+# b=Detections([11,122],[13,14],[15,16])
+# c=a.append(b)
+# print(c)
