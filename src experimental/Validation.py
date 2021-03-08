@@ -110,7 +110,8 @@ def UserValidation(file_path, filename_yolo, filename_gui):
     Precision = TP / (TP + FP)
     Recall = TP / (TP + FN)
     Accuracy = TP / (TP + FP + FN)
-    print('Precision is {}, Recall is {} and Accuracy is {}'.format(Precision, Recall, Accuracy))
+    F1_score = (2*(Precision*Recall))/(Precision+Recall)
+    print('Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision, Recall, Accuracy, F1_score))
 
 UserValidation(dir_thermal_resized,'I00799_YOLO','I00799')
 
