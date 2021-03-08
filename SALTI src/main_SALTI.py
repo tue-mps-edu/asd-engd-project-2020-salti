@@ -15,6 +15,7 @@ def label_loop(image_path):
     net_RGB, classnames_RGB = netrgb.initialize()
     net_T, classnames_T, opt, device = nettherm.initialize()
 
+
     i = 0
     for filename_thermal in os.listdir(dir_thermal):
         i = i+1
@@ -154,3 +155,4 @@ label_loop(dir_dataset)
 #     input("Press Enter to finish test...")
 #
 # # label_single()
+

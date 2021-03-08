@@ -6,8 +6,10 @@ output_width=640
 import os, errno
 
 # Define image locations
-dir_dataset = os.path.join(os.getcwd(),'Data\Dataset_V0\images\set00\V000')
-dir_thermal = os.path.join(dir_dataset,'thermal')
+dir_dataset = os.path.join(os.getcwd(),'Data\set03_V001\images\set03\V001')
+# dir_dataset = os.path.join(os.getcwd(),'Data\Dataset_V1\images\set00\V000')
+dir_thermal = os.path.join(dir_dataset,'lwir')
+# dir_thermal = os.path.join(dir_dataset,'thermal')
 dir_rgb = os.path.join(dir_dataset,'visible')
 dir_thermal_resized = os.path.join(dir_dataset,'thermal_resized')
 dir_rgb_resized = os.path.join(dir_dataset,'rgb_resized')
@@ -24,8 +26,8 @@ image_format = ".jpg"
 class ConfigRGB:
     # Configuration of YOLO color detection algorithm
     whT = 320               # width & height of the image input into YOLO (standard resolution, square)
-    confThreshold = 0.5     # Confidence threshold for approval of detection
-    nmsThreshold = 0.3      # Non-maximum suppresion threshold (lower = less number)
+    confThreshold = 0.3     # Confidence threshold for approval of detection
+    nmsThreshold = 0.5      # Non-maximum suppresion threshold (lower = less number)
     dir_classes = 'Yolo_config/coco-rgb.names'
     dir_cfg = 'Yolo_config/yolov3-rgb.cfg'
     dir_weights = 'Yolo_config/yolov3-rgb.weights'
@@ -33,8 +35,8 @@ class ConfigRGB:
 class ConfigThermal:
     # Configuration of YOLO thermal detection algorithm
     whT = 320               # width & height of the image input into YOLO (standard resolution, square)
-    confThreshold = 0.5     # Confidence threshold for approval of detection
-    nmsThreshold = 0.3      # Non-maximum suppresion threshold (lower = less number)
+    confThreshold = 0.3     # Confidence threshold for approval of detection
+    nmsThreshold = 0.5      # Non-maximum suppresion threshold (lower = less number)
     #dir_classes = 'Yolo_config\coco-thermal.names'
     dir_classes = 'Yolo_config/coco-thermal.data'
     #dir_classes = 'data/coco.data'
