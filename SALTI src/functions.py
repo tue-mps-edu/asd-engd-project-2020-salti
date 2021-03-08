@@ -4,6 +4,10 @@ from utils_thermal.utils import *
 
 import cv2
 import numpy as np
+import pandas as pd
+
+import sys
+from pascal_voc_writer import Writer
 
 
 def nms(boxes, confidences, classes, conf_threshold=0.5, nms_threshold=0.3 ):
@@ -118,5 +122,33 @@ def analyze_results(df_whole,path):
         plt.ylabel('Detections')
         plt.title(item)
         plt.savefig(os.path.join(path,item))
+
+
+def save_to_format(df, merged_img_path, merg_img, output_path):
+
+    # df = Dataframe storing results of the merged bounding boxes and class names
+    # merged_img_path = The path of the merged image. Ex: 'D:\Git repos\asd-pdeng-project-2020-developer\SALTI src\Data\Dataset_V0\images\set00\V000\thermal\I00000.jpg'
+    # merg_img = The image of interest (In this case: Merged image of the SALTI Program)
+    # output_path = Location where pascal voc file needs to be stored. Ex: 'D:\Git repos\asd-pdeng-project-2020-developer\SALTI src\output'
+
+
+    img_sz = np.shape(merg_img) # Get the size of the image
+
+    # Writer(path, width, height) -  adds description about the shape of the image
+    writer = Writer(merged_img_path,img_sz[0], img_sz[1], img_sz[2])
+
+    # For loop to iterate over all the rows of the Dataframe
+    for index,row in df.iterrows():
+
+        #::addObject(name, xmin, ymin, xmax, ymax) - Converts information from Dataframe to pascal voc format
+        writer.addObject(df.iloc[index,6], int(df.iloc[index,2]-df.iloc[index,4]/2), int(df.iloc[index,3]-df.iloc[index,5]/2), int(df.iloc[index,2]+df.iloc[index,4]/2), int(df.iloc[index,3]+df.iloc[index,5]/2))
+
+    # Save pascal voc file with the same name as the image
+    filename = merged_img_path.split('\\')
+    filename = filename[-1].split('.')
+    filename = filename[0]
+
+    # Save the file to output folder
+    writer.save(output_path + '\\' + filename + '.xml')
 
 
