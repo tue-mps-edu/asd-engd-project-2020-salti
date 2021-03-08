@@ -18,9 +18,9 @@ def label_loop(image_path):
 
     i = 0
     for filename_thermal in os.listdir(dir_thermal):
-        i = i+1
-        if i%50!=0:
-            continue
+        # i = i+1
+        # if i%100!=0:
+        #     continue
 
         # Skip everything that is the wrong format
         if not filename_thermal.endswith(image_format):
@@ -43,7 +43,7 @@ def label_loop(image_path):
             img_C = resize_image(img_C,output_width,output_height)
             img_T = resize_image(img_T,output_width,output_height)
             img_M = resize_image(img_M,output_width,output_height)
-        cv2.imwrite(os.path.join(dir_Results, filename_thermal), img_T) #Saving the thermal image in the result folder
+        cv2.imwrite(os.path.join(dir_Validation, filename_thermal), img_T) #Saving the thermal image in the result folder
 
 
         # Perform detection
@@ -64,7 +64,7 @@ def label_loop(image_path):
                                     conf_threshold_ensemble, nms_threshold_ensemble)
 
         # Exporting the results
-        df = save_objects(dir_Results, file_name, file_ext, boxes, confs, classes,classnames_T, output_width, output_height)
+        df = save_objects(dir_Validation, file_name, file_ext, boxes, confs, classes,classnames_T, output_width, output_height)
 
         # Add Bounding Boxes to image
         draw_bboxs(img_M, boxes, confs, classes, classnames_RGB)
