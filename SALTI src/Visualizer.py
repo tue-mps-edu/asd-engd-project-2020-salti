@@ -17,8 +17,9 @@ class Visualizer():
     def print_annotated_image(self, img_type, classnames, detection):
         self.draw_bboxs(classnames,detection)
         cv2.imshow(img_type,self.img)
+        cv2.waitKey(1)
 
-class Visualize_all(Visualizer):
+class Visualize_all():
     def __init__(self,img_c, img_t):
         self.color = Visualizer(img_c)
         self.thermal = Visualizer(img_t)
@@ -39,4 +40,4 @@ def test_visualizer():
     cv2.waitKey(100)
     print('pause')
 
-test_visualizer()
+#test_visualizer()

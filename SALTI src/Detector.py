@@ -96,8 +96,8 @@ class YoloJoeHeller(ThermalDetector):
 
 det = ColorDetector(1,2)
 '''
-
-a=cv2.imread(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI src\Data\Dataset_V0\images\set00\V000\visible\I00041.jpg')
-b=YOLOv3_320()
-c=b.detect(a)
-print(c)
+def test_rgb():
+    a=cv2.imread(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI src\Data\Dataset_V0\images\set00\V000\visible\I00041.jpg')
+    b=YOLOv3_320()
+    c=b.detect(a)
+    print(c)

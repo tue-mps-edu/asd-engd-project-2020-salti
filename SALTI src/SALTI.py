@@ -1,7 +1,9 @@
 #from Detector import *
+from Detector import YOLOv3_320
 from Dataloader import Dataloader
 from Preprocesser import Preprocessor
 from Visualizer import Visualize_all
+from Visualizer import Visualizer
 import cv2
 
 def SALTI(dirs, thres, outputs):
@@ -15,20 +17,21 @@ def SALTI(dirs, thres, outputs):
     pp = Preprocessor(output_size=output_size, resize=do_resize)
 
 
-    #net_C, net_T = YOLOv3_320(), YoloJoeHeller()
+    net_C = YOLOv3_320()
+    #net_T = YoloJoeHeller()
 
-    for img_c, img_t in data:
+    for img_t, img_c in data:
         if do_resize:
             img_c = pp.process(img_c)
             img_t = pp.process(img_t)
 
-        cv2.imshow('RGB',img_c)
-        cv2.imshow('Thermal',img_t)
-        cv2.waitKey(100)
-        Visualize_all(img_c, img_t)
+
+        det_c = net_C.detect(img_c)
+        V = Visualizer(img_c)
+        V.print_annotated_image('RGB',['car' for x in range(0,4)],det_c)
+        #Visualize_all(img_c, img_t)
         print('dbstop')
 
-        V
         #det_c = net_c.detect(img_c)
         #det_t = net_t.detect(img_t)
 
