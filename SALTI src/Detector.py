@@ -75,56 +75,23 @@ class YoloJoeHeller(Detector):
         self.whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.confThreshold = 0.3  # Confidence threshold for approval of detection
         self.nmsThreshold = 0.5  # Non-maximum suppresion threshold (lower = less number)
-        
         self.cfg = 'Yolo_config/yolov3-spp.cfg'
         self.data = 'Yolo_config/coco-thermal.data' #Not used anywhere
         self.weights='Yolo_config\yolov3-thermal.weights'
-        self.source=r'C:\Github\asd-pdeng-project-2020-developer\SALTI src\Data\mytestdata\RGB' #Not used
-        self.output='output' #Not used
         self.img_size=416
-        self.fourcc='mp4v' #Not being used anywhere
         self.half=False
         self.device=''
         self.view_img=False
 
 
-        # parser = argparse.ArgumentParser()
-        # parser.add_argument('--cfg', type=str, default='Yolo_config/yolov3-spp.cfg', help='cfg file path')
-        # parser.add_argument('--data', type=str, default='Yolo_config/coco-thermal.data', help='coco.data file path')
-        # parser.add_argument('--weights', type=str, default='Yolo_config\yolov3-thermal.weights',
-        #                     help='path to weights file')
-        # parser.add_argument('--source', type=str,
-        #                     default=r'C:\Github\asd-pdeng-project-2020-developer\SALTI src\Data\mytestdata\RGB',
-        #                     help='source')  # input file/folder, 0 for webcam
-        # parser.add_argument('--output', type=str, default='output', help='output folder')  # output folder
-        # parser.add_argument('--img-size', type=int, default=416, help='inference size (pixels)')
-        # parser.add_argument('--conf-thres', type=float, default=self.confThreshold, help='object confidence threshold')
-        # parser.add_argument('--nms-thres', type=float, default=self.nmsThreshold,
-        #                     help='iou threshold for non-maximum suppression')
-        # parser.add_argument('--fourcc', type=str, default='mp4v', help='output video codec (verify ffmpeg support)')
-        # parser.add_argument('--half', action='store_true', help='half precision FP16 inference')
-        # parser.add_argument('--device', default='', help='device id (i.e. 0 or 0,1) or cpu')
-        # parser.add_argument('--view-img', action='store_true', help='display results')
-        # self.opt = parser.parse_args()
-        self.DEBUG_MODE = False
-
-        # if self.DEBUG_MODE:
-        #     print(self.opt)
-
         with torch.no_grad():
             img_size = (
             320, 192) if ONNX_EXPORT else self.img_size  # (320, 192) or (416, 256) or (608, 352) for (height, width)
             print("detect_thermal.py, line 32 update config")
-            out, source, weights, half, view_img = self.output, self.source, self.weights, self.half, self.view_img
-            webcam = source == '0' or source.startswith('rtsp') or source.startswith('http') or source.endswith('.txt')
+            weights, half, view_img = self.weights, self.half, self.view_img
 
             # Initialize
             device = torch_utils.select_device(device='cpu' if ONNX_EXPORT else self.device)
-
-            #Output is not being used
-            # if os.path.exists(out):
-            #     shutil.rmtree(out)  # delete output folder
-            # os.makedirs(out)  # make new output folder
 
             # Initialize model
             model = Darknet(self.cfg, img_size)
@@ -173,7 +140,6 @@ class YoloJoeHeller(Detector):
         self.model=model
         self.classes=classes
         self.device=device
-        # return model, classes, opt, device
 
     def convertImage(self,img0):
         # Padded resize
@@ -185,10 +151,6 @@ class YoloJoeHeller(Detector):
         img /= 255.0  # 0 - 255 to 0.0 - 1.0
 
         img = torch.from_numpy(img).to(self.device)
-
-        if self.DEBUG_MODE:
-            print('original' + str(img0.shape))
-            print('resized' + str(img.shape))
 
         return img, img0
 
