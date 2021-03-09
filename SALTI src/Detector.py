@@ -75,7 +75,9 @@ class YoloJoeHeller(Detector):
         self.whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.confThreshold = 0.3  # Confidence threshold for approval of detection
         self.nmsThreshold = 0.5  # Non-maximum suppresion threshold (lower = less number)
-
+        
+        self.cfg = 'Yolo_config/yolov3-spp.cfg'
+        self.data = 'Yolo_config/coco-thermal.data'
         parser = argparse.ArgumentParser()
         parser.add_argument('--cfg', type=str, default='Yolo_config/yolov3-spp.cfg', help='cfg file path')
         parser.add_argument('--data', type=str, default='Yolo_config/coco-thermal.data', help='coco.data file path')
@@ -113,7 +115,7 @@ class YoloJoeHeller(Detector):
             os.makedirs(out)  # make new output folder
 
             # Initialize model
-            model = Darknet(self.opt.cfg, img_size)
+            model = Darknet(self.cfg, img_size)
 
             # Load weights
             attempt_download(weights)
@@ -153,7 +155,7 @@ class YoloJoeHeller(Detector):
                 model.half()
 
             # Get classes and colors
-            classes = load_classes(parse_data_cfg(self.opt.data)['names'])
+            classes = load_classes(parse_data_cfg(self.data)['names'])
         #        colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(classes))]
 
         self.model=model
