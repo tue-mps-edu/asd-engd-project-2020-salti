@@ -16,7 +16,7 @@ def main():
     GUI_add_directory(root, dirs)
     GUI_add_scales(root, thres, scale_rows)
     GUI_add_buttons(root, scale_rows, dirs, thres)
-    Button(root,text="RUN SALTI",command= lambda: SALTI(dirs, thres),width=15,font='Helvetica 11 bold').grid(row=scale_rows[4],column=cols['dirbutton'])
+    Button(root,text="RUN SALTI",command= lambda: SALTI(dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=scale_rows[4],column=cols['dirbutton'])
     root.mainloop()
 
 if __name__ == "__main__":

@@ -18,5 +18,6 @@ class Visualizer():
 
 def test_visualizer():
     img = cv2.imread(r'D:\KAIST\set00\V000\lwir\I00000.jpg')
+
     vis = Visualizer(img)
     vis.draw_bbox('rgb')
