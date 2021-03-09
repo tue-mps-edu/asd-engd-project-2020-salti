@@ -4,7 +4,7 @@ from pascal_voc_writer import Writer
 import cv2
 import numpy as np
 import math
-##Add import detection class
+from Detections import Detections
 
 
 class Exporter():
@@ -22,7 +22,7 @@ class Exporter():
         filename = filename[-1].split('.')
         self.filename = filename[0]
 
-        self.boxes=detection.boxes                  
+        self.boxes=detection.boxes
         self.classes=detection.classes
 
         self.df=self.Output_df(self)
