@@ -42,6 +42,10 @@ class Dataloader():
 
             path_C = self.imgs_rgb[self.count]              # Color image path
             path_T = self.imgs_thermal[self.count]          # Thermal image path
+
+            file_name = os.path.splitext(path_C)[0]
+            file_ext = os.path.splitext(path_C)[1]
+
             if self.DEBUG:
                 print('color image: \t'+path_C)
                 print('thermal iamge: \t'+path_T)
@@ -51,7 +55,9 @@ class Dataloader():
 
             self.count = self.count + 1                     # Update to next image
             self.progress = (self.count/self.nr_imgs)*100   # Update progress
-            yield img_C, img_T
+
+
+            yield file_name, file_ext, img_C, img_T
 
 def test_dataloader():
     path_t = r'D:\KAIST\set00\V000\lwir'

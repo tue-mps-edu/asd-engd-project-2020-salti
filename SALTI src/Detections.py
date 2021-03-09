@@ -1,8 +1,8 @@
 class Detections():
     def __init__(self, boxes=list, classes=list, confidences=list):
-        self.boxes=boxes
-        self.classes=classes
-        self.confidences=confidences
+        self.boxes = boxes
+        self.classes = classes
+        self.confidences = confidences
 
     def __copy__(self):
         # Overload copy operator
@@ -10,16 +10,16 @@ class Detections():
 
     def append(self,other):
         out = self.__copy__()
-        out.boxes       += other.boxes
-        out.classes     += other.classes
+        out.boxes += other.boxes
+        out.classes += other.classes
         out.confidences += other.confidences
         return out
 
     def __add__(self, other):
         # Overload + operator
         out = self.__copy__()
-        out.boxes       += other.boxes
-        out.classes     += other.classes
+        out.boxes += other.boxes
+        out.classes += other.classes
         out.confidences += other.confidences
         return out
 
@@ -31,9 +31,6 @@ def test_detections():
     b=Detections([11,122],[13,14],[15,16])
     L_before = len(a.confidences)
     c=a.append(b)
-    print(a)
-    print(c)
     assert(len(a.confidences)==L_before)
-
 
 test_detections()
