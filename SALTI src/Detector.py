@@ -72,7 +72,6 @@ class YOLOv3_320(Detector):
 #Thermal Detector Class definitiom
 class YoloJoeHeller(Detector):
     def __init__(self):
-
         self.whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.confThreshold = 0.3  # Confidence threshold for approval of detection
         self.nmsThreshold = 0.5  # Non-maximum suppresion threshold (lower = less number)
@@ -220,8 +219,15 @@ class YoloJoeHeller(Detector):
 # cc=Detector()
 # print(c)
 
+def test_thermal():
+    aa=cv2.imread(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI src\Data\Dataset_V0\images\set00\V000\visible\I00041.jpg')
+    bb=YoloJoeHeller()
+    cc = bb.detect(aa)
+    print(cc)
 
-aa=cv2.imread(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI src\Data\Dataset_V0\images\set00\V000\visible\I00041.jpg')
-bb=YoloJoeHeller()
-cc = bb.detect(aa)
-print(cc)
+def test_rgb():
+    a=cv2.imread(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI src\Data\Dataset_V0\images\set00\V000\visible\I00041.jpg')
+    b=YOLOv3_320()
+    c=b.detect(a)
+    print(c)
+
