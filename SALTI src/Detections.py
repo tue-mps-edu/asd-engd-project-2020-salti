@@ -4,11 +4,18 @@ class Detections():
         self.classes=classes
         self.confidences=confidences
 
-    def append(self,other_detection):
-        self.boxes=self.boxes+other_detection.boxes
-        self.classes=self.classes+other_detection.classes
-        self.confidences=self.confidences+other_detection.confidences
-        return self
+    def copy(self):
+        return Detections(self.boxes, self.classes, self.confidences)
+
+    def append(self,other):
+        out = self.copy()
+        out.boxes       += other.boxes
+        out.classes     += other.classes
+        out.confidences += other.confidences
+        return out
+
+def add_classes(a, b):
+    return Detections(a.boxes + b.boxes, a.classes + b.classes, a.confidences + b.confidences)
 
 def test_detections():
     a=Detections([1,2],[3,4],[5,6])
