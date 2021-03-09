@@ -60,7 +60,7 @@ def GUI_add_scales(root, thres, scale_rows):
 
 def GUI_add_buttons(root, parser, scale_rows, dirs, thres, outputs):
     # Saving the configuration
-    Button(root,text="Save configuration",command=partial(saveconfig,parser,dirs, thres),width=15).grid(row=scale_rows[3],column=cols['dirbutton'])
+    Button(root,text="Save configuration",command=partial(saveconfig,parser,dirs, thres, outputs),width=15).grid(row=scale_rows[3],column=cols['dirbutton'])
     # Running SALTI
     Button(root,text="RUN SALTI",command= partial(SALTI, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=scale_rows[4],column=cols['dirbutton'])
 

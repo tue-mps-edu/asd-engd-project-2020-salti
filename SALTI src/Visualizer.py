@@ -27,7 +27,7 @@ class Visualize_all():
     def print(self, classnames, det_c, det_t, det_m):
         self.color.print_annotated_image('RGB', classnames, det_c)
         self.thermal.print_annotated_image('Thermal', classnames, det_t)
-        self.thermal.print_annotated_image('Merged', classnames, det_m)
+        #self.thermal.print_annotated_image('Merged', classnames, det_m)
 
 def test_visualizer():
     img_c = cv2.imread(r'D:\KAIST\set00\V000\lwir\I00000.jpg')

@@ -1,7 +1,7 @@
 import configparser
 from tkinter import *
 
-def saveconfig(parser, dirs, thres):
+def saveconfig(parser, dirs, thres, outputs):
     parser.set('Directories','rgb',dirs['rgb'].get())
     parser.set('Directories', 'thermal', dirs['thermal'].get())
     parser.set('Directories','output',dirs['output'].get())
@@ -10,9 +10,9 @@ def saveconfig(parser, dirs, thres):
     parser.set('Thresholds', 'thermal_nms', str(thres['thermal_nms'].get()))
     parser.set('Thresholds', 'thermal_conf', str(thres['thermal_conf'].get()))
     parser.set('Thresholds', 'merge_nms', str(thres['merge_nms'].get()))
-    parser.set('Outputs', 'x_size', str(thres['x_size'].get()))
-    parser.set('Outputs', 'y_size', str(thres['y_size'].get()))
-    parser.set('Outputs', 'label', str(thres['label'].get()))
+    parser.set('Outputs', 'x_size', str(outputs['x_size'].get()))
+    parser.set('Outputs', 'y_size', str(outputs['y_size'].get()))
+    parser.set('Outputs', 'label', str(outputs['label'].get()))
     cfgfile = open('config.ini','w')
     parser.write(cfgfile)
     cfgfile.close()
