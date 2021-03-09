@@ -8,24 +8,25 @@ from Detections import Detections
 
 
 class Exporter():
-    def __init__(self,output_path,detection,confs,classNames, desired_width, desired_height):
+    def __init__(self,output_path,filename,detection,classNames, desired_width, desired_height):
 
         # Initialize variables
 
-        self.output_path=output_path                  #output path
-        self.confs=confs
+        self.output_path=output_path                  #output path + filename
         self.classNames=classNames
         self.desired_width=desired_width
         self.desired_height=desired_height
 
-        filename = output_path.split('\\')
-        filename = filename[-1].split('.')
-        self.filename = filename[0]
+        self.filename=filename
+        # filename = output_path.split('\\')
+        # filename = filename[-1].split('.')
+        # self.filename = filename[0]
 
         self.boxes=detection.boxes
         self.classes=detection.classes
+        self.confs = detection.confidences
 
-        self.df=self.Output_df(self)
+        self.df=self.Output_df()
     ### Output Pascal VOC format for GUI
 
     def Output_Pascal_VOC(self,merg_img):
@@ -103,14 +104,33 @@ class Exporter():
 
     def df_GUI_csv(self):
 
-        df_GUI=self.Output_YOLO(self)
+        df_GUI=self.Output_YOLO()
 
         # Saving to gui readable format
-        df_GUI.to_csv(os.path.join(self.path, self.filename + '.txt'), header=None, index=None, sep=' ')
-        df_GUI.to_csv(os.path.join(self.path, self.filename + '_VAL.txt'), header=None, index=None, sep=' ')
+        df_GUI.to_csv(os.path.join(self.output_path, self.filename + '.txt'), header=None, index=None, sep=' ')
+        df_GUI.to_csv(os.path.join(self.output_path, self.filename + '_VAL.txt'), header=None, index=None, sep=' ')
 
     def df_csv(self):
 
         df=self.df
         # Exporting each picture's results to its specific csv file
-        df.to_csv(os.path.join(self.path, self.filename + '.csv'), index=False)
+        df.to_csv(os.path.join(self.output_path, self.filename + '.csv'), index=False)
+
+
+def test_exporter():
+    img = cv2.imread(r'C:\Users\20181049\Downloads\Arjun v1.0\Dataset_V0\images\set00\V000\visible\I00000.jpg')
+    classnames = ['car']
+    det = Detections([[200, 200, 300, 300]], [0], [0.9])
+    out_path=r'C:\Users\20181049\Downloads\check'
+    filename=r'I00000'
+    exp=Exporter(out_path,filename,det,classnames,640,512)
+    df=exp.Output_df()
+    print(df)
+    df_GUI=exp.Output_YOLO()
+    print(df_GUI)
+    exp.Output_Pascal_VOC(img)
+    exp.df_GUI_csv()
+    exp.df_csv()
+
+
+test_exporter()

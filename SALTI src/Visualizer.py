@@ -20,12 +20,13 @@ class Visualizer():
 
 
 def test_visualizer():
-    img = cv2.imread(r'D:\KAIST\set00\V000\lwir\I00000.jpg')
+    img = cv2.imread(r'C:\Users\20181049\Downloads\Arjun v1.0\Dataset_V0\images\set00\V000\visible\I00000.jpg')
     classnames = ['car']
     det = Detections([[200,200,300,300]],[0],[0.9])
     vis = Visualizer(img)
     vis.print_annotated_image('rgb', classnames, det)
 
-    cv2.waitKey(100)
+    cv2.waitKey(1000)
     print('pause')
 
+test_visualizer()
