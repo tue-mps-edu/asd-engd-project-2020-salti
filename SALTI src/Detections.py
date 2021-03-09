@@ -1,5 +1,5 @@
 class Detections():
-    def __init__(self,boxes, classes , confidences):
+    def __init__(self, boxes, classes , confidences):
         self.boxes=boxes
         self.classes=classes
         self.confidences=confidences
