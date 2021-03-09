@@ -37,12 +37,13 @@ def SALTI(dirs, thres, outputs):
         det_t = net_t.detect(img_t)
         # THERMAL NMS IS ALREADY IN DETECTOR, HERE IS DUPLICATE
         #det_tf = merge_t.NMS(det_t)
+        det_tf = det_t
         det_m = merge_all.NMS(det_cf.append(det_t))
 
         # Visualize
         fake_classes = ['car' for x in range(0,4)]
         V = Visualize_all(img_c, img_t)
-        V.print(fake_classes,det_c,det_t,det_m)
+        V.print(fake_classes,det_cf,det_tf,det_m)
 
 
 
