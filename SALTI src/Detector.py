@@ -11,17 +11,6 @@ class Detector():
         self.weights = weights
         pass
 
-
-# class ColorDetector(Detector):
-#     def __init__(self, classnames, weights):
-#         super().__init__(classnames,weights)
-#         pass
-#
-# class ThermalDetector(Detector):
-#     def __init__(self, classnames, weights):
-#         super().__init__(classnames,weights)
-#         pass
-
 class YOLOv3_320(Detector):
     def __init__(self):
         self.dir_classes = 'Yolo_config/coco-rgb.names'
