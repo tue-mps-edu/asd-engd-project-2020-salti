@@ -47,7 +47,10 @@ class DataExporter():
                              int(df.iloc[index, 3] + df.iloc[index, 5] / 2))
 
         # Save the file to output folder
-        writer.save(self.output_path + '\\' + self.filename + '.xml')
+        try:
+            writer.save(self.output_path + '\\' + self.filename + '.xml')
+        except:
+            print('stop here ')
 
     def CreateYoloLabel(self):
     ### Output Yolo format for GUI
@@ -114,4 +117,4 @@ def test_exporter():
     E2 = DataExporter('YOLO', out_path, classnames)
     E2.export(img.shape, filename, det)
 
-test_exporter()
+#test_exporter()

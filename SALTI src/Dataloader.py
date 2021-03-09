@@ -20,6 +20,7 @@ class Dataloader():
         files_rgb = sorted(glob.glob(os.path.join(path_rgb,'*.*')))
         files_thermal = sorted(glob.glob(os.path.join(path_thermal, '*.*')))
 
+
         # Get a list of the images
         self.imgs_thermal = [x for x in files_thermal if os.path.splitext(x)[-1].lower() in input_formats]
         self.imgs_rgb = [x for x in files_rgb if os.path.splitext(x)[-1].lower() in input_formats]
@@ -43,8 +44,9 @@ class Dataloader():
             path_C = self.imgs_rgb[self.count]              # Color image path
             path_T = self.imgs_thermal[self.count]          # Thermal image path
 
-            file_name = os.path.splitext(path_C)[0]
-            file_ext = os.path.splitext(path_C)[1]
+            file_name, file_ext = os.path.splitext(path_C)
+
+            assert(len(file_name)<10)
 
             if self.DEBUG:
                 print('color image: \t'+path_C)
