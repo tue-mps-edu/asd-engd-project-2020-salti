@@ -3,7 +3,7 @@ from functions import *
 import detect_rgb as netrgb
 import detect_thermal as nettherm
 from preprocess import *
-
+import shutil
 
 def get_name_ext(filename):
     return os.path.splitext(filename)[0], os.path.splitext(filename)[1]
@@ -18,9 +18,9 @@ def label_loop(image_path):
 
     i = 0
     for filename_thermal in os.listdir(dir_thermal):
-        # i = i+1
-        # if i%100!=0:
-        #     continue
+        i = i+1
+        if i%100!=0:
+            continue
 
         # Skip everything that is the wrong format
         if not filename_thermal.endswith(image_format):
@@ -70,6 +70,7 @@ def label_loop(image_path):
         draw_bboxs(img_M, boxes, confs, classes, classnames_RGB)
         cv2.imshow("MERGED", img_M)
         cv2.waitKey(100)
+    shutil.copy(r'classes.txt',dir_Validation)
 
 label_loop(dir_dataset)
 

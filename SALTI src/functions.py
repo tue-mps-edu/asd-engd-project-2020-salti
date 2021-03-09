@@ -62,7 +62,6 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,d
         df.at[j,CL[5]] = h #Vertical distance
         df.at[j,CL[6]] = classNames[classIds[i]]
         df.at[j,CL[7]] = confs[i]
-        j += 1
 
         #For GUI
         df_GUI.at[j, CL_GUI[0]] = name
@@ -70,6 +69,7 @@ def save_objects(path, file_name, file_ext, bboxs, confs, classIds, classNames,d
         df_GUI.at[j, CL_GUI[2]] = y / desired_height  # y_centroid for GUI
         df_GUI.at[j, CL_GUI[3]] = w / desired_width  # horizontal distance
         df_GUI.at[j, CL_GUI[4]] = h / desired_height  # Vertical distance
+        j += 1
 
     #Exporting each picture's results to its specific csv file
     df.to_csv(os.path.join(path, file_name + '.csv'), index=False)
