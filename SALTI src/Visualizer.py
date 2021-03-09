@@ -37,7 +37,8 @@ def test_visualizer():
     vis = Visualize_all(img_c, img_t)
     vis.print(classnames,det,det,det)
 
-    cv2.waitKey(100)
+    cv2.waitKey(1000)
     print('pause')
+
 
 #test_visualizer()
