@@ -1,12 +1,8 @@
 class Detections():
-    def __init__(self, boxes = list, classes=list, confidences=list):
+    def __init__(self, boxes=list, classes=list, confidences=list):
         self.boxes=boxes
         self.classes=classes
         self.confidences=confidences
-    def __init__(self):
-        self.boxes = []
-        self.classes = []
-        self.confidences = []
 
     def append(self,other_detection):
         self.boxes=self.boxes+other_detection.boxes
