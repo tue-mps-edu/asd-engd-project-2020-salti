@@ -23,5 +23,3 @@ def test_merger():
     print(c.confidences)
     print('length'+str(len(c.classes)))
     assert(len(c.classes)==1)
-
-test_merger()
