@@ -19,3 +19,5 @@ def test_merger():
     a=Merger(0.5,0.5)
     c=a.NMS(b)
     print('a')
+
+test_merger()
