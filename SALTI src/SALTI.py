@@ -22,18 +22,21 @@ def SALTI(dirs, thres, outputs):
     net_c = YOLOv3_320()
     #net_t = YoloJoeHeller()
 
+    # Initailize merger
+    merge_c = Merger(thres['rgb_conf'].get(), thres['rgb_nms'].get())
+    merge_t = Merger( thres['thermal_conf'].get(), thres['thermal_nms'].get())
+    merge_all = Merger( 0.0, thres['merge_nms'].get())
+
     for img_t, img_c in data:
         if do_resize:
             img_c = pp.process(img_c)
             img_t = pp.process(img_t)
 
-        # Do detections
-        Merger(0.5, 0.5)
-        det_c = net_c.detect(img_c)
+        det_c = merge_c.NMS(net_c.detect(img_c))
         #det_t = net_t.detect(img_t)
-        det_t, = Detections()
+        #det_t = Detections()
 
-        det_m = Merger(0.5, 0.5)
+        #det_m = Merger(0.5, 0.5)
 
 
         # Visualize

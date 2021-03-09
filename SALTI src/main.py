@@ -15,7 +15,7 @@ def main():
 
     GUI_add_directory(root, dirs)
     GUI_add_scales(root, thres, scale_rows)
-    GUI_add_buttons(root, scale_rows, dirs, thres, outputs)
+    GUI_add_buttons(root, parser, scale_rows, dirs, thres, outputs)
 
     root.mainloop()
 

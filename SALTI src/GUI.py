@@ -58,9 +58,9 @@ def GUI_add_scales(root, thres, scale_rows):
     Label(root,text="Merge NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=scale_rows[4],column=0)
     Scale(root,variable=thres['merge_nms'],resolution=0.05,to=1,width=20,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=scale_rows[4],column=1)
 
-def GUI_add_buttons(root, scale_rows, dirs, thres, outputs):
+def GUI_add_buttons(root, parser, scale_rows, dirs, thres, outputs):
     # Saving the configuration
-    Button(root,text="Save configuration",command=saveconfig,width=15).grid(row=scale_rows[3],column=cols['dirbutton'])
+    Button(root,text="Save configuration",command=partial(saveconfig,parser,dirs, thres),width=15).grid(row=scale_rows[3],column=cols['dirbutton'])
     # Running SALTI
     Button(root,text="RUN SALTI",command= partial(SALTI, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=scale_rows[4],column=cols['dirbutton'])
 
