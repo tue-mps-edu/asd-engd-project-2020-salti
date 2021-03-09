@@ -16,10 +16,10 @@ class ColorDetector(Detector):
         super().__init__(classnames,weights)
         pass
 
-# class ThermalDetector(Detector):
-#     def __init__(self):
-#         pass
-#
+class ThermalDetector(Detector):
+    def __init__(self):
+        pass
+
 class YOLOv3_320(ColorDetector):
     def __init__(self):
         self.dir_classes = 'Yolo_config/coco-rgb.names'
@@ -34,8 +34,6 @@ class YOLOv3_320(ColorDetector):
 
         self.getclasses()
         # Define the network
-
-
 
 
     # Get classes
@@ -91,10 +89,10 @@ class YOLOv3_320(ColorDetector):
     def detect(self, image):
         #return Detection(boxes, classes, confidences)
         pass 
-#
-# class YoloJoeHeller(ThermalDetector):
-#     def __init__(self):
-#         pass
+
+class YoloJoeHeller(ThermalDetector):
+    def __init__(self):
+        pass
 
 det = ColorDetector(1,2)
 '''
