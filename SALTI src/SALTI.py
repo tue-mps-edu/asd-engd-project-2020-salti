@@ -44,6 +44,7 @@ def SALTI(dirs, thres, outputs):
 
         # Here it goes wrong. It has to do with class copies.
         # Solve this if you want to really learn python ;)
+        # Fixed it!
         det_m = det_c.append(det_t)
         assert(L1==len(det_c.confidences))
         assert(L2==len(det_t.confidences))

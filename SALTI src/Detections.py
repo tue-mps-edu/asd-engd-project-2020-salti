@@ -5,7 +5,7 @@ class Detections():
         self.confidences=confidences
 
     def copy(self):
-        return Detections(self.boxes, self.classes, self.confidences)
+        return Detections(self.boxes.copy(), self.classes.copy(),self.confidences.copy())
 
     def append(self,other):
         out = self.copy()
