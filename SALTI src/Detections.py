@@ -4,11 +4,20 @@ class Detections():
         self.classes=classes
         self.confidences=confidences
 
-    def copy(self):
+    def __copy__(self):
+        # Overload copy operator
         return Detections(self.boxes.copy(), self.classes.copy(),self.confidences.copy())
 
     def append(self,other):
-        out = self.copy()
+        out = self.__copy__()
+        out.boxes       += other.boxes
+        out.classes     += other.classes
+        out.confidences += other.confidences
+        return out
+
+    def __add__(self, other):
+        # Overload + operator
+        out = self.__copy__()
         out.boxes       += other.boxes
         out.classes     += other.classes
         out.confidences += other.confidences
