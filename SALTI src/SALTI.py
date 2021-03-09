@@ -4,6 +4,8 @@ from Dataloader import Dataloader
 from Preprocesser import Preprocessor
 from Visualizer import Visualize_all
 from Visualizer import Visualizer
+from Detections import Detections
+from Merger import Merger
 import cv2
 
 def SALTI(dirs, thres, outputs):
@@ -17,18 +19,27 @@ def SALTI(dirs, thres, outputs):
     pp = Preprocessor(output_size=output_size, resize=do_resize)
 
 
-    net_C = YOLOv3_320()
-    #net_T = YoloJoeHeller()
+    net_c = YOLOv3_320()
+    #net_t = YoloJoeHeller()
 
     for img_t, img_c in data:
         if do_resize:
             img_c = pp.process(img_c)
             img_t = pp.process(img_t)
 
+        # Do detections
+        Merger(0.5, 0.5)
+        det_c = net_c.detect(img_c)
+        #det_t = net_t.detect(img_t)
+        det_t, = Detections()
 
-        det_c = net_C.detect(img_c)
+        det_m = Merger(0.5, 0.5)
+
+
+        # Visualize
         V = Visualizer(img_c)
         V.print_annotated_image('RGB',['car' for x in range(0,4)],det_c)
+
         #Visualize_all(img_c, img_t)
         print('dbstop')
 
