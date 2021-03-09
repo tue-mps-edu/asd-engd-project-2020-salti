@@ -23,6 +23,10 @@ class Dataloader():
         # Get a list of the images
         self.imgs_thermal = [x for x in files_thermal if os.path.splitext(x)[-1].lower() in input_formats]
         self.imgs_rgb = [x for x in files_rgb if os.path.splitext(x)[-1].lower() in input_formats]
+
+        img_temp = cv2.imread(files_rgb[0])
+        self.img_size = img_temp.shape
+
         # Check if there is an equal number of images for rgb-thermal
         assert(len(self.imgs_thermal)==len(self.imgs_rgb))
         self.nr_imgs = len(self.imgs_rgb)
@@ -57,6 +61,3 @@ def test_dataloader():
         cv2.imshow("rgb",img_c)
         cv2.imshow("thermal",img_t)
         cv2.waitKey(100)
-
-
-test_dataloader()
