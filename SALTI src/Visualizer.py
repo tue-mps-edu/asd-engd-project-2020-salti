@@ -29,4 +29,3 @@ def test_visualizer():
     cv2.waitKey(100)
     print('pause')
 
-#test_visualizer()
