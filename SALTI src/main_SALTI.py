@@ -72,6 +72,7 @@ def label_loop(image_path):
         cv2.waitKey(100)
     shutil.copy(r'classes.txt',dir_Validation)
 
+    shutil.copy(r"classes.txt", os.path.join(dir_dataset, 'Validation'))  # copy classes file to Validation folder
 label_loop(dir_dataset)
 
 '''' READING IMAGES
