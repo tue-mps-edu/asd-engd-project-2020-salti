@@ -14,7 +14,7 @@ class Visualizer():
             cv2.putText(self.img, f'{classNames[detection.classes[i]].upper()} {int(detection.confidences[i] * 100)}%', (x, y - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
 
-    def print_output(self, img_type, classnames, detection):
+    def print_annotated_image(self, img_type, classnames, detection):
         self.draw_bboxs(classnames,detection)
         cv2.imshow(img_type,self.img)
 
@@ -23,9 +23,10 @@ def test_visualizer():
     img = cv2.imread(r'D:\KAIST\set00\V000\lwir\I00000.jpg')
     classnames = ['car']
     det = Detections([[200,200,300,300]],[0],[0.9])
-    vis = Visualizer(img, classnames, det)
-    vis.print_output('rgb', classnames, det)
+    vis = Visualizer(img)
+    vis.print_annotated_image('rgb', classnames, det)
 
     cv2.waitKey(100)
+    print('pause')
 
-test_visualizer()
+#test_visualizer()
