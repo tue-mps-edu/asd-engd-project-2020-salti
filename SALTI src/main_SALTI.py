@@ -2,7 +2,7 @@ from config import *
 from functions import *
 import detect_rgb as netrgb
 import detect_thermal as nettherm
-import preprocess
+# import preprocess
 
 
 def get_name_ext(filename):

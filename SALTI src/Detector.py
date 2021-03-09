@@ -73,44 +73,23 @@ class YoloJoeHeller(Detector):
         self.whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.confThreshold = 0.3  # Confidence threshold for approval of detection
         self.nmsThreshold = 0.5  # Non-maximum suppresion threshold (lower = less number)
-        
         self.cfg = 'Yolo_config/yolov3-spp.cfg'
-        self.data = 'Yolo_config/coco-thermal.data'
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--cfg', type=str, default='Yolo_config/yolov3-spp.cfg', help='cfg file path')
-        parser.add_argument('--data', type=str, default='Yolo_config/coco-thermal.data', help='coco.data file path')
-        parser.add_argument('--weights', type=str, default='Yolo_config\yolov3-thermal.weights',
-                            help='path to weights file')
-        parser.add_argument('--source', type=str,
-                            default=r'C:\Github\asd-pdeng-project-2020-developer\SALTI src\Data\mytestdata\RGB',
-                            help='source')  # input file/folder, 0 for webcam
-        parser.add_argument('--output', type=str, default='output', help='output folder')  # output folder
-        parser.add_argument('--img-size', type=int, default=416, help='inference size (pixels)')
-        parser.add_argument('--conf-thres', type=float, default=self.confThreshold, help='object confidence threshold')
-        parser.add_argument('--nms-thres', type=float, default=self.nmsThreshold,
-                            help='iou threshold for non-maximum suppression')
-        parser.add_argument('--fourcc', type=str, default='mp4v', help='output video codec (verify ffmpeg support)')
-        parser.add_argument('--half', action='store_true', help='half precision FP16 inference')
-        parser.add_argument('--device', default='', help='device id (i.e. 0 or 0,1) or cpu')
-        parser.add_argument('--view-img', action='store_true', help='display results')
-        self.opt = parser.parse_args()
-        self.DEBUG_MODE = False
+        self.data = 'Yolo_config/coco-thermal.data' #Not used anywhere
+        self.weights='Yolo_config\yolov3-thermal.weights'
+        self.img_size=416
+        self.half=False
+        self.device=''
+        self.view_img=False
 
-        if self.DEBUG_MODE:
-            print(self.opt)
 
         with torch.no_grad():
             img_size = (
-            320, 192) if ONNX_EXPORT else self.opt.img_size  # (320, 192) or (416, 256) or (608, 352) for (height, width)
+            320, 192) if ONNX_EXPORT else self.img_size  # (320, 192) or (416, 256) or (608, 352) for (height, width)
             print("detect_thermal.py, line 32 update config")
-            out, source, weights, half, view_img = self.opt.output, self.opt.source, self.opt.weights, self.opt.half, self.opt.view_img
-            webcam = source == '0' or source.startswith('rtsp') or source.startswith('http') or source.endswith('.txt')
+            weights, half, view_img = self.weights, self.half, self.view_img
 
             # Initialize
-            device = torch_utils.select_device(device='cpu' if ONNX_EXPORT else self.opt.device)
-            if os.path.exists(out):
-                shutil.rmtree(out)  # delete output folder
-            os.makedirs(out)  # make new output folder
+            device = torch_utils.select_device(device='cpu' if ONNX_EXPORT else self.device)
 
             # Initialize model
             model = Darknet(self.cfg, img_size)
@@ -159,22 +138,17 @@ class YoloJoeHeller(Detector):
         self.model=model
         self.classes=classes
         self.device=device
-        # return model, classes, opt, device
 
-    def convertImage(self,img0, device, opt):
+    def convertImage(self,img0):
         # Padded resize
-        img = letterbox(img0, new_shape=opt.img_size)[0]
+        img = letterbox(img0, new_shape=self.img_size)[0]
 
         # Normalize RGB
         img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB
-        img = np.ascontiguousarray(img, dtype=np.float16 if opt.half else np.float32)  # uint8 to fp16/fp32
+        img = np.ascontiguousarray(img, dtype=np.float16 if self.half else np.float32)  # uint8 to fp16/fp32
         img /= 255.0  # 0 - 255 to 0.0 - 1.0
 
-        img = torch.from_numpy(img).to(device)
-
-        if self.DEBUG_MODE:
-            print('original' + str(img0.shape))
-            print('resized' + str(img.shape))
+        img = torch.from_numpy(img).to(self.device)
 
         return img, img0
 
@@ -195,29 +169,25 @@ class YoloJoeHeller(Detector):
         # Run inference
         with torch.no_grad():
             # Get detections
-            img, img0 = self.convertImage(img, self.device, self.opt)
+            img, img0 = self.convertImage(img)
 
             if img.ndimension() == 3:
                 img = img.unsqueeze(0)
 
             pred = self.model(img)[0]
 
-            if self.opt.half:
+            if self.half:
                 pred = pred.float()
 
             # Apply NMS
-            pred = non_max_suppression(pred, self.opt.conf_thres, self.opt.nms_thres)
+            pred = non_max_suppression(pred, self.confThreshold, self.nmsThreshold)
             bboxs, confs, classes = self.getlists(pred, img, img0)
 
         return Detections(bboxs, classes, confs)
 
 
 
-# a=cv2.imread(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI src\Data\Dataset_V0\images\set00\V000\visible\I00041.jpg')
-# b=YOLOv3_320()
-# c=b.detect(a)
-# cc=Detector()
-# print(c)
+
 
 def test_thermal():
     aa=cv2.imread(r'Data\Dataset_V0\images\set00\V000\visible\I00041.jpg')
