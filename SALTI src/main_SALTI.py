@@ -42,10 +42,10 @@ def label_loop(image_path):
         img_M = img_T.copy()
 
         #Resizing the images
-        # if img_T.shape[0] !=output_height or img_T.shape[1] !=output_width: #Images will be resized only if they don't match the desired output size
-        #     img_C = resize_image(img_C,output_width,output_height)
-        #     img_T = resize_image(img_T,output_width,output_height)
-        #     img_M = resize_image(img_M,output_width,output_height)
+        if img_T.shape[0] !=output_height or img_T.shape[1] !=output_width: #Images will be resized only if they don't match the desired output size
+            img_C = resize_image(img_C,output_width,output_height)
+            img_T = resize_image(img_T,output_width,output_height)
+            img_M = resize_image(img_M,output_width,output_height)
         cv2.imwrite(os.path.join(dir_Results, filename_thermal), img_T) #Saving the thermal image in the result folder
 
 
