@@ -1,5 +1,5 @@
 import argparse
-from models_thermal import *  # set ONNX_EXPORT in models.py
+from utils_thermal.models_thermal import *  # set ONNX_EXPORT in models.py
 from utils_thermal.datasets import *
 
 from config import *
