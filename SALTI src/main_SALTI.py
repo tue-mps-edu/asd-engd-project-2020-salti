@@ -3,7 +3,7 @@ from functions import *
 import detect_rgb as netrgb
 import detect_thermal as nettherm
 from preprocess import *
-
+import shutil
 
 def get_name_ext(filename):
     return os.path.splitext(filename)[0], os.path.splitext(filename)[1]
@@ -71,6 +71,7 @@ def label_loop(image_path):
         cv2.imshow("MERGED", img_M)
         cv2.waitKey(100)
 
+    shutil.copy(r"classes.txt", os.path.join(dir_dataset, 'Validation'))  # copy classes file to Validation folder
 label_loop(dir_dataset)
 
 '''' READING IMAGES

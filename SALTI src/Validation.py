@@ -3,8 +3,6 @@ from config import *
 #from localFunctions import *
 import pandas as pd
 import os
-# from sklearn import metrics
-# import shutil
 
 def get_iou(pred_box, gt_box):
     """
@@ -168,7 +166,7 @@ def UserValidation(Results_directory,img_extention):
     print('Total: Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision_tot, Recall_tot, Accuracy_tot, F1_score_tot))
     # mAP = metrics.auc(Precision_tot, Recall_tot)
     # print(mAP)
-    # shutil.copy()
+
 img_extention = ['.bmp', '.jpg', '.jpeg', '.png', '.tif', '.dng']
 UserValidation(dir_Validation,img_extention)
 
