@@ -33,25 +33,16 @@ def SALTI(dirs, thres, outputs):
 
         # Do detections and apply non-maximum suppression on BBOXes
         det_c = net_c.detect(img_c)
-        det_c = merge_c.NMS(det_c)
+        det_cf = merge_c.NMS(det_c)
         det_t = net_t.detect(img_t)
         # THERMAL NMS IS ALREADY IN DETECTOR, HERE IS DUPLICATE
-        #det_t = merge_t.NMS(det_t)
-        det_m = merge_all.NMS(det_c.append(det_t))
+        #det_tf = merge_t.NMS(det_t)
+        det_m = merge_all.NMS(det_cf.append(det_t))
 
         # Visualize
         fake_classes = ['car' for x in range(0,4)]
-        v_c = Visualizer(img_c)
-        v_t = Visualizer(img_t)
-        v_m = Visualizer(img_t)
-        v_c.print_annotated_image('RGB',fake_classes, det_c)
-        v_t.print_annotated_image('Thermal',fake_classes,det_t)
-        v_m.print_annotated_image('Merged',fake_classes,det_m)
-
-        dbstop = True
-        # Visualize the data
-        #V = Visualize_all(img_c, img_t)
-        #V.print(['car' for x in range(0,4)],det_c,det_t,det_m)
+        V = Visualize_all(img_c, img_t)
+        V.print(fake_classes,det_c,det_t,det_m)
 
 
 

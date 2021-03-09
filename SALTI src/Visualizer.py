@@ -17,7 +17,6 @@ class Visualizer():
     def print_annotated_image(self, img_type, classnames, detection):
         self.draw_bboxs(classnames,detection)
         cv2.imshow(img_type,self.img)
-        cv2.waitKey(1)
 
 class Visualize_all():
     def __init__(self,img_c, img_t):
@@ -27,7 +26,8 @@ class Visualize_all():
     def print(self, classnames, det_c, det_t, det_m):
         self.color.print_annotated_image('RGB', classnames, det_c)
         self.thermal.print_annotated_image('Thermal', classnames, det_t)
-        #self.thermal.print_annotated_image('Merged', classnames, det_m)
+        self.thermal.print_annotated_image('Merged', classnames, det_m)
+        cv2.waitKey(1000)
 
 def test_visualizer():
     img_c = cv2.imread(r'D:\KAIST\set00\V000\lwir\I00000.jpg')

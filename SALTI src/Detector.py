@@ -4,7 +4,6 @@ import argparse
 from utils_thermal.models_thermal import *  # set ONNX_EXPORT in models.py
 from utils_thermal.datasets import *
 
-
 class Detector():
     def __init__(self, classnames, weights):
         self.classnames = classnames
@@ -65,7 +64,6 @@ class YOLOv3_320(Detector):
 
         # Get all objects from the outputs that are above confidence level
         boxes, classes, confidences = self.getobjects(outputs, image, self.confThreshold)
-
         return Detections(boxes, classes, confidences)
 
 
@@ -232,5 +230,3 @@ def test_rgb():
     b=YOLOv3_320()
     c=b.detect(a)
     print(c)
-
-test_thermal()
