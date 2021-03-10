@@ -27,6 +27,7 @@ class DataExporter():
             self.df_label = self.CreateYoloLabel()
             self.SaveDataframeAsTXT(self.df_label,self.filename)
             self.SaveDataframeAsTXT(self.df_label,self.filename+'_VAL')
+            assert(not 'CODE MISSING: ADD CLASSES FILE EXPORT!')
 
     def Output_Pascal_VOC(self, df):
     ### Output Pascal VOC format for GUI
