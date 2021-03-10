@@ -18,9 +18,9 @@ def SALTI(dirs, thres, outputs):
     path_rgb = dirs['rgb'].get()
     path_thermal = dirs['thermal'].get()
     path_output = dirs['output'].get()
-    data = Dataloader(path_rgb,path_thermal)
+    data = Dataloader(path_rgb,path_thermal,debug=True)
 
-    fake_classes = ['car' for x in range(0,4)]
+    fake_classes = ['car' for x in range(0,64)]
     label_type = 'PascalVOC'
     exporter = DataExporter(label_type,dirs['output'].get(),fake_classes)
 
