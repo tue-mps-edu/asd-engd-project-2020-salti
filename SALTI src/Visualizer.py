@@ -22,12 +22,13 @@ class Visualize_all():
     def __init__(self,img_c, img_t):
         self.color = Visualizer(img_c)
         self.thermal = Visualizer(img_t)
+        self.thermal_copy = Visualizer(img_t.copy())
 
     def print(self, classnames, det_c, det_t, det_m):
         self.color.print_annotated_image('RGB', classnames, det_c)
         self.thermal.print_annotated_image('Thermal', classnames, det_t)
-        self.thermal.print_annotated_image('Merged', classnames, det_m)
-        cv2.waitKey(1000)
+        self.thermal_copy.print_annotated_image('Merged', classnames, det_m)
+        cv2.waitKey(1)
 
 def test_visualizer():
     img_c = cv2.imread(r'D:\KAIST\set00\V000\lwir\I00000.jpg')
@@ -37,7 +38,7 @@ def test_visualizer():
     vis = Visualize_all(img_c, img_t)
     vis.print(classnames,det,det,det)
 
-    cv2.waitKey(1000)
+    cv2.waitKey(10)
     print('pause')
 
 

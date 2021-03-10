@@ -74,7 +74,7 @@ class YoloJoeHeller(Detector):
         self.confThreshold = 0.3  # Confidence threshold for approval of detection
         self.nmsThreshold = 0.5  # Non-maximum suppresion threshold (lower = less number)
         self.cfg = 'Yolo_config/yolov3-spp.cfg'
-        self.data = 'Yolo_config/coco-thermal.data' #Not used anywhere
+        self.data = 'Yolo_config/coco-thermal.data'
         self.weights='Yolo_config\yolov3-thermal.weights'
         self.img_size=416
         self.half=False
