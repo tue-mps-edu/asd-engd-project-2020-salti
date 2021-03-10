@@ -9,7 +9,7 @@ from DataExporter import DataExporter
 import cv2
 from Visualizer import Visualizer
 from Detections import Detections, add_classes
-
+import os
 
 def SALTI(dirs, thres, outputs):
 
@@ -52,5 +52,6 @@ def SALTI(dirs, thres, outputs):
 
         # Export data
         exporter.export(img_t.shape,file_name,det_m)
+        cv2.imwrite(os.path.join(path_output,file_name+file_ext), img_t)
 
 
