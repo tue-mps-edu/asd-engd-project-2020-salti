@@ -1,6 +1,7 @@
 import os
 import cv2
-import glob
+#import glob
+import ntpath
 
 input_formats = ['.png','.jpg','.jpeg']
 
@@ -17,8 +18,13 @@ class Dataloader():
         assert(os.path.isdir(path_rgb) and os.path.isdir(path_thermal))
 
         # Get the file list
-        files_rgb = sorted(glob.glob(os.path.join(path_rgb,'*.*')))
-        files_thermal = sorted(glob.glob(os.path.join(path_thermal, '*.*')))
+        #files_rgb = sorted(glob.glob(os.path.join(path_rgb,'*.*')))
+        #files_thermal = sorted(glob.glob(os.path.join(path_thermal, '*.*')))
+        #files_rgb = [x.absolute() for x in pathlib.Path(path_rgb).glob('**/*')]
+        #files_thermal = [x.absolute() for x in pathlib.Path(path_thermal).glob('**/*')]
+        files_rgb = [os.path.abspath(os.path.join(path_rgb, p)) for p in os.listdir(path_rgb)]
+        files_thermal = [os.path.abspath(os.path.join(path_thermal, p)) for p in os.listdir(path_thermal)]
+
 
         # Get a list of the images
         self.imgs_thermal = [x for x in files_thermal if os.path.splitext(x)[-1].lower() in input_formats]
@@ -42,6 +48,14 @@ class Dataloader():
 
             path_C = self.imgs_rgb[self.count]              # Color image path
             path_T = self.imgs_thermal[self.count]          # Thermal image path
+
+            file = ntpath.basename(path_C)
+            file_name, file_ext = os.path.splitext(file)
+
+            #file_name, file_ext = os.path.splitext(path_C)
+
+            #assert(len(file_name)<10)
+
             if self.DEBUG:
                 print('color image: \t'+path_C)
                 print('thermal iamge: \t'+path_T)
@@ -51,7 +65,9 @@ class Dataloader():
 
             self.count = self.count + 1                     # Update to next image
             self.progress = (self.count/self.nr_imgs)*100   # Update progress
-            yield img_C, img_T
+
+
+            yield file_name, file_ext, img_C, img_T
 
 def test_dataloader():
     path_t = r'D:\KAIST\set00\V000\lwir'

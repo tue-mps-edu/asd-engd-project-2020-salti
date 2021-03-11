@@ -6,16 +6,23 @@ class Merger():
         self.confThreshold=conf_threshold
         self.nmsThreshold=nms_threshold
 
-    def NMS(self, detection):
+    def merge(self, detections):
+        return self.NMS(detections)
+
+    def NMS(self, detections):
         # Non maximum suppression, will give indices to keep
-        indices = cv2.dnn.NMSBoxes(detection.boxes, detection.confidences, self.confThreshold, self.nmsThreshold)
+        indices = cv2.dnn.NMSBoxes(detections.boxes, detections.confidences, self.confThreshold, self.nmsThreshold)
         to_keep = [i[0] for i in indices]
-        return Detections([detection.boxes[i] for i in to_keep],
-                          [detection.classes[i] for i in to_keep],
-                          [detection.confidences[i] for i in to_keep])
+        return Detections([detections.boxes[i] for i in to_keep],
+                          [detections.classes[i] for i in to_keep],
+                          [detections.confidences[i] for i in to_keep])
 
 def test_merger():
-    b=Detections([1,2,3,4],[1],[0.7])
+    b=Detections([[1,2,3,4],[1,2,3,4]],[1,1],[0.1,0.7])
     a=Merger(0.5,0.5)
     c=a.NMS(b)
-    print('a')
+    print(c.boxes)
+    print(c.classes)
+    print(c.confidences)
+    print('length'+str(len(c.classes)))
+    assert(len(c.classes)==1)
