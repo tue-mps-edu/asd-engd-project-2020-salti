@@ -1,5 +1,5 @@
 import pandas as pd
-from utils_thermal.utils import *
+from config_thermal.utils_thermal.utils import *
 from pascal_voc_writer import Writer
 import cv2
 import numpy as np

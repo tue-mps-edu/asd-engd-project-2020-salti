@@ -3,6 +3,8 @@ Data
 __pycache__
 Archive.csv
 Yolo_config
+config_thermal
+config_rgb
 Post_Analysis
 output
 0.8.0

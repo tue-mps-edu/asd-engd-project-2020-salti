@@ -1,6 +1,6 @@
 from Detections import *
-from utils_thermal.models_thermal import *  # set ONNX_EXPORT in models.py
-from utils_thermal.datasets import *
+from config_thermal.utils_thermal.models_thermal import *  # set ONNX_EXPORT in models.py
+from config_thermal.utils_thermal.datasets import *
 
 
 class Detector(object):
@@ -23,9 +23,9 @@ class YOLOv3_320():
     ''' RGB YOLO v3 object detection '''
 
     def __init__(self):
-        self.__dir_classes = 'Yolo_config/coco-rgb.names'
-        self.__dir_cfg = 'Yolo_config/yolov3-rgb.cfg'
-        self.__dir_weights = 'Yolo_config/yolov3-rgb.weights'
+        self.__dir_classes = 'config_rgb/coco-rgb.names'
+        self.__dir_cfg = 'config_rgb/yolov3-rgb.cfg'
+        self.__dir_weights = 'config_rgb/yolov3-rgb.weights'
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.__confThreshold = 0.3     # Confidence threshold for approval of detection
 
@@ -85,9 +85,9 @@ class YoloJoeHeller():
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.__confThreshold = confThreshold  # Confidence threshold for approval of detection
         self.__nmsThreshold = nmsThreshold  # Non-maximum suppresion threshold (lower = less number)
-        self.__dir_cfg = 'Yolo_config/yolov3-spp.cfg'
-        self.__dir_data = 'Yolo_config/coco-thermal.data'
-        self.__dir_weights='Yolo_config\yolov3-thermal.weights'
+        self.__dir_cfg = 'config_thermal/yolov3-spp.cfg'
+        self.__dir_data = 'config_thermal/coco-thermal.data'
+        self.__dir_weights='config_thermal/yolov3-thermal.weights'
         self.__img_size=416
         self.__half=False
         self.__device=''
@@ -96,7 +96,6 @@ class YoloJoeHeller():
         with torch.no_grad():
             img_size = (
             320, 192) if ONNX_EXPORT else self.__img_size  # (320, 192) or (416, 256) or (608, 352) for (height, width)
-            print("detect_thermal.py, line 32 update config")
             weights, half, view_img = self.__dir_weights, self.__half, self.__view_img
 
             # Initialize
