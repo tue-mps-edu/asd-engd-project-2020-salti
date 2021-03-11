@@ -34,7 +34,7 @@ class YOLOv3_320(Detector):
                 '\n')  # rstrip strips off the ("content here") and split splits off for("content here")
         self.classNames = classNames
 
-    def getobjects(self,outputs, img_rgb, conf_threshold):
+    def getobjects(self,outputs, img_rgb):
         hT, wT, cT = img_rgb.shape
         bboxs = []
         classIds = []
@@ -45,12 +45,12 @@ class YOLOv3_320(Detector):
                 scores = det[5:]
                 classId = np.argmax(scores)
                 confidence = scores[classId]
-                if confidence > conf_threshold:
-                    w, h = int(det[2] * wT), int(det[3] * hT)
-                    x, y = int((det[0] * wT) - w / 2), int((det[1] * hT) - h / 2)
-                    bboxs.append([x, y, w, h])
-                    classIds.append(classId)
-                    confs.append(float(confidence))
+                # if confidence > conf_threshold:
+                w, h = int(det[2] * wT), int(det[3] * hT)
+                x, y = int((det[0] * wT) - w / 2), int((det[1] * hT) - h / 2)
+                bboxs.append([x, y, w, h])
+                classIds.append(classId)
+                confs.append(float(confidence))
 
         return bboxs, classIds, confs
 
@@ -63,16 +63,16 @@ class YOLOv3_320(Detector):
         outputs = self.net.forward(outputNames)
 
         # Get all objects from the outputs that are above confidence level
-        boxes, classes, confidences = self.getobjects(outputs, image, self.confThreshold)
+        boxes, classes, confidences = self.getobjects(outputs, image)
         return Detections(boxes, classes, confidences)
 
 
 #Thermal Detector Class definitiom
 class YoloJoeHeller(Detector):
-    def __init__(self):
+    def __init__(self, confThreshold, nmsThreshold):
         self.whT = 320  # width & height of the image input into YOLO (standard resolution, square)
-        self.confThreshold = 0.3  # Confidence threshold for approval of detection
-        self.nmsThreshold = 0.5  # Non-maximum suppresion threshold (lower = less number)
+        self.confThreshold = confThreshold  # Confidence threshold for approval of detection
+        self.nmsThreshold = nmsThreshold  # Non-maximum suppresion threshold (lower = less number)
         self.cfg = 'Yolo_config/yolov3-spp.cfg'
         self.data = 'Yolo_config/coco-thermal.data'
         self.weights='Yolo_config\yolov3-thermal.weights'
