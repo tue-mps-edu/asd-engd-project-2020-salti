@@ -85,9 +85,9 @@ class YoloJoeHeller():
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.__confThreshold = confThreshold  # Confidence threshold for approval of detection
         self.__nmsThreshold = nmsThreshold  # Non-maximum suppresion threshold (lower = less number)
-        self.__dir_cfg = 'config_thermal/yolov3-spp.cfg'
+        self.__dir_cfg = 'config_thermal/yolov3-spp-r.cfg'
         self.__dir_data = 'config_thermal/coco-thermal.data'
-        self.__dir_weights='config_thermal/yolov3-thermal.weights'
+        self.__dir_weights='config_thermal/yolov3-thermal-best.pt'
         self.__img_size=416
         self.__half=False
         self.__device=''
