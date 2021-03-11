@@ -5,33 +5,39 @@ import cv2
 import numpy as np
 from Detections import Detections
 import pandas as pd
+import datetime
 
 class DataExporter():
     def __init__(self,label_type, output_path, classnames):
         # Initialize variables
         self.label_type = label_type
-        self.output_path = output_path                  #output path + filename
+        self.output_path = os.path.join(output_path,datetime.datetime.now().strftime('%Y.%m.%d_%Hh%Mm%Ss'))
         self.classNames = classnames
+        self.try_to_make_folder(self.output_path)
+
         if (self.label_type == 'YOLO'):
             df = pd.DataFrame(self.classNames)
             df.to_csv(os.path.join(self.output_path,'classes.txt'), header=None, index=None)
 
-    def export(self, output_size, filename, detections):
-        self.filename = filename
+    def export(self, output_size, file_name, file_ext, detections, img):
+        self.filename = file_name
         self.output_size = output_size
         self.detections = detections
 
-        df_overview = self.CreateOverviewDataframe()
+        df_overview = self.create_dataframe_overview()
 
         if (self.label_type == 'PascalVOC'):
-            self.df_label = self.Output_Pascal_VOC(df_overview)
+            self.df_label = self.output_pasval_voc(df_overview)
 
         elif (self.label_type == 'YOLO'):
-            self.df_label = self.CreateYoloLabel()
-            self.SaveDataframeAsTXT(self.df_label,self.filename)
-            self.SaveDataframeAsTXT(self.df_label,self.filename+'_VAL')
+            self.df_label = self.create_yolo_label()
+            self.save_dataframe_as_txt(self.df_label,self.filename)
+            self.save_dataframe_as_txt(self.df_label,self.filename+'_VAL')
 
-    def Output_Pascal_VOC(self, df):
+        # Save the image
+        self.save_opencv_image(img,file_ext)
+
+    def output_pasval_voc(self, df):
     ### Output Pascal VOC format for GUI
         # df = Dataframe storing results of the merged bounding boxes and class names
         # merged_img_path = The path of the merged image. Ex: 'D:\Git repos\asd-pdeng-project-2020-developer\SALTI src\Data\Dataset_V0\images\set00\V000\thermal\I00000.jpg'
@@ -56,7 +62,7 @@ class DataExporter():
         except:
             print('stop here ')
 
-    def CreateYoloLabel(self):
+    def create_yolo_label(self):
     ### Output Yolo format for GUI
         # For GUI
         CL_GUI = ["Category", "xc", "yc", "w", "h"]
@@ -77,7 +83,7 @@ class DataExporter():
         return df_yolo
 
     # In main file do df=Exporter.Output_df() to extract dataframes
-    def CreateOverviewDataframe(self):
+    def create_dataframe_overview(self):
 
         # Preparing a blank dataframe for each picture's results
         CL = ["Image", "Box", "xc", "yc", "w", "h", "Category", "Confidence"]
@@ -102,13 +108,24 @@ class DataExporter():
 
         return df_csv
 
-    def SaveDataframeAsTXT(self, df_txt, filename):
+    def save_dataframe_as_txt(self, df_txt, filename):
         # Saving to gui readable format
         df_txt.to_csv(os.path.join(self.output_path, filename + '.txt'), header=None, index=None, sep=' ')
 
-    def SaveDataframeAsCSV(self, df_csv, filename):
+    def save_dataframe_as_csv(self, df_csv, filename):
         # Exporting each picture's results to its specific csv file
         df_csv.to_csv(os.path.join(self.output_path, filename + '.csv'), index=False)
+
+    def save_opencv_image(self, img, file_ext):
+        cv2.imwrite(os.path.join(self.output_path,self.filename+file_ext), img)
+
+    def try_to_make_folder(self, folder):
+        try:
+            os.mkdir(self.output_path)
+        except:
+            assert("Folder already exists")
+
+
 
 def test_exporter():
     img = cv2.imread(r'Data\Dataset_V0\images\set00\V000\visible\I00000.jpg')
