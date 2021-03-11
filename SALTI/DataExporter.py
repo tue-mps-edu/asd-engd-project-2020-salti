@@ -1,11 +1,13 @@
 import pandas as pd
-from utils_thermal.utils import *
+from config_thermal.utils_thermal.utils import *
 from pascal_voc_writer import Writer
 import cv2
 import numpy as np
 from Detections import Detections
 import pandas as pd
 import datetime
+from shutil import copyfile
+import os
 
 class DataExporter():
     def __init__(self,label_type, output_path, classnames):
@@ -14,6 +16,8 @@ class DataExporter():
         self.output_path = os.path.join(output_path,datetime.datetime.now().strftime('%Y.%m.%d_%Hh%Mm%Ss'))
         self.classNames = classnames
         self.try_to_make_folder(self.output_path)
+
+        copyfile('config.ini',os.path.join(self.output_path,'config.ini'))
 
         if (self.label_type == 'YOLO'):
             df = pd.DataFrame(self.classNames)
@@ -124,18 +128,3 @@ class DataExporter():
             os.mkdir(self.output_path)
         except:
             assert("Folder already exists")
-
-
-
-def test_exporter():
-    img = cv2.imread(r'Data\Dataset_V0\images\set00\V000\visible\I00000.jpg')
-    classnames = ['car']
-    det = Detections([[200, 200, 300, 300]], [0], [0.9])
-    out_path = r'D:\Outputs'
-    filename = r'I00000'
-    E1 = DataExporter('PascalVOC', out_path, classnames)
-    E1.export(img.shape, filename, det)
-    E2 = DataExporter('YOLO', out_path, classnames)
-    E2.export(img.shape, filename, det)
-
-#test_exporter()

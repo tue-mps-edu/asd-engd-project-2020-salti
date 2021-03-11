@@ -1,15 +1,12 @@
 #from Detector import *
 
-from Detector import YOLOv3_320, YoloJoeHeller
+from Detector import Detector
 from DataLoader import DataLoader
 from Preprocesser import Preprocessor
 from Visualizer import Visualize_all
 from Merger import Merger
 from DataExporter import DataExporter
-import cv2
-from Visualizer import Visualizer
-from Detections import Detections, add_classes
-import os
+
 
 def SALTI(dirs, thres, outputs):
 
@@ -25,16 +22,19 @@ def SALTI(dirs, thres, outputs):
     pp = Preprocessor(output_size=output_size, resize=do_resize)
 
     # Initialize networks
-    net_c = YOLOv3_320()
-    net_t=YoloJoeHeller(thres['thermal_conf'].get(),thres['thermal_nms'].get())
-    RGB_classNames = net_c.classNames #Should be improved and retrieved through a getter (make it private attribute)
+    #net_c = YOLOv3_320()
+    #net_t=YoloJoeHeller(thres['thermal_conf'].get(),thres['thermal_nms'].get())
+
+    net_c = Detector('RGB')
+    net_t = Detector('Thermal', thres['thermal_conf'].get(), thres['thermal_nms'].get())
+    RGB_classNames = net_c.get_classes() #Should be improved and retrieved through a getter (make it private attribute)
 
     # Initialize merger
     merge_c   = Merger( thres['rgb_conf'].get(),     thres['rgb_nms'].get())
     merge_t   = Merger( thres['thermal_conf'].get(), thres['thermal_nms'].get())
     merge_all = Merger( 0.0,                         thres['merge_nms'].get())
 
-    label_type = 'YOLO'
+    label_type = 'PascalVOC'
     exporter = DataExporter(label_type, path_output , RGB_classNames)
 
 

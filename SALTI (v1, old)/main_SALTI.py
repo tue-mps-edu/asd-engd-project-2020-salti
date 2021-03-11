@@ -8,10 +8,6 @@ import detect_thermal as nettherm
 def get_name_ext(filename):
     return os.path.splitext(filename)[0], os.path.splitext(filename)[1]
 
-def SALTI(dirs, thres):
-
-    net_C = 
-
 def label_loop(image_path):
 
     # Initialize the thermal and RGB YOLO
