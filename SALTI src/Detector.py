@@ -1,31 +1,39 @@
 from Detections import *
-
-import argparse
 from utils_thermal.models_thermal import *  # set ONNX_EXPORT in models.py
 from utils_thermal.datasets import *
 
-class Detector():
-    def __init__(self, classnames, weights):
-        self.__classnames = classnames
-        self.__weights = weights
-        pass
+
+class Detector(object):
+    def __init__(self, type=None, nms_threshold=0.5, conf_threshold=0.5):
+        if type == 'RGB':               # Select an RGB method
+            self.net = YOLOv3_320()
+        elif type == 'Thermal':         # Select a Thermal method
+            self.net = YoloJoeHeller(conf_threshold, nms_threshold)
+        else:
+            raise ValueError(type)
+    
+    def detect(self, img):
+        return self.net.detect(img)
+
+    def get_classes(self):
+        return self.net.get_classes()
 
 
+class YOLOv3_320():
+    ''' RGB YOLO v3 object detection '''
 
-class YOLOv3_320(Detector):
     def __init__(self):
         self.__dir_classes = 'Yolo_config/coco-rgb.names'
         self.__dir_cfg = 'Yolo_config/yolov3-rgb.cfg'
         self.__dir_weights = 'Yolo_config/yolov3-rgb.weights'
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
-        self.confThreshold = 0.3     # Confidence threshold for approval of detection
+        self.__confThreshold = 0.3     # Confidence threshold for approval of detection
 
-        self.__net = cv2.dnn.readNetFromDarknet(self.__dir_cfg,self.__dir_weights)
+        self.__net = cv2.dnn.readNetFromDarknet(self.__dir_cfg, self.__dir_weights)
         self.__net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
         self.__net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
-        self.__load_classes()
-        # Define the network
+        self.__classnames = self.__load_classes()
 
     def get_classes(self):
         return self.__classnames
@@ -36,9 +44,9 @@ class YOLOv3_320(Detector):
         with open(self.__dir_classes, 'r') as f:  # using WITH function takes away the need to use CLOSE file function
             classNames = f.read().rstrip('\n').split(
                 '\n')  # rstrip strips off the ("content here") and split splits off for("content here")
-        self.__classnames = classNames
+        return classNames
 
-    def getobjects(self,outputs, img_rgb):
+    def __getobjects(self,outputs, img_rgb):
         hT, wT, cT = img_rgb.shape
         bboxs = []
         classIds = []
@@ -67,36 +75,35 @@ class YOLOv3_320(Detector):
         outputs = self.__net.forward(outputNames)
 
         # Get all objects from the outputs that are above confidence level
-        boxes, classes, confidences = self.getobjects(outputs, image)
+        boxes, classes, confidences = self.__getobjects(outputs, image)
         return Detections(boxes, classes, confidences)
 
 
-#Thermal Detector Class definitiom
-class YoloJoeHeller(Detector):
+class YoloJoeHeller():
+    ''' Thermal YOLO object detection, Joe Hoeller'''
     def __init__(self, confThreshold, nmsThreshold):
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
-        self.confThreshold = confThreshold  # Confidence threshold for approval of detection
-        self.nmsThreshold = nmsThreshold  # Non-maximum suppresion threshold (lower = less number)
-        self.cfg = 'Yolo_config/yolov3-spp.cfg'
-        self.data = 'Yolo_config/coco-thermal.data'
-        self.__weights='Yolo_config\yolov3-thermal.weights'
-        self.img_size=416
-        self.half=False
-        self.device=''
-        self.view_img=False
-
+        self.__confThreshold = confThreshold  # Confidence threshold for approval of detection
+        self.__nmsThreshold = nmsThreshold  # Non-maximum suppresion threshold (lower = less number)
+        self.__dir_cfg = 'Yolo_config/yolov3-spp.cfg'
+        self.__dir_data = 'Yolo_config/coco-thermal.data'
+        self.__dir_weights='Yolo_config\yolov3-thermal.weights'
+        self.__img_size=416
+        self.__half=False
+        self.__device=''
+        self.__view_img=False
 
         with torch.no_grad():
             img_size = (
-            320, 192) if ONNX_EXPORT else self.img_size  # (320, 192) or (416, 256) or (608, 352) for (height, width)
+            320, 192) if ONNX_EXPORT else self.__img_size  # (320, 192) or (416, 256) or (608, 352) for (height, width)
             print("detect_thermal.py, line 32 update config")
-            weights, half, view_img = self.__weights, self.half, self.view_img
+            weights, half, view_img = self.__dir_weights, self.__half, self.__view_img
 
             # Initialize
-            device = torch_utils.select_device(device='cpu' if ONNX_EXPORT else self.device)
+            device = torch_utils.select_device(device='cpu' if ONNX_EXPORT else self.__device)
 
             # Initialize model
-            model = Darknet(self.cfg, img_size)
+            model = Darknet(self.__dir_cfg, img_size)
 
             # Load weights
             attempt_download(weights)
@@ -136,27 +143,30 @@ class YoloJoeHeller(Detector):
                 model.half()
 
             # Get classes and colors
-            classes = load_classes(parse_data_cfg(self.data)['names'])
+            classes = load_classes(parse_data_cfg(self.__dir_data)['names'])
         #        colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(classes))]
 
-        self.model=model
-        self.classes=classes
-        self.device=device
+        self.__model=model
+        self.__classnames=classes
+        self.__device=device
 
-    def convertImage(self,img0):
+    def get_classes(self):
+            return self.__classnames
+
+    def __padd_and_normalize_image(self,img0):
         # Padded resize
-        img = letterbox(img0, new_shape=self.img_size)[0]
+        img = letterbox(img0, new_shape=self.__img_size)[0]
 
         # Normalize RGB
         img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB
-        img = np.ascontiguousarray(img, dtype=np.float16 if self.half else np.float32)  # uint8 to fp16/fp32
+        img = np.ascontiguousarray(img, dtype=np.float16 if self.__half else np.float32)  # uint8 to fp16/fp32
         img /= 255.0  # 0 - 255 to 0.0 - 1.0
 
-        img = torch.from_numpy(img).to(self.device)
+        img = torch.from_numpy(img).to(self.__device)
 
         return img, img0
 
-    def getlists(self,preds, img, im0):
+    def __convert_tensor_to_lists(self,preds, img, im0):
         bboxs, confs, classes = [], [], []
         for i, det in enumerate(preds):
             if det is not None and len(det):
@@ -173,34 +183,40 @@ class YoloJoeHeller(Detector):
         # Run inference
         with torch.no_grad():
             # Get detections
-            img, img0 = self.convertImage(img)
+            img, img0 = self.__padd_and_normalize_image(img)
 
             if img.ndimension() == 3:
                 img = img.unsqueeze(0)
 
-            pred = self.model(img)[0]
+            pred = self.__model(img)[0]
 
-            if self.half:
+            if self.__half:
                 pred = pred.float()
 
             # Apply NMS
-            pred = non_max_suppression(pred, self.confThreshold, self.nmsThreshold)
-            bboxs, confs, classes = self.getlists(pred, img, img0)
+            pred = non_max_suppression(pred, self.__confThreshold, self.__nmsThreshold)
+            bboxs, confs, classes = self.__convert_tensor_to_lists(pred, img, img0)
 
         return Detections(bboxs, classes, confs)
 
 
-
-
-
 def test_thermal():
+    ee = Detector('RGB',0.5,0.5)
     aa=cv2.imread(r'Data\Dataset_V0\images\set00\V000\visible\I00041.jpg')
-    bb=YoloJoeHeller()
+    bb=YoloJoeHeller(0.1,0.1)
     cc = bb.detect(aa)
     print(cc)
+    ee.detect(aa)
+
+
 
 def test_rgb():
+    ee = Detector('Thermal',0.5,0.5)
     a=cv2.imread(r'Data\Dataset_V0\images\set00\V000\visible\I00041.jpg')
     b=YOLOv3_320()
     c=b.detect(a)
+    ee.detect(a)
     print(c)
+
+#test_rgb()
+#test_thermal()
