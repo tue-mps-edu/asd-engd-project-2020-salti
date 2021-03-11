@@ -21,20 +21,22 @@ def SALTI(dirs, thres, outputs):
 
     data = DataLoader(path_rgb,path_thermal,debug=True)
 
-    fake_classes = ['car' for x in range(0,64)]
-    label_type = 'YOLO'
-    exporter = DataExporter(label_type,path_output,fake_classes)
-
     do_resize = (data.img_size[0]==output_size[0] and data.img_size[1]==output_size[1])
     pp = Preprocessor(output_size=output_size, resize=do_resize)
 
     # Initialize networks
-    net_c, net_t = YOLOv3_320(), YoloJoeHeller()
+    net_c = YOLOv3_320()
+    net_t=YoloJoeHeller(thres['thermal_conf'].get(),thres['thermal_nms'].get())
+    RGB_classNames = net_c.classNames #Should be improved and retrieved through a getter (make it private attribute)
 
     # Initialize merger
     merge_c   = Merger( thres['rgb_conf'].get(),     thres['rgb_nms'].get())
     merge_t   = Merger( thres['thermal_conf'].get(), thres['thermal_nms'].get())
     merge_all = Merger( 0.0,                         thres['merge_nms'].get())
+
+    label_type = 'YOLO'
+    exporter = DataExporter(label_type, path_output , RGB_classNames)
+
 
     for file_name, file_ext, img_c, img_t in data:
         #img_output = img_t.copy()
@@ -50,7 +52,7 @@ def SALTI(dirs, thres, outputs):
 
         # Visualize
         V = Visualize_all(img_c.copy(), img_t.copy())
-        V.print(fake_classes,det_c,det_t,det_m)
+        V.print(RGB_classNames,det_c,det_t,det_m)
 
         # Export data
         exporter.export(img_t.shape,file_name, file_ext,det_m, img_t)
