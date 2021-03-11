@@ -6,33 +6,37 @@ from utils_thermal.datasets import *
 
 class Detector():
     def __init__(self, classnames, weights):
-        self.classnames = classnames
-        self.weights = weights
+        self.__classnames = classnames
+        self.__weights = weights
         pass
+
+
 
 class YOLOv3_320(Detector):
     def __init__(self):
-        self.dir_classes = 'Yolo_config/coco-rgb.names'
-        self.dir_cfg = 'Yolo_config/yolov3-rgb.cfg'
-        self.dir_weights = 'Yolo_config/yolov3-rgb.weights'
-        self.whT = 320  # width & height of the image input into YOLO (standard resolution, square)
+        self.__dir_classes = 'Yolo_config/coco-rgb.names'
+        self.__dir_cfg = 'Yolo_config/yolov3-rgb.cfg'
+        self.__dir_weights = 'Yolo_config/yolov3-rgb.weights'
+        self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.confThreshold = 0.3     # Confidence threshold for approval of detection
 
-        self.net = cv2.dnn.readNetFromDarknet(self.dir_cfg,self.dir_weights)
-        self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
-        self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
+        self.__net = cv2.dnn.readNetFromDarknet(self.__dir_cfg,self.__dir_weights)
+        self.__net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+        self.__net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
-        self.getclasses()
+        self.__load_classes()
         # Define the network
 
+    def get_classes(self):
+        return self.__classnames
 
     # Get classes
-    def getclasses(self):
+    def __load_classes(self):
         classNames = []
-        with open(self.dir_classes, 'r') as f:  # using WITH function takes away the need to use CLOSE file function
+        with open(self.__dir_classes, 'r') as f:  # using WITH function takes away the need to use CLOSE file function
             classNames = f.read().rstrip('\n').split(
                 '\n')  # rstrip strips off the ("content here") and split splits off for("content here")
-        self.classNames = classNames
+        self.__classnames = classNames
 
     def getobjects(self,outputs, img_rgb):
         hT, wT, cT = img_rgb.shape
@@ -56,11 +60,11 @@ class YOLOv3_320(Detector):
 
     def detect(self, image):
         # Send image through OpenCV neural net
-        blob = cv2.dnn.blobFromImage(image, 1 / 255, (self.whT, self.whT), [0, 0, 0], 1, False)
-        self.net.setInput(blob)
-        layerNames = self.net.getLayerNames()
-        outputNames = [layerNames[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
-        outputs = self.net.forward(outputNames)
+        blob = cv2.dnn.blobFromImage(image, 1 / 255, (self.__whT, self.__whT), [0, 0, 0], 1, False)
+        self.__net.setInput(blob)
+        layerNames = self.__net.getLayerNames()
+        outputNames = [layerNames[i[0] - 1] for i in self.__net.getUnconnectedOutLayers()]
+        outputs = self.__net.forward(outputNames)
 
         # Get all objects from the outputs that are above confidence level
         boxes, classes, confidences = self.getobjects(outputs, image)
@@ -70,12 +74,12 @@ class YOLOv3_320(Detector):
 #Thermal Detector Class definitiom
 class YoloJoeHeller(Detector):
     def __init__(self, confThreshold, nmsThreshold):
-        self.whT = 320  # width & height of the image input into YOLO (standard resolution, square)
+        self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.confThreshold = confThreshold  # Confidence threshold for approval of detection
         self.nmsThreshold = nmsThreshold  # Non-maximum suppresion threshold (lower = less number)
         self.cfg = 'Yolo_config/yolov3-spp.cfg'
         self.data = 'Yolo_config/coco-thermal.data'
-        self.weights='Yolo_config\yolov3-thermal.weights'
+        self.__weights='Yolo_config\yolov3-thermal.weights'
         self.img_size=416
         self.half=False
         self.device=''
@@ -86,7 +90,7 @@ class YoloJoeHeller(Detector):
             img_size = (
             320, 192) if ONNX_EXPORT else self.img_size  # (320, 192) or (416, 256) or (608, 352) for (height, width)
             print("detect_thermal.py, line 32 update config")
-            weights, half, view_img = self.weights, self.half, self.view_img
+            weights, half, view_img = self.__weights, self.half, self.view_img
 
             # Initialize
             device = torch_utils.select_device(device='cpu' if ONNX_EXPORT else self.device)

@@ -27,7 +27,7 @@ def SALTI(dirs, thres, outputs):
     # Initialize networks
     net_c = YOLOv3_320()
     net_t=YoloJoeHeller(thres['thermal_conf'].get(),thres['thermal_nms'].get())
-    RGB_classNames = net_c.classNames #Should be improved and retrieved through a getter (make it private attribute)
+    RGB_classNames = net_c.get_classes() #Should be improved and retrieved through a getter (make it private attribute)
 
     # Initialize merger
     merge_c   = Merger( thres['rgb_conf'].get(),     thres['rgb_nms'].get())
