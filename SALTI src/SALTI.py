@@ -1,11 +1,11 @@
 #from Detector import *
 
 from Detector import YOLOv3_320, YoloJoeHeller
-from Dataloader import Dataloader
+from DataLoader import DataLoader
 from Preprocesser import Preprocessor
 from Visualizer import Visualize_all
 from Merger import Merger
-from Dataexporter import DataExporter
+from DataExporter import DataExporter
 import cv2
 from Visualizer import Visualizer
 from Detections import Detections, add_classes
@@ -18,11 +18,8 @@ def SALTI(dirs, thres, outputs):
     path_rgb = dirs['rgb'].get()
     path_thermal = dirs['thermal'].get()
     path_output = dirs['output'].get()
-    data = Dataloader(path_rgb,path_thermal,debug=True)
 
-    # fake_classes = ['car' for x in range(0,64)]
-    # label_type = 'YOLO'
-    # exporter = DataExporter(label_type,dirs['output'].get(),net_c.classNames)
+    data = DataLoader(path_rgb,path_thermal,debug=True)
 
     do_resize = (data.img_size[0]==output_size[0] and data.img_size[1]==output_size[1])
     pp = Preprocessor(output_size=output_size, resize=do_resize)
@@ -38,10 +35,11 @@ def SALTI(dirs, thres, outputs):
     merge_all = Merger( 0.0,                         thres['merge_nms'].get())
 
     label_type = 'YOLO'
-    exporter = DataExporter(label_type, dirs['output'].get(), RGB_classNames)
+    exporter = DataExporter(label_type, path_output , RGB_classNames)
 
 
     for file_name, file_ext, img_c, img_t in data:
+        #img_output = img_t.copy()
         if do_resize:
             img_c = pp.process(img_c)
             img_t = pp.process(img_t)
@@ -53,11 +51,11 @@ def SALTI(dirs, thres, outputs):
         det_m = merge_all.NMS(det_m)
 
         # Visualize
-        V = Visualize_all(img_c, img_t)
+        V = Visualize_all(img_c.copy(), img_t.copy())
         V.print(RGB_classNames,det_c,det_t,det_m)
 
         # Export data
-        exporter.export(img_t.shape,file_name,det_m)
-        cv2.imwrite(os.path.join(path_output,file_name+file_ext), img_t)
+        exporter.export(img_t.shape,file_name, file_ext,det_m, img_t)
+
 
 
