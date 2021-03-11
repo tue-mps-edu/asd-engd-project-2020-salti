@@ -4,7 +4,7 @@ from pascal_voc_writer import Writer
 import cv2
 import numpy as np
 from Detections import Detections
-
+import pandas as pd
 
 class DataExporter():
     def __init__(self,label_type, output_path, classnames):
@@ -12,6 +12,9 @@ class DataExporter():
         self.label_type = label_type
         self.output_path = output_path                  #output path + filename
         self.classNames = classnames
+        if (self.label_type == 'YOLO'):
+            df = pd.DataFrame(self.classNames)
+            df.to_csv(os.path.join(self.output_path,'classes.txt'), header=None, index=None)
 
     def export(self, output_size, filename, detections):
         self.filename = filename
@@ -27,7 +30,6 @@ class DataExporter():
             self.df_label = self.CreateYoloLabel()
             self.SaveDataframeAsTXT(self.df_label,self.filename)
             self.SaveDataframeAsTXT(self.df_label,self.filename+'_VAL')
-            assert(not 'CODE MISSING: ADD CLASSES FILE EXPORT!')
 
     def Output_Pascal_VOC(self, df):
     ### Output Pascal VOC format for GUI
@@ -50,6 +52,7 @@ class DataExporter():
         # Save the file to output folder
         try:
             writer.save(self.output_path + '\\' + self.filename + '.xml')
+            writer.save(self.output_path + '\\' +  self.filename+'_val' + '.xml')
         except:
             print('stop here ')
 

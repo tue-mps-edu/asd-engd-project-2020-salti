@@ -21,7 +21,7 @@ def SALTI(dirs, thres, outputs):
     data = Dataloader(path_rgb,path_thermal,debug=True)
 
     fake_classes = ['car' for x in range(0,64)]
-    label_type = 'PascalVOC'
+    label_type = 'YOLO'
     exporter = DataExporter(label_type,dirs['output'].get(),fake_classes)
 
     do_resize = (data.img_size[0]==output_size[0] and data.img_size[1]==output_size[1])
