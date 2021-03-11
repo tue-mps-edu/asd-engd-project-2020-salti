@@ -5,7 +5,7 @@ from Dataloader import Dataloader
 from Preprocesser import Preprocessor
 from Visualizer import Visualize_all
 from Merger import Merger
-from DataExporter import DataExporter
+from Dataexporter import DataExporter
 import cv2
 from Visualizer import Visualizer
 from Detections import Detections, add_classes
