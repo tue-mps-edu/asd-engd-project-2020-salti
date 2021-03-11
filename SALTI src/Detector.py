@@ -4,7 +4,7 @@ from utils_thermal.datasets import *
 
 
 class Detector(object):
-    def __init__(self, type=None, nms_threshold=0.5, conf_threshold=0.5):
+    def __init__(self, type=None, nms_threshold=None, conf_threshold=None):
         if type == 'RGB':               # Select an RGB method
             self.net = YOLOv3_320()
         elif type == 'Thermal':         # Select a Thermal method

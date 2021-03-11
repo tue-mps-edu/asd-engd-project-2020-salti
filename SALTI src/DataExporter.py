@@ -6,6 +6,8 @@ import numpy as np
 from Detections import Detections
 import pandas as pd
 import datetime
+from shutil import copyfile
+import os
 
 class DataExporter():
     def __init__(self,label_type, output_path, classnames):
@@ -14,6 +16,8 @@ class DataExporter():
         self.output_path = os.path.join(output_path,datetime.datetime.now().strftime('%Y.%m.%d_%Hh%Mm%Ss'))
         self.classNames = classnames
         self.try_to_make_folder(self.output_path)
+
+        copyfile('config.ini',os.path.join(self.output_path,'config.ini'))
 
         if (self.label_type == 'YOLO'):
             df = pd.DataFrame(self.classNames)
