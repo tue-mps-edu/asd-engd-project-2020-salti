@@ -1,18 +1,10 @@
-import unittest
-import Dataloader
+from DataLoader import *
 
-class MyTestCase(unittest.TestCase):
-    def test_something(self):
-        path_t = r'D:\KAIST\set00\V000\lwir'
-        path_c = r'D:\KAIST\set00\V000\visible'
-        data = Dataloader(path_c, path_t, [-1,-1], resize=False)
-        for img_c, img_t in data:
-            cv2.imshow("demo",img_c)
-            cv2.waitKey(100)
-
-
-#        self.assertEqual(True, False)
-
-
-if __name__ == '__main__':
-    unittest.main()
+def test_dataloader():
+    path_t = r'D:\KAIST\set00\V000\lwir'
+    path_c = r'D:\KAIST\set00\V000\visible'
+    data = DataLoader(path_c, path_t, output_size=[320,320], debug=True)
+    for img_c, img_t in data:
+        cv2.imshow("rgb",img_c)
+        cv2.imshow("thermal",img_t)
+        cv2.waitKey(100)
