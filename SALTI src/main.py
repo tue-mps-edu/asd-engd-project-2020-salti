@@ -3,7 +3,6 @@ import configparser
 from configurator import *
 from GUI import *
 
-
 def main():
     # Read the configuration file
     parser = configparser.ConfigParser()
