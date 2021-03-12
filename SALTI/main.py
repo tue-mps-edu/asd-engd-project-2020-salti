@@ -1,6 +1,6 @@
 from tkinter import *
 import configparser
-from configurator import *
+from Configurator import *
 from GUI import *
 
 def main():

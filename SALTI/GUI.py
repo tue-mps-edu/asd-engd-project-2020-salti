@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import filedialog
-from configurator import *
+from Configurator import *
 from functools import partial
 from SALTI import SALTI
 

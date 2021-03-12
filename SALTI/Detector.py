@@ -4,6 +4,7 @@ from config_thermal.utils_thermal.datasets import *
 
 
 class Detector(object):
+    ''' Detector class generator'''
     def __init__(self, type=None, nms_threshold=None, conf_threshold=None):
         if type == 'RGB':               # Select an RGB method
             self.net = YOLOv3_320()

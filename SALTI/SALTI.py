@@ -1,5 +1,3 @@
-#from Detector import *
-
 from Detector import Detector
 from DataLoader import DataLoader
 from Preprocesser import Preprocessor
@@ -20,10 +18,6 @@ def SALTI(dirs, thres, outputs):
 
     do_resize = (data.img_size[0]==output_size[0] and data.img_size[1]==output_size[1])
     pp = Preprocessor(output_size=output_size, resize=do_resize)
-
-    # Initialize networks
-    #net_c = YOLOv3_320()
-    #net_t=YoloJoeHeller(thres['thermal_conf'].get(),thres['thermal_nms'].get())
 
     net_c = Detector('RGB')
     net_t = Detector('Thermal', thres['thermal_conf'].get(), thres['thermal_nms'].get())
