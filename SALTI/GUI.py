@@ -69,3 +69,12 @@ def save_and_run(parser,dirs,thres,outputs):
     saveconfig(parser,dirs, thres, outputs)
     SALTI(dirs, thres, outputs)
 
+
+def GUI_add_options(root, outputs):
+
+    OptionList = [
+        "YOLO",
+        "PascalVOC",
+    ]
+    om1 = OptionMenu(root, outputs['label'], *OptionList)
+    om1.grid(row=5, column=2)

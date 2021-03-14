@@ -28,7 +28,7 @@ def SALTI(dirs, thres, outputs):
     merge_t   = Merger( thres['thermal_conf'].get(), thres['thermal_nms'].get())
     merge_all = Merger( 0.0,                         thres['merge_nms'].get())
 
-    label_type = 'YOLO' #'PascalVOC'
+    label_type = outputs['label'].get()
     exporter = DataExporter(label_type, path_output , RGB_classNames)
 
 
