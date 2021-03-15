@@ -128,7 +128,11 @@ class Validator():
         else:
             Accuracy = TP / (TP + FP + FN)
 
-        F1_score = (2 * (Precision * Recall)) / (Precision + Recall)
+        if Precision + Recall == 0:
+            F1_score=0
+        else:
+            F1_score = (2 * (Precision * Recall)) / (Precision + Recall)
+
         print('Image ' + file_name + ': TP = {}, FP is {}, FN is {}'.format(TP, FP, FN))
         print('Image ' + file_name + ': Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision,
                                                                                                           Recall,
@@ -169,7 +173,11 @@ class Validator():
         else:
             Accuracy_tot = TP_tot / (TP_tot + FP_tot + FN_tot)
 
-        F1_score_tot = (2 * (Precision_tot * Recall_tot)) / (Precision_tot + Recall_tot)
+        if Precision_tot + Recall_tot == 0:
+            F1_score_tot = 0
+        else:
+            F1_score_tot = (2 * (Precision_tot * Recall_tot)) / (Precision_tot + Recall_tot)
+
         print('Total: TP = {}, FP is {}, FN is {}'.format(TP_tot, FP_tot, FN_tot))
         print('Total: Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision_tot, Recall_tot,
                                                                                          Accuracy_tot, F1_score_tot))
@@ -177,12 +185,12 @@ class Validator():
 
 
 
-# v = Validator(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.14_18h27m52s',
-#               '.jpg',
-#               0.8)
-#
-# # v.single_Validate('I00120.jpg')
-# v.complete_Validation()
+v = Validator(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.14_18h27m52s',
+              '.jpg',
+              0.8)
+
+# v.single_Validate('I00120.jpg')
+v.complete_Validation()
 
 
 
