@@ -9,11 +9,9 @@ def update_dir_rgb(dirs):
 
 def update_dir_thermal(dirs):
     dirs['thermal'].set(filedialog.askdirectory(initialdir=dirs['thermal'], title="Select Thermal images directory"))
-    #dirs['thermal'].set(str(dirs['thermal']))
 
 def update_dir_output(dirs):
     dirs['output'].set(filedialog.askdirectory(initialdir=dirs['thermal'], title="Select output directory"))
-    #var_O.set(str(dirs['output']))
 
 # Grid configuration
 rows = {"C":1,
@@ -40,8 +38,9 @@ def GUI_add_directory(root, dirs):
 
 scale_rows= [x for x in range(6,11)]
 
+
 def GUI_add_scales(root, thres, scale_rows):
-    Label(root,text=" ").grid(row=4,columnspan=3)
+    Label(root,text=" ").grid(row=4,columnspan=2)
     Label(root,text="    Algorithm settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=5,columnspan=1)
 
     # RGB sliders
