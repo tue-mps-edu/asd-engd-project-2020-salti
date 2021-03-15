@@ -43,15 +43,10 @@ def SALTI(dirs, thres, outputs):
         det_t = net_t.detect(img_t.copy())
         det_m = det_c+det_t
         det_m = merge_all.NMS(det_m)
-
-        # Visualize
-        #V = Visualize_all(img_c.copy(), img_t.copy())
-        #V.print(RGB_classNames,det_c,det_t,det_m)
-
+        
         # Progress window
         V = ProgressWindow(img_c, img_t, det_c, det_t, det_m, RGB_classNames, data.progress)
-        #V.update(data.progress, RGB_classNames, det_c, det_t, det_m)
-        #.update(data.progress,RGB_classNames,det_c,det_t,det_m)
+
         # Export data
         exporter.export(img_t.shape,file_name, file_ext,det_m, img_t)
 
