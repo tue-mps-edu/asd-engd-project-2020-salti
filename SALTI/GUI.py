@@ -109,6 +109,7 @@ def create_gui(root, parser, dirs, thres, outputs):
     Button(root,text="RUN SALTI",command= partial(save_and_run, parser, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=r_out+4,column=col_button_path)
 
 def open_folder(dirs):
+    # Only tested for Windows!
     try:
         os.system("explorer "+str(dirs['output'].get()))
     except:
