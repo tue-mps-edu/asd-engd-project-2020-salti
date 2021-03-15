@@ -58,16 +58,16 @@ def GUI_add_scales(root, thres, scale_rows):
     Label(root,text="Merge NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=scale_rows[4],column=0)
     Scale(root,variable=thres['merge_nms'],resolution=0.05,to=1,width=20,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=scale_rows[4],column=1)
 
-def GUI_add_buttons(root, parser, scale_rows, dirs, thres, outputs):
+def GUI_add_buttons(root, parser, scale_rows, dirs, thres, outputs,preprocess_bool):
     # Saving the configuration
     #Button(root,text="Save configuration",command=partial(saveconfig,parser,dirs, thres, outputs),width=15).grid(row=scale_rows[3],column=cols['dirbutton'])
     # Running SALTI
     # Button(root,text="RUN SALTI",command= partial(SALTI, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=scale_rows[4],column=cols['dirbutton'])
-    Button(root,text="Save/RUN SALTI",command= partial(save_and_run, parser, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=scale_rows[4],column=cols['dirbutton'])
+    Button(root,text="Save/RUN SALTI",command= partial(save_and_run, parser, dirs, thres, outputs,bool),width=15,font='Helvetica 11 bold').grid(row=scale_rows[4],column=cols['dirbutton'])
 
-def save_and_run(parser,dirs,thres,outputs):
+def save_and_run(parser,dirs,thres,outputs,bool):
     saveconfig(parser,dirs, thres, outputs)
-    SALTI(dirs, thres, outputs)
+    SALTI(dirs, thres, outputs,bool)
 
 
 def GUI_add_options(root, outputs):
@@ -78,3 +78,14 @@ def GUI_add_options(root, outputs):
     ]
     om1 = OptionMenu(root, outputs['label'], *OptionList)
     om1.grid(row=5, column=2)
+
+def GUI_add_checkbox(root):
+    boolean_var = BooleanVar()
+    option_yes = Radiobutton(root, text="Yes", variable=boolean_var,
+                                     value=True)
+    option_no = Radiobutton(root, text="No", variable=boolean_var,
+                                    value=False)
+    option_yes.grid(row=6, column=2)
+    option_no.grid(row=7, column=2)
+
+    return boolean_var

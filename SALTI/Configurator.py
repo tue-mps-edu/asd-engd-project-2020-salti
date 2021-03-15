@@ -22,8 +22,9 @@ def ConfigSectionMap(parser):
     section = 'Directories'
     options = parser.options(section)
     for option in options:
-        dirs[option] = StringVar()
+        # dirs[option] = StringVar()
         dirs[option].set(parser.get(section, option))
+        # dirs
     section = 'Thresholds'
     options = parser.options(section)
     for option in options:
