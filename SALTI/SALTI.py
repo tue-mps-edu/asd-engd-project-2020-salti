@@ -8,11 +8,11 @@ from DataExporter import DataExporter
 
 def SALTI(dirs, thres, outputs):
 
-    output_size = [outputs['x_size'].get(), outputs['y_size'].get()]
+    output_size = [outputs['x_size'], outputs['y_size']]
 
-    path_rgb = dirs['rgb'].get()
-    path_thermal = dirs['thermal'].get()
-    path_output = dirs['output'].get()
+    path_rgb = dirs['rgb']
+    path_thermal = dirs['thermal']
+    path_output = dirs['output']
 
     data = DataLoader(path_rgb,path_thermal,debug=True)
 
@@ -20,15 +20,15 @@ def SALTI(dirs, thres, outputs):
     pp = Preprocessor(output_size=output_size, resize=do_resize)
 
     net_c = Detector('RGB')
-    net_t = Detector('Thermal', thres['thermal_conf'].get(), thres['thermal_nms'].get())
+    net_t = Detector('Thermal', thres['thermal_conf'], thres['thermal_nms'])
     RGB_classNames = net_c.get_classes() #Should be improved and retrieved through a getter (make it private attribute)
 
     # Initialize merger
-    merge_c   = Merger( thres['rgb_conf'].get(),     thres['rgb_nms'].get())
-    merge_t   = Merger( thres['thermal_conf'].get(), thres['thermal_nms'].get())
-    merge_all = Merger( 0.0,                         thres['merge_nms'].get())
+    merge_c   = Merger( thres['rgb_conf'],     thres['rgb_nms'])
+    merge_t   = Merger( thres['thermal_conf'], thres['thermal_nms'])
+    merge_all = Merger( 0.0,                         thres['merge_nms'])
 
-    label_type = outputs['label'].get()
+    label_type = outputs['label']
     exporter = DataExporter(label_type, path_output , RGB_classNames)
 
 
