@@ -63,7 +63,7 @@ class DataLoader():
             img_T = cv2.imread(path_T)                      # Read thermal image
 
             self.count = self.count + 1                     # Update to next image
-            self.progress = (self.count/self.nr_imgs)*100   # Update progress
+            self.progress = (self.count/self.nr_imgs)   # Update progress
 
 
             yield file_name, file_ext, img_C, img_T
