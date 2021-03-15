@@ -67,9 +67,11 @@ def GUI_add_buttons(root, parser, scale_rows, dirs, thres, outputs):
 def save_and_run(parser,dirs,thres,outputs):
     saveconfig(parser,dirs, thres, outputs)
 
+    dirs_dict=py_dictionaries(dirs) #Changing tkinter dictionaries to normal python dictionaries
+    thres_dict = py_dictionaries(thres) #Changing tkinter dictionaries to normal python dictionaries
+    outputs_dict = py_dictionaries(outputs) #Changing tkinter dictionaries to normal python dictionaries
 
-
-    SALTI(dirs, thres, outputs)
+    SALTI(dirs_dict, thres_dict, outputs_dict)
 
 
 def GUI_add_options(root, outputs):
@@ -91,3 +93,10 @@ def GUI_add_checkbox(root):
     option_no.grid(row=7, column=2)
 
     return boolean_var
+
+
+def py_dictionaries(tkinter_dict):
+    py_dict = {}
+    for option in tkinter_dict:
+        py_dict[option]=tkinter_dict[option].get()
+    return py_dict
