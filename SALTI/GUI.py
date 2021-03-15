@@ -53,7 +53,7 @@ def create_gui(root, parser, dirs, thres, outputs):
         ONE LINE SPACING
     '''
     r_empty = r_path+4
-    Label(root,text=" ").grid(row=r_empty,columnspan=4)
+    Label(root,text=" ").grid(row=r_empty,columnspan=3)
     '''
         ALGORITHM SETTINGS
     '''
@@ -82,7 +82,8 @@ def create_gui(root, parser, dirs, thres, outputs):
         OUTPUT SETTINGS
     '''
     #Label(root,text=" ").grid(row=r_empty,columnspan=2)
-    r_out = r_alg+8
+    Label(root,text=" ").grid(row=r_alg+8,columnspan=3)
+    r_out = r_alg+9
     # Header
     Label(root,text="    Output settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_out,column=0,columnspan=2)
     # Output size
