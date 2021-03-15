@@ -3,6 +3,8 @@ from tkinter import filedialog
 from Configurator import *
 from functools import partial
 from SALTI import SALTI
+import os
+from sys import platform
 
 def update_dir_rgb(dirs):
     dirs['rgb'].set(filedialog.askdirectory(initialdir=dirs['rgb'],title="Select RGB images directory"))
@@ -20,6 +22,10 @@ def create_gui(root, parser, dirs, thres, outputs):
     #raise NotImplementedError
     bool_pp = BooleanVar()
     bool_val = BooleanVar()
+    text_var_x = IntVar()
+    text_var_x.set(640)
+    text_var_y = IntVar()
+    text_var_y.set(512)
     '''
         PATH SETTINGS
     '''
@@ -78,26 +84,36 @@ def create_gui(root, parser, dirs, thres, outputs):
     r_out = r_alg+8
     # Header
     Label(root,text="    Output settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_out,column=0,columnspan=2)
-    # Validation checkbox
-    Label(root,text="Validation enabled:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+1,column=0)
-    Checkbutton(root, width = 15, variable = bool_val, justify=LEFT, anchor="w").grid(sticky=W, row=r_out+1, column=1)
+    # Output size
+    Label(root,text="Image size x:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+1,column=0)
+    Entry(root, textvariable=text_var_x, justify=LEFT,width=20).grid(sticky = W,row=r_out+1,column=1)
+    Label(root,text="Image size y:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+2,column=0)
+    Entry(root, textvariable=text_var_y, justify=LEFT,width=20).grid(sticky = W,row=r_out+2,column=1)
     # Output format
     OptionList = [
         "YOLO",
         "PascalVOC",
     ]
-    Label(root,text="Output label format:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+2,column=0)
+    Label(root,text="Output label format:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+3,column=0)
     om1 = OptionMenu(root,  outputs['label'], *OptionList)
     om1.config(width=15)
-    om1.grid(sticky=W, row=r_out+2, column=1)
-
-
-
+    om1.grid(sticky=W, row=r_out+3, column=1)
+    # Validation checkbox
+    Label(root,text="Validation enabled:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+4,column=0)
+    Checkbutton(root, width = 15, variable = bool_val, justify=LEFT, anchor="w").grid(sticky=W, row=r_out+4, column=1)
 
     '''
         RUNNING SALTI
     '''
-    Button(root,text="Save/RUN SALTI",command= partial(save_and_run, parser, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=r_out+2,column=col_button_path)
+    Button(root,text="Open output folder",command= partial(open_folder,dirs),width=15,font='Helvetica 11').grid(row=r_out+3,column=col_button_path)
+    Button(root,text="RUN SALTI",command= partial(save_and_run, parser, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=r_out+4,column=col_button_path)
+
+def open_folder(dirs):
+    try:
+        os.system("explorer "+str(dirs['output'].get()))
+    except:
+        raise NotImplementedError
+
 
 def save_and_run(parser,dirs,thres,outputs):
     saveconfig(parser,dirs, thres, outputs)
