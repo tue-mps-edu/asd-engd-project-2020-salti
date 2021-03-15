@@ -22,6 +22,7 @@ def create_gui(root, parser, dirs, thres, outputs):
     #raise NotImplementedError
     bool_pp = BooleanVar()
     bool_val = BooleanVar()
+    bool_enh = BooleanVar()
     text_var_x = IntVar()
     text_var_x.set(640)
     text_var_y = IntVar()
@@ -101,12 +102,15 @@ def create_gui(root, parser, dirs, thres, outputs):
     # Validation checkbox
     Label(root,text="Validation enabled:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+4,column=0)
     Checkbutton(root, width = 15, variable = bool_val, justify=LEFT, anchor="w").grid(sticky=W, row=r_out+4, column=1)
+    # Output enhanced image
+    Label(root,text="Enhanced visibility:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+5,column=0)
+    Checkbutton(root, width = 15, variable = bool_enh, justify=LEFT, anchor="w").grid(sticky=W, row=r_out+5, column=1)
 
     '''
         RUNNING SALTI
     '''
-    Button(root,text="Open output folder",command= partial(open_folder,dirs),width=15,font='Helvetica 11').grid(row=r_out+3,column=col_button_path)
-    Button(root,text="RUN SALTI",command= partial(save_and_run, parser, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=r_out+4,column=col_button_path)
+    Button(root,text="Open output folder",command= partial(open_folder,dirs),width=15,font='Helvetica 11').grid(row=r_out+4,column=col_button_path)
+    Button(root,text="RUN SALTI",command= partial(save_and_run, parser, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=r_out+5,column=col_button_path)
 
 def open_folder(dirs):
     # Only tested for Windows!
