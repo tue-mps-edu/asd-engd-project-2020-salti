@@ -1,7 +1,7 @@
 from Detector import Detector
 from DataLoader import DataLoader
 from Preprocesser import Preprocessor
-from Visualizer import Visualize_all
+from Visualizer import ProgressWindow
 from Merger import Merger
 from DataExporter import DataExporter
 
@@ -39,14 +39,13 @@ def SALTI(dirs, thres, outputs):
             img_t = pp.process(img_t)
 
         # Do detections and apply non-maximum suppression on BBOXes
-        det_c = merge_c.NMS(net_c.detect(img_c))
-        det_t = net_t.detect(img_t)
+        det_c = merge_c.NMS(net_c.detect(img_c.copy()))
+        det_t = net_t.detect(img_t.copy())
         det_m = det_c+det_t
         det_m = merge_all.NMS(det_m)
-
-        # Visualize
-        V = Visualize_all(img_c.copy(), img_t.copy())
-        V.print(RGB_classNames,det_c,det_t,det_m)
+        
+        # Progress window
+        V = ProgressWindow(img_c, img_t, det_c, det_t, det_m, RGB_classNames, data.progress)
 
         # Export data
         exporter.export(img_t.shape,file_name, file_ext,det_m, img_t)
