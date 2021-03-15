@@ -34,7 +34,7 @@ class ProgressWindow():
         stacked_imgs = np.hstack((self.imgs_rz[0], self.imgs_rz[1], self.imgs_rz[2]))
         self.create_bar_from_img(stacked_imgs, progress)
         self.window = np.concatenate((stacked_imgs, self.bar_progress),axis=0)
-        cv2.imshow('merged', self.window)
+        cv2.imshow('SALTI labeling progress', self.window)
         cv2.waitKey(1)
 
     def create_bar_from_img(self, stacked_imgs, progress):
