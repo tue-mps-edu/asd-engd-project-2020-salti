@@ -86,6 +86,7 @@ class Validator():
 
             # Calculate the IoU (predicted YO box vs ground truth GU box) and set threshold
             IoU = self.get_iou([x_YO_low, y_YO_low, x_YO_high, y_YO_high], [x_GU_low, y_GU_low, x_GU_high, y_GU_high])
+            print(IoU)
             '''
             #compare the minimum with diameter of the larger box
             GUI_diam = np.sqrt( (GU['w'][GUI_min_ind]) **2 + (GU['h'][GUI_min_ind]) **2 )
@@ -185,7 +186,7 @@ class Validator():
 
 
 
-v = Validator(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.14_18h27m52s',
+v = Validator(r'D:\Courses\Block 2\Inhouse-project\GIT\asd-pdeng-project-2020-developer\SALTI\Data\KAIST_DAY\Output\2021.03.16_10h21m49s',
               '.jpg',
               0.8)
 

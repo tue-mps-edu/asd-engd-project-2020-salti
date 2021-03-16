@@ -95,8 +95,7 @@ class DataExporter():
         j = 0
         for i in range(len(self.detections.boxes)):
             box, conf, classid = self.detections.boxes[i], self.detections.confidences[i], self.detections.classes[i]
-            x, y, w, h = int(box[0] + box[2] / 2), int(box[1] + box[3] / 2), box[2], box[
-                3]  # Bounding box is X_topleft,Y_topleft while we need X_cent, Y_cent for GUI
+            x, y, w, h = int(box[0] + box[2] / 2), int(box[1] + box[3] / 2), box[2], box[3]  # Bounding box is X_topleft,Y_topleft while we need X_cent, Y_cent for GUI
 
             # Storing each picture's results in its dataframe
             df_csv = df_csv.append(pd.Series(0, index=df_csv.columns), ignore_index=True)
