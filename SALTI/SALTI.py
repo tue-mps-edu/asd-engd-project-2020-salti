@@ -6,37 +6,35 @@ from Merger import Merger
 from DataExporter import DataExporter
 
 
-def SALTI(dirs, thres, outputs):
+def SALTI(config):
 
-    output_size = [outputs['x_size'].get(), outputs['y_size'].get()]
+    output_size = [config['int_output_x_size'], config['int_output_y_size']]
 
-    path_rgb = dirs['rgb'].get()
-    path_thermal = dirs['thermal'].get()
-    path_output = dirs['output'].get()
+    path_rgb = config['str_dir_rgb']
+    path_thermal = config['str_dir_thermal']
+    path_output = config['str_dir_output']
 
     data = DataLoader(path_rgb,path_thermal,debug=True)
 
-    do_resize = (data.img_size[0]==output_size[0] and data.img_size[1]==output_size[1])
-    pp = Preprocessor(output_size=output_size, resize=do_resize)
+    do_resize = not(data.img_size[0]==output_size[0] and data.img_size[1]==output_size[1])
+    pp = Preprocessor(output_size=output_size)
 
     net_c = Detector('RGB')
-    net_t = Detector('Thermal', thres['thermal_conf'].get(), thres['thermal_nms'].get())
+    net_t = Detector('Thermal', config['dbl_thermal_conf'], config['dbl_thermal_nms'])
     RGB_classNames = net_c.get_classes() #Should be improved and retrieved through a getter (make it private attribute)
 
     # Initialize merger
-    merge_c   = Merger( thres['rgb_conf'].get(),     thres['rgb_nms'].get())
-    merge_t   = Merger( thres['thermal_conf'].get(), thres['thermal_nms'].get())
-    merge_all = Merger( 0.0,                         thres['merge_nms'].get())
+    merge_c   = Merger( config['dbl_rgb_conf'],     config['dbl_rgb_nms'])
+    merge_t   = Merger( config['dbl_thermal_conf'], config['dbl_thermal_nms'])
+    merge_all = Merger( 0.0,                         config['dbl_merge_nms'])
 
-    label_type = outputs['label'].get()
+    label_type = config['str_label']
     exporter = DataExporter(label_type, path_output , RGB_classNames)
 
 
     for file_name, file_ext, img_c, img_t in data:
-        #img_output = img_t.copy()
-        if do_resize:
-            img_c = pp.process(img_c)
-            img_t = pp.process(img_t)
+        img_c = pp.process(img_c, do_resize, False)
+        img_t = pp.process(img_t, do_resize, config['bln_dofilter'])
 
         # Do detections and apply non-maximum suppression on BBOXes
         det_c = merge_c.NMS(net_c.detect(img_c.copy()))

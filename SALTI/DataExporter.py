@@ -1,9 +1,5 @@
-import pandas as pd
-from config_thermal.utils_thermal.utils import *
 from pascal_voc_writer import Writer
 import cv2
-import numpy as np
-from Detections import Detections
 import pandas as pd
 import datetime
 from shutil import copyfile

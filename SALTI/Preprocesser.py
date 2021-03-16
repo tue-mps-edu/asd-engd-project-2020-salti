@@ -1,20 +1,18 @@
 import cv2
 
 class Preprocessor():
-    def __init__(self,output_size=[640,512],resize=False, padding=False):
+    def __init__(self,output_size=[640,512]):
         self.output_size = output_size  # [x,y]
-        self.do_resize = resize
-        self.do_padding = padding
 
-    def process(self, img):
-        if self.do_resize:
+    def process(self, img, do_resize=False, do_filter=False):
+        if do_resize:
             img = self.resize_image(img)
-        if self.do_padding:
-            img = self.add_padding(img)
+        if do_filter:
+            img = self.filter_image(img)
         return img
 
     def resize_image(self, img_in):
         return cv2.resize(img_in, (self.output_size[0],self.output_size[1]), interpolation=cv2.INTER_AREA)
 
-    def add_padding(self, img_in):
+    def filter_image(self, img_in):
         return img_in

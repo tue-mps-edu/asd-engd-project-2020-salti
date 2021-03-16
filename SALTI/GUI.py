@@ -3,78 +3,127 @@ from tkinter import filedialog
 from Configurator import *
 from functools import partial
 from SALTI import SALTI
+import os
+from sys import platform
 
-def update_dir_rgb(dirs):
-    dirs['rgb'].set(filedialog.askdirectory(initialdir=dirs['rgb'],title="Select RGB images directory"))
+def update_dir_rgb(config):
+    config['str_dir_rgb'].set(filedialog.askdirectory(initialdir=config['str_dir_rgb'],title="Select RGB images directory"))
 
-def update_dir_thermal(dirs):
-    dirs['thermal'].set(filedialog.askdirectory(initialdir=dirs['thermal'], title="Select Thermal images directory"))
-    #dirs['thermal'].set(str(dirs['thermal']))
+def update_dir_thermal(config):
+    config['str_dir_thermal'].set(filedialog.askdirectory(initialdir=config['str_dir_thermal'], title="Select Thermal images directory"))
 
-def update_dir_output(dirs):
-    dirs['output'].set(filedialog.askdirectory(initialdir=dirs['thermal'], title="Select output directory"))
-    #var_O.set(str(dirs['output']))
+def update_dir_output(config):
+    config['str_dir_output'].set(filedialog.askdirectory(initialdir=config['str_dir_thermal'], title="Select output directory"))
 
-# Grid configuration
-rows = {"C":1,
-        "T":2,
-        "O":3}
-cols = {"dirheader":0,
-        "dirprint":1,
-        "dirbutton":2}
-
-def GUI_add_directory(root, dirs):
-    Label(root,text="    Image directories", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=0,columnspan=1)
+def create_gui(root, parser, config):
+    '''
+        PATH SETTINGS
+    '''
+    r_path = 1
+    col_label_path = 0
+    col_text_path = 1
+    col_button_path = 3
+    span = 2
+    # Header
+    Label(root,text="    Image directories", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_path,columnspan=4)
     # Setting the RGB directory
-    Label(root,text="RGB image directory:", justify=LEFT, anchor="w").grid(sticky = W,row=rows['C'],column=cols['dirheader'])
-    Label(root,textvariable=dirs['rgb'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=rows['C'],column=cols['dirprint'])
-    Button(root,text="Set RGB path",command=partial(update_dir_rgb, dirs),width=15).grid(row=rows['C'],column=cols['dirbutton'])
+    Label(root,text="RGB image directory:", justify=LEFT, anchor="w").grid(sticky = W,row=r_path+1,column=col_label_path)
+    Label(root,textvariable=config['str_dir_rgb'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=r_path+1,column=col_text_path, columnspan=span)
+    Button(root,text="Set RGB path",command=partial(update_dir_rgb, config),width=15).grid(row=r_path+1,column=col_button_path)
     # Setting the thermal directory
-    Label(root,text="Thermal image directory:", justify=LEFT).grid(sticky = W,row=rows['T'],column=cols['dirheader'])
-    Label(root,textvariable=dirs['thermal'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=rows['T'],column=cols['dirprint'])
-    Button(root,text="Set thermal path",command=partial(update_dir_thermal, dirs),width=15).grid(row=rows['T'],column=cols['dirbutton'])
+    Label(root,text="Thermal image directory:", justify=LEFT).grid(sticky = W,row=r_path+2,column=col_label_path)
+    Label(root,textvariable=config['str_dir_thermal'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=r_path+2,column=col_text_path, columnspan=span)
+    Button(root,text="Set thermal path",command=partial(update_dir_thermal, config),width=15).grid(row=r_path+2,column=col_button_path)
     # Setting the output directory
-    Label(root,text="Output directory:", justify=LEFT).grid(sticky = W,row=rows['O'],column=cols['dirheader'])
-    Label(root,textvariable=dirs['output'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=rows['O'],column=cols['dirprint'])
-    Button(root,text="Set output path",command=partial(update_dir_output, dirs),width=15).grid(row=rows['O'],column=cols['dirbutton'])
-
-scale_rows= [x for x in range(6,11)]
-
-def GUI_add_scales(root, thres, scale_rows):
-    Label(root,text=" ").grid(row=4,columnspan=3)
-    Label(root,text="    Algorithm settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=5,columnspan=1)
-
+    Label(root,text="Output directory:", justify=LEFT).grid(sticky = W,row=r_path+3,column=col_label_path)
+    Label(root,textvariable=config['str_dir_output'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=r_path+3,column=col_text_path, columnspan=span)
+    Button(root,text="Set output path",command=partial(update_dir_output, config),width=15).grid(row=r_path+3,column=col_button_path)
+    '''
+        ONE LINE SPACING
+    '''
+    r_empty = r_path+4
+    Label(root,text=" ").grid(row=r_empty,columnspan=3)
+    '''
+        ALGORITHM SETTINGS
+    '''
+    r_alg = r_empty+1
+    # Header
+    scale_width = 15
+    scale_length = 130
+    Label(root,text="    Algorithm settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_alg+1,column=0,columnspan=2)
+    # Preprocessing check button
+    Label(root,text="Preprocessing enabled:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+2,column=0)
+    Checkbutton(root, width = 15, variable = config['bln_dofilter'], justify=LEFT, anchor="w").grid(sticky=W, row=r_alg+2, column=1)
     # RGB sliders
-    Label(root,text="RGB NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=scale_rows[0],column=0)
-    Scale(root,variable=thres['rgb_nms'],resolution=0.05,to=1,width=20,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=scale_rows[0],column=1)
-    Label(root,text="RGB Confidence level:", justify=LEFT, anchor="w").grid(sticky = W,row=scale_rows[1],column=0)
-    Scale(root,variable=thres['rgb_conf'],resolution=0.05,to=1,width=20,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=scale_rows[1],column=1)
+    Label(root,text="RGB NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+3,column=0)
+    Scale(root,variable=config['dbl_rgb_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+3,column=1)
+    Label(root,text="RGB Confidence level:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+4,column=0)
+    Scale(root,variable=config['dbl_rgb_conf'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+4,column=1)
     # Thermal Sliders
-    Label(root,text="Thermal NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=scale_rows[2],column=0)
-    Scale(root,variable=thres['thermal_nms'],resolution=0.05,to=1,width=20,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=scale_rows[2],column=1)
-    Label(root,text="Thermal Confidence level:", justify=LEFT, anchor="w",width=25).grid(sticky = W,row=scale_rows[3],column=0)
-    Scale(root,variable=thres['thermal_conf'],resolution=0.05,to=1,width=20,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=scale_rows[3],column=1)
+    Label(root,text="Thermal NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+5,column=0)
+    Scale(root,variable=config['dbl_thermal_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+5,column=1)
+    Label(root,text="Thermal Confidence level:", justify=LEFT, anchor="w",width=25).grid(sticky = W,row=r_alg+6,column=0)
+    Scale(root,variable=config['dbl_thermal_conf'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+6,column=1)
     # Merge sliders
-    Label(root,text="Merge NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=scale_rows[4],column=0)
-    Scale(root,variable=thres['merge_nms'],resolution=0.05,to=1,width=20,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=scale_rows[4],column=1)
-
-def GUI_add_buttons(root, parser, scale_rows, dirs, thres, outputs):
-    # Saving the configuration
-    #Button(root,text="Save configuration",command=partial(saveconfig,parser,dirs, thres, outputs),width=15).grid(row=scale_rows[3],column=cols['dirbutton'])
-    # Running SALTI
-    # Button(root,text="RUN SALTI",command= partial(SALTI, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=scale_rows[4],column=cols['dirbutton'])
-    Button(root,text="Save/RUN SALTI",command= partial(save_and_run, parser, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=scale_rows[4],column=cols['dirbutton'])
-
-def save_and_run(parser,dirs,thres,outputs):
-    saveconfig(parser,dirs, thres, outputs)
-    SALTI(dirs, thres, outputs)
-
-
-def GUI_add_options(root, outputs):
-
+    Label(root,text="Merge NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+7,column=0)
+    Scale(root,variable=config['dbl_merge_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+7,column=1)
+    '''
+        OUTPUT SETTINGS
+    '''
+    #Label(root,text=" ").grid(row=r_empty,columnspan=2)
+    Label(root,text=" ").grid(row=r_alg+8,columnspan=3)
+    r_out = r_alg+9
+    # Header
+    Label(root,text="    Output settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_out,column=0,columnspan=2)
+    # Output size
+    Label(root,text="Image width:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+1,column=0)
+    Entry(root, textvariable=config['int_output_x_size'], justify=LEFT,width=20).grid(sticky = W,row=r_out+1,column=1)
+    Label(root,text="Image height:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+2,column=0)
+    Entry(root, textvariable=config['int_output_y_size'], justify=LEFT,width=20).grid(sticky = W,row=r_out+2,column=1)
+    # Output format
     OptionList = [
         "YOLO",
         "PascalVOC",
     ]
-    om1 = OptionMenu(root, outputs['label'], *OptionList)
-    om1.grid(row=5, column=2)
+    Label(root,text="Output label format:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+3,column=0)
+    om1 = OptionMenu(root,  config['str_label'], *OptionList)
+    om1.config(width=15)
+    om1.grid(sticky=W, row=r_out+3, column=1)
+    # Validation checkbox
+    Label(root,text="Validation enabled:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+4,column=0)
+    Checkbutton(root, width = 15, variable = config['bln_validationcopy'], justify=LEFT, anchor="w").grid(sticky=W, row=r_out+4, column=1)
+    # Output enhanced image
+    Label(root,text="Enhanced visibility:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+5,column=0)
+    Checkbutton(root, width = 15, variable = config['bln_enhancevisibility'], justify=LEFT, anchor="w").grid(sticky=W, row=r_out+5, column=1)
+    # Padding
+    Label(root,text="  ", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+6,column=3)
+    Label(root,text="  ", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+5,column=4)
+
+    '''
+        RUNNING SALTI
+    '''
+    Button(root,text="Open output folder",command= partial(open_folder,config),width=15,font='Helvetica 11').grid(row=r_out+4,column=col_button_path)
+    Button(root,text="RUN SALTI",command= partial(save_and_run, parser, config),width=15,font='Helvetica 11 bold').grid(row=r_out+5,column=col_button_path)
+
+
+def open_folder(config):
+    # Only tested for Windows!
+    try:
+        path = str(config['str_dir_output'].get())
+        path_w = path.replace(r"/", "\\")
+        os.system("explorer "+path_w)
+    except:
+        raise NotImplementedError
+
+
+def save_and_run(parser,config):
+    saveconfig(parser, config)
+
+    config_dict = tkinterDict_to_pythonDict(config)
+    SALTI(config_dict)
+
+def tkinterDict_to_pythonDict(tkinter_dict):
+    py_dict = {}
+    for option in tkinter_dict:
+        py_dict[option]=tkinter_dict[option].get()
+    return py_dict
