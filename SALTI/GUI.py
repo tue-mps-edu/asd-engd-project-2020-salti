@@ -17,17 +17,6 @@ def update_dir_output(config):
 
 def create_gui(root, parser, config):
     '''
-        BOOLEANS TO BE ADDED TO GUI
-    '''
-    #raise NotImplementedError
-    #config['bln_preprocessing'] = BooleanVar()
-    #config['bln_validationcopy'] = BooleanVar()
-    #config['bln_enhancevisibility'] = BooleanVar()
-    #config['int_output_x_size'] = IntVar()
-    #config['int_output_x_size'].set(640)
-    #config['int_output_y_size'] = IntVar()
-    #config['int_output_y_size'].set(512)
-    '''
         PATH SETTINGS
     '''
     r_path = 1
@@ -110,7 +99,6 @@ def create_gui(root, parser, config):
     Label(root,text="  ", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+6,column=3)
     Label(root,text="  ", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+5,column=4)
 
-
     '''
         RUNNING SALTI
     '''
@@ -121,7 +109,9 @@ def create_gui(root, parser, config):
 def open_folder(config):
     # Only tested for Windows!
     try:
-        os.system("explorer "+str(config['str_dir_output'].get()))
+        path = str(config['str_dir_output'].get())
+        path_w = path.replace(r"/", "\\")
+        os.system("explorer "+path_w)
     except:
         raise NotImplementedError
 
