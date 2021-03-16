@@ -53,7 +53,7 @@ def create_gui(root, parser, config):
     Label(root,text="    Algorithm settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_alg+1,column=0,columnspan=2)
     # Preprocessing check button
     Label(root,text="Preprocessing enabled:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+2,column=0)
-    Checkbutton(root, width = 15, variable = config['bln_preprocessing'], justify=LEFT, anchor="w").grid(sticky=W, row=r_alg+2, column=1)
+    Checkbutton(root, width = 15, variable = config['bln_dofilter'], justify=LEFT, anchor="w").grid(sticky=W, row=r_alg+2, column=1)
     # RGB sliders
     Label(root,text="RGB NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+3,column=0)
     Scale(root,variable=config['dbl_rgb_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+3,column=1)
