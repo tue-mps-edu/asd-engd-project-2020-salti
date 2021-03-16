@@ -6,11 +6,11 @@ class Preprocessor():
         self.do_resize = resize
         self.do_padding = padding
 
-    def process(self, img):
-        if self.do_resize:
-            img = self.resize_image(img)
-        if self.do_padding:
-            img = self.add_padding(img)
+    def process(self, img, do_resize=False, do_filter=False):
+        if do_resize:
+            img = resize_image(img)
+        if do_filter:
+            img = add_padding(img)
         return img
 
     def resize_image(self, img_in):
