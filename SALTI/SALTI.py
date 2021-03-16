@@ -29,7 +29,7 @@ def SALTI(config):
     merge_all = Merger( 0.0,                         config['dbl_merge_nms'])
 
     label_type = config['str_label']
-    exporter = DataExporter(label_type, path_output , RGB_classNames)
+    exporter = DataExporter(label_type, path_output , RGB_classNames, config['bln_validationcopy'])
 
 
     for file_name, file_ext, img_c, img_t in data:
