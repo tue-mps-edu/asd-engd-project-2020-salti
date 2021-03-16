@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 
 class Preprocessor():
+
     def __init__(self,output_size=[640,512], resize=False, padding=False, enhancing=False):
         self.output_size = output_size  # [x,y]
         self.do_resize = resize
@@ -10,7 +11,7 @@ class Preprocessor():
 
     def process(self, img, output_size):
 
-        if (img.shape[0] == output_size[0]) and (img.shape[1] == output_size[1]):
+        if not(img.shape[0] == output_size[0] and img.shape[1] == output_size[1]):
             if self.do_resize:
                 img = self.resize_image(img)
 
@@ -25,7 +26,7 @@ class Preprocessor():
     def resize_image(self, img_in):
         return cv2.resize(img_in, (self.output_size[0],self.output_size[1]), interpolation=cv2.INTER_AREA)
 
-    def add_padding(self, img_in):
+    def filter_image(self, img_in):
         return img_in
 
     def add_enhancing(self, img_in):

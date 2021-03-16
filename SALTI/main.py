@@ -1,6 +1,3 @@
-from tkinter import *
-import configparser
-from Configurator import *
 from GUI import *
 
 def main():
@@ -10,12 +7,9 @@ def main():
 
     root = Tk()     # Initialize widget
     root.title("SALTI")
-    dirs, thres, outputs = ConfigSectionMap(parser)
-
-    GUI_add_directory(root, dirs)
-    GUI_add_scales(root, thres, scale_rows)
-    GUI_add_buttons(root, parser, scale_rows, dirs, thres, outputs)
-    GUI_add_options(root,outputs)
+    config = ConfigSectionMap(parser, 'Config')
+    saveconfig(parser,config)
+    create_gui(root,parser,config)
 
     root.mainloop()
 

@@ -1,17 +1,14 @@
-import pandas as pd
-from config_thermal.utils_thermal.utils import *
 from pascal_voc_writer import Writer
 import cv2
-import numpy as np
-from Detections import Detections
 import pandas as pd
 import datetime
 from shutil import copyfile
 import os
 
 class DataExporter():
-    def __init__(self,label_type, output_path, classnames):
+    def __init__(self,label_type, output_path, classnames, do_copy=False):
         # Initialize variables
+        self.make_validation_copy = do_copy
         self.label_type = label_type
         self.output_path = os.path.join(output_path,datetime.datetime.now().strftime('%Y.%m.%d_%Hh%Mm%Ss'))
         self.classNames = classnames
@@ -36,7 +33,8 @@ class DataExporter():
         elif (self.label_type == 'YOLO'):
             self.df_label = self.create_yolo_label()
             self.save_dataframe_as_txt(self.df_label,self.filename)
-            self.save_dataframe_as_txt(self.df_label,self.filename+'_VAL')
+            if self.make_validation_copy:
+                self.save_dataframe_as_txt(self.df_label,self.filename+'_VAL')
 
         # Save the image
         self.save_opencv_image(img,file_ext)
@@ -62,7 +60,8 @@ class DataExporter():
         # Save the file to output folder
         try:
             writer.save(self.output_path + '\\' + self.filename + '.xml')
-            writer.save(self.output_path + '\\' +  self.filename+'_val' + '.xml')
+            if self.make_validation_copy:
+                writer.save(self.output_path + '\\' +  self.filename+'_val' + '.xml')
         except:
             print('stop here ')
 
