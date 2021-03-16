@@ -8,7 +8,7 @@ from DataExporter import DataExporter
 
 def SALTI(config):
 
-    output_size = [config['int_x_size'], config['int_y_size']]
+    output_size = [config['int_output_x_size'], config['int_output_y_size']]
 
     path_rgb = config['str_dir_rgb']
     path_thermal = config['str_dir_thermal']
