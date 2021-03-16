@@ -33,10 +33,8 @@ def SALTI(dirs, thres, outputs):
 
 
     for file_name, file_ext, img_c, img_t in data:
-        #img_output = img_t.copy()
-        if do_resize:
-            img_c = pp.process(img_c)
-            img_t = pp.process(img_t)
+        img_c = pp.process(img_c, do_resize, False)
+        img_t = pp.process(img_t, do_resize, config['bln_dofilter'])
 
         # Do detections and apply non-maximum suppression on BBOXes
         det_c = merge_c.NMS(net_c.detect(img_c))

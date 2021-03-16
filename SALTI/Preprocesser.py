@@ -1,7 +1,7 @@
 import cv2
 
 class Preprocessor():
-    def __init__(self,output_size=[640,512],resize=False, padding=False):
+    def __init__(self,output_size=[640,512],resize=False padding=False):
         self.output_size = output_size  # [x,y]
         self.do_resize = resize
         self.do_padding = padding
