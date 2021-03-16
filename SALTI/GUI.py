@@ -6,16 +6,16 @@ from SALTI import SALTI
 import os
 from sys import platform
 
-def update_dir_rgb(dirs):
-    dirs['rgb'].set(filedialog.askdirectory(initialdir=dirs['rgb'],title="Select RGB images directory"))
+def update_dir_rgb(config):
+    config['str_dir_rgb'].set(filedialog.askdirectory(initialdir=config['str_dir_rgb'],title="Select RGB images directory"))
 
-def update_dir_thermal(dirs):
-    dirs['thermal'].set(filedialog.askdirectory(initialdir=dirs['thermal'], title="Select Thermal images directory"))
+def update_dir_thermal(config):
+    config['str_dir_thermal'].set(filedialog.askdirectory(initialdir=config['str_dir_thermal'], title="Select Thermal images directory"))
 
-def update_dir_output(dirs):
-    dirs['output'].set(filedialog.askdirectory(initialdir=dirs['thermal'], title="Select output directory"))
+def update_dir_output(config):
+    config['str_dir_output'].set(filedialog.askdirectory(initialdir=config['str_dir_thermal'], title="Select output directory"))
 
-def create_gui(root, parser, dirs, thres, outputs):
+def create_gui(root, parser, config):
     '''
         BOOLEANS TO BE ADDED TO GUI
     '''
@@ -39,16 +39,16 @@ def create_gui(root, parser, dirs, thres, outputs):
     Label(root,text="    Image directories", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_path,columnspan=4)
     # Setting the RGB directory
     Label(root,text="RGB image directory:", justify=LEFT, anchor="w").grid(sticky = W,row=r_path+1,column=col_label_path)
-    Label(root,textvariable=dirs['rgb'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=r_path+1,column=col_text_path, columnspan=span)
-    Button(root,text="Set RGB path",command=partial(update_dir_rgb, dirs),width=15).grid(row=r_path+1,column=col_button_path)
+    Label(root,textvariable=config['str_dir_rgb'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=r_path+1,column=col_text_path, columnspan=span)
+    Button(root,text="Set RGB path",command=partial(update_dir_rgb, config),width=15).grid(row=r_path+1,column=col_button_path)
     # Setting the thermal directory
     Label(root,text="Thermal image directory:", justify=LEFT).grid(sticky = W,row=r_path+2,column=col_label_path)
-    Label(root,textvariable=dirs['thermal'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=r_path+2,column=col_text_path, columnspan=span)
-    Button(root,text="Set thermal path",command=partial(update_dir_thermal, dirs),width=15).grid(row=r_path+2,column=col_button_path)
+    Label(root,textvariable=config['str_dir_thermal'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=r_path+2,column=col_text_path, columnspan=span)
+    Button(root,text="Set thermal path",command=partial(update_dir_thermal, config),width=15).grid(row=r_path+2,column=col_button_path)
     # Setting the output directory
     Label(root,text="Output directory:", justify=LEFT).grid(sticky = W,row=r_path+3,column=col_label_path)
-    Label(root,textvariable=dirs['output'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=r_path+3,column=col_text_path, columnspan=span)
-    Button(root,text="Set output path",command=partial(update_dir_output, dirs),width=15).grid(row=r_path+3,column=col_button_path)
+    Label(root,textvariable=config['str_dir_output'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=r_path+3,column=col_text_path, columnspan=span)
+    Button(root,text="Set output path",command=partial(update_dir_output, config),width=15).grid(row=r_path+3,column=col_button_path)
     '''
         ONE LINE SPACING
     '''
@@ -67,17 +67,17 @@ def create_gui(root, parser, dirs, thres, outputs):
     Checkbutton(root, width = 15, variable = bool_pp, justify=LEFT, anchor="w").grid(sticky=W, row=r_alg+2, column=1)
     # RGB sliders
     Label(root,text="RGB NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+3,column=0)
-    Scale(root,variable=thres['rgb_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+3,column=1)
+    Scale(root,variable=config['dbl_rgb_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+3,column=1)
     Label(root,text="RGB Confidence level:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+4,column=0)
-    Scale(root,variable=thres['rgb_conf'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+4,column=1)
+    Scale(root,variable=config['dbl_rgb_conf'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+4,column=1)
     # Thermal Sliders
     Label(root,text="Thermal NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+5,column=0)
-    Scale(root,variable=thres['thermal_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+5,column=1)
+    Scale(root,variable=config['dbl_thermal_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+5,column=1)
     Label(root,text="Thermal Confidence level:", justify=LEFT, anchor="w",width=25).grid(sticky = W,row=r_alg+6,column=0)
-    Scale(root,variable=thres['thermal_conf'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+6,column=1)
+    Scale(root,variable=config['dbl_thermal_conf'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+6,column=1)
     # Merge sliders
     Label(root,text="Merge NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+7,column=0)
-    Scale(root,variable=thres['merge_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+7,column=1)
+    Scale(root,variable=config['dbl_merge_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+7,column=1)
     '''
         OUTPUT SETTINGS
     '''
@@ -97,7 +97,7 @@ def create_gui(root, parser, dirs, thres, outputs):
         "PascalVOC",
     ]
     Label(root,text="Output label format:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+3,column=0)
-    om1 = OptionMenu(root,  outputs['label'], *OptionList)
+    om1 = OptionMenu(root,  config['str_label'], *OptionList)
     om1.config(width=15)
     om1.grid(sticky=W, row=r_out+3, column=1)
     # Validation checkbox
@@ -114,24 +114,24 @@ def create_gui(root, parser, dirs, thres, outputs):
     '''
         RUNNING SALTI
     '''
-    Button(root,text="Open output folder",command= partial(open_folder,dirs),width=15,font='Helvetica 11').grid(row=r_out+4,column=col_button_path)
-    Button(root,text="RUN SALTI",command= partial(save_and_run, parser, dirs, thres, outputs),width=15,font='Helvetica 11 bold').grid(row=r_out+5,column=col_button_path)
+    Button(root,text="Open output folder",command= partial(open_folder,config),width=15,font='Helvetica 11').grid(row=r_out+4,column=col_button_path)
+    Button(root,text="RUN SALTI",command= partial(save_and_run, parser, config),width=15,font='Helvetica 11 bold').grid(row=r_out+5,column=col_button_path)
 
 
-def open_folder(dirs):
+def open_folder(config):
     # Only tested for Windows!
     try:
-        os.system("explorer "+str(dirs['output'].get()))
+        os.system("explorer "+str(config['str_dir_output'].get()))
     except:
         raise NotImplementedError
 
 
-def save_and_run(parser,dirs,thres,outputs):
-    saveconfig(parser,dirs, thres, outputs)
+def save_and_run(parser,config):
+    saveconfig(parser, config)
 
-    dirs_dict=py_dictionaries(dirs) #Changing tkinter dictionaries to normal python dictionaries
-    thres_dict = py_dictionaries(thres) #Changing tkinter dictionaries to normal python dictionaries
-    outputs_dict = py_dictionaries(outputs) #Changing tkinter dictionaries to normal python dictionaries
+    dirs_dict=py_dictionaries(config) #Changing tkinter dictionaries to normal python dictionaries
+    thres_dict = py_dictionaries(config) #Changing tkinter dictionaries to normal python dictionaries
+    outputs_dict = py_dictionaries(config) #Changing tkinter dictionaries to normal python dictionaries
 
     SALTI(dirs_dict, thres_dict, outputs_dict)
 

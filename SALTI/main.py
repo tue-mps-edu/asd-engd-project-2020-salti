@@ -7,9 +7,9 @@ def main():
 
     root = Tk()     # Initialize widget
     root.title("SALTI")
-    dirs, thres, outputs = ConfigSectionMap(parser)
-
-    create_gui(root,parser,dirs,thres,outputs)
+    config = ConfigSectionMap(parser, 'Config')
+    saveconfig(parser,config)
+    create_gui(root,parser,config)
 
     root.mainloop()
 
