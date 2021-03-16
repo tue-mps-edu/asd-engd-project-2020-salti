@@ -119,13 +119,10 @@ def open_folder(config):
 def save_and_run(parser,config):
     saveconfig(parser, config)
 
-    dirs_dict=py_dictionaries(config) #Changing tkinter dictionaries to normal python dictionaries
-    thres_dict = py_dictionaries(config) #Changing tkinter dictionaries to normal python dictionaries
-    outputs_dict = py_dictionaries(config) #Changing tkinter dictionaries to normal python dictionaries
+    config_dict = tkinterDict_to_pythonDict(config)
+    SALTI(config_dict)
 
-    SALTI(dirs_dict, thres_dict, outputs_dict)
-
-def py_dictionaries(tkinter_dict):
+def tkinterDict_to_pythonDict(tkinter_dict):
     py_dict = {}
     for option in tkinter_dict:
         py_dict[option]=tkinter_dict[option].get()
