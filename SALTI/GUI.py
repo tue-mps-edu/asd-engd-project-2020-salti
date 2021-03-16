@@ -76,9 +76,9 @@ def create_gui(root, parser, config):
     # Header
     Label(root,text="    Output settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_out,column=0,columnspan=2)
     # Output size
-    Label(root,text="Image size x:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+1,column=0)
+    Label(root,text="Image width:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+1,column=0)
     Entry(root, textvariable=config['int_output_x_size'], justify=LEFT,width=20).grid(sticky = W,row=r_out+1,column=1)
-    Label(root,text="Image size y:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+2,column=0)
+    Label(root,text="Image height:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+2,column=0)
     Entry(root, textvariable=config['int_output_y_size'], justify=LEFT,width=20).grid(sticky = W,row=r_out+2,column=1)
     # Output format
     OptionList = [

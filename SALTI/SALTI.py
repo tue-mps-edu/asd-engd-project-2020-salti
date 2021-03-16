@@ -16,7 +16,7 @@ def SALTI(config):
 
     data = DataLoader(path_rgb,path_thermal,debug=True)
 
-    do_resize = (data.img_size[0]==output_size[0] and data.img_size[1]==output_size[1])
+    do_resize = not(data.img_size[0]==output_size[0] and data.img_size[1]==output_size[1])
     pp = Preprocessor(output_size=output_size)
 
     net_c = Detector('RGB')
