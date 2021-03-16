@@ -20,13 +20,13 @@ def create_gui(root, parser, config):
         BOOLEANS TO BE ADDED TO GUI
     '''
     #raise NotImplementedError
-    bool_pp = BooleanVar()
-    bool_val = BooleanVar()
-    bool_enh = BooleanVar()
-    text_var_x = IntVar()
-    text_var_x.set(640)
-    text_var_y = IntVar()
-    text_var_y.set(512)
+    #config['bln_preprocessing'] = BooleanVar()
+    #config['bln_validationcopy'] = BooleanVar()
+    #config['bln_enhancevisibility'] = BooleanVar()
+    #config['int_output_x_size'] = IntVar()
+    #config['int_output_x_size'].set(640)
+    #config['int_output_y_size'] = IntVar()
+    #config['int_output_y_size'].set(512)
     '''
         PATH SETTINGS
     '''
@@ -64,7 +64,7 @@ def create_gui(root, parser, config):
     Label(root,text="    Algorithm settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_alg+1,column=0,columnspan=2)
     # Preprocessing check button
     Label(root,text="Preprocessing enabled:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+2,column=0)
-    Checkbutton(root, width = 15, variable = bool_pp, justify=LEFT, anchor="w").grid(sticky=W, row=r_alg+2, column=1)
+    Checkbutton(root, width = 15, variable = config['bln_preprocessing'], justify=LEFT, anchor="w").grid(sticky=W, row=r_alg+2, column=1)
     # RGB sliders
     Label(root,text="RGB NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+3,column=0)
     Scale(root,variable=config['dbl_rgb_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+3,column=1)
@@ -88,9 +88,9 @@ def create_gui(root, parser, config):
     Label(root,text="    Output settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_out,column=0,columnspan=2)
     # Output size
     Label(root,text="Image size x:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+1,column=0)
-    Entry(root, textvariable=text_var_x, justify=LEFT,width=20).grid(sticky = W,row=r_out+1,column=1)
+    Entry(root, textvariable=config['int_output_x_size'], justify=LEFT,width=20).grid(sticky = W,row=r_out+1,column=1)
     Label(root,text="Image size y:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+2,column=0)
-    Entry(root, textvariable=text_var_y, justify=LEFT,width=20).grid(sticky = W,row=r_out+2,column=1)
+    Entry(root, textvariable=config['int_output_y_size'], justify=LEFT,width=20).grid(sticky = W,row=r_out+2,column=1)
     # Output format
     OptionList = [
         "YOLO",
@@ -102,10 +102,10 @@ def create_gui(root, parser, config):
     om1.grid(sticky=W, row=r_out+3, column=1)
     # Validation checkbox
     Label(root,text="Validation enabled:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+4,column=0)
-    Checkbutton(root, width = 15, variable = bool_val, justify=LEFT, anchor="w").grid(sticky=W, row=r_out+4, column=1)
+    Checkbutton(root, width = 15, variable = config['bln_validationcopy'], justify=LEFT, anchor="w").grid(sticky=W, row=r_out+4, column=1)
     # Output enhanced image
     Label(root,text="Enhanced visibility:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+5,column=0)
-    Checkbutton(root, width = 15, variable = bool_enh, justify=LEFT, anchor="w").grid(sticky=W, row=r_out+5, column=1)
+    Checkbutton(root, width = 15, variable = config['bln_enhancevisibility'], justify=LEFT, anchor="w").grid(sticky=W, row=r_out+5, column=1)
     # Padding
     Label(root,text="  ", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+6,column=3)
     Label(root,text="  ", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+5,column=4)
