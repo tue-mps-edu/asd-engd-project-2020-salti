@@ -7,7 +7,7 @@ class Detector(object):
     ''' Detector class generator'''
     def __init__(self, type=None, nms_threshold=None, conf_threshold=None):
         if type == 'RGB':               # Select an RGB method
-            self.net = YOLOv3_320()
+            self.net = YOLOv3_320(conf_threshold, nms_threshold)
         elif type == 'Thermal':         # Select a Thermal method
             self.net = YoloJoeHeller(conf_threshold, nms_threshold)
         else:
@@ -23,13 +23,13 @@ class Detector(object):
 class YOLOv3_320():
     ''' RGB YOLO v3 object detection '''
 
-    def __init__(self):
+    def __init__(self, confThreshold, nmsThreshold):
         self.__dir_classes = 'config_rgb/coco-rgb.names'
         self.__dir_cfg = 'config_rgb/yolov3-rgb.cfg'
         self.__dir_weights = 'config_rgb/yolov3-rgb.weights'
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
-        self.__confThreshold = 0.3     # Confidence threshold for approval of detection
-
+        self.__confThreshold = confThreshold#0.3     # Confidence threshold for approval of detection
+        self.__nmsThreshold = nmsThreshold  # Non-maximum suppresion threshold (lower = less number)
         self.__net = cv2.dnn.readNetFromDarknet(self.__dir_cfg, self.__dir_weights)
         self.__net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
         self.__net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)

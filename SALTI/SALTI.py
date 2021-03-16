@@ -8,7 +8,7 @@ from DataExporter import DataExporter
 
 def SALTI(dirs, thres, outputs):
 
-    output_size = [int(outputs['x_size'].get()), int(outputs['y_size'].get())]  # Fix datatype
+    output_size = [float(outputs['x_size'].get()), float(outputs['y_size'].get())]  # Fix datatype
 
     path_rgb = dirs['rgb'].get()
     path_thermal = dirs['thermal'].get()
@@ -18,7 +18,7 @@ def SALTI(dirs, thres, outputs):
 
     do_resize = (data.img_size[0]==output_size[0] and data.img_size[1]==output_size[1])
     pp = Preprocessor(output_size=output_size, resize=do_resize)
-    net_c = Detector('RGB')
+    net_c = Detector('RGB', thres['rgb_conf'].get(), thres['rgb_nms'].get())
     net_t = Detector('Thermal', thres['thermal_conf'].get(), thres['thermal_nms'].get())
     RGB_classNames = net_c.get_classes() #Should be improved and retrieved through a getter (make it private attribute)
 
