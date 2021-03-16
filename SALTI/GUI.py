@@ -90,7 +90,7 @@ def create_gui(root, parser, config):
     om1.config(width=15)
     om1.grid(sticky=W, row=r_out+3, column=1)
     # Validation checkbox
-    Label(root,text="Validation enabled:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+4,column=0)
+    Label(root,text="Create validation labels:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+4,column=0)
     Checkbutton(root, width = 15, variable = config['bln_validationcopy'], justify=LEFT, anchor="w").grid(sticky=W, row=r_out+4, column=1)
     # Output enhanced image
     Label(root,text="Enhanced visibility:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+5,column=0)
