@@ -3,31 +3,22 @@ import numpy as np
 
 class Preprocessor():
 
-    def __init__(self,output_size=[640,512], resize=False, padding=False, enhancing=False):
+    def __init__(self,output_size=[640,512],  enhancing=False):
         self.output_size = output_size  # [x,y]
-        self.do_resize = resize
-        self.do_padding = padding
         self.do_enhancing = enhancing
 
-    def process(self, img, output_size):
-
-        if not(img.shape[0] == output_size[0] and img.shape[1] == output_size[1]):
-            if self.do_resize:
-                img = self.resize_image(img)
-
-            if self.do_padding:
-                img = self.add_padding(img)
-
+    def process(self, img):
+        self.do_resize = not(img.shape[0] == self.output_size[0] and img.shape[1] == self.output_size[1])
+        if self.do_resize:
+            img = self.resize_image(img)
         if self.do_enhancing:
-            img = self.add_enhancing(img)
-
-        return img
+            img_enh = self.add_enhancing(img)
+            return img, img_enh
+        else:
+            return img, img
 
     def resize_image(self, img_in):
         return cv2.resize(img_in, (self.output_size[0],self.output_size[1]), interpolation=cv2.INTER_AREA)
-
-    def filter_image(self, img_in):
-        return img_in
 
     def add_enhancing(self, img_in):
 

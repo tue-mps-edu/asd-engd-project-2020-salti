@@ -16,13 +16,11 @@ def SALTI(config):
 
     data = DataLoader(path_rgb,path_thermal,debug=True)
 
-    do_resize = not(data.img_size[0]==output_size[0] and data.img_size[1]==output_size[1])
-
     # Preprocessor for RGB image with enhancing = False
-    pp_c = Preprocessor(output_size=output_size, resize=do_resize, padding=False, enhancing=False)
+    pp_c = Preprocessor(output_size=output_size, enhancing=False)
 
     # Preprocessor for thermal image with enhancing = True
-    pp_t = Preprocessor(output_size=output_size, resize=do_resize, padding=False, enhancing=True)
+    pp_t = Preprocessor(output_size=output_size, enhancing=config['bln_dofilter'])
 
     net_c = Detector('RGB')
     net_t = Detector('Thermal', config['dbl_thermal_conf'], config['dbl_thermal_nms'])
@@ -40,11 +38,11 @@ def SALTI(config):
     for file_name, file_ext, img_c, img_t in data:
 
         # img_plt is defined for visualizing the final thermal image without any pre-processing
-        img_plt = img_t.copy()
+        #img_plt = img_t.copy() # Wrong. this is not resized.
 
         # Output size added as an additional argument to define condition for resizing
-        img_c = pp_c.process(img_c, output_size)
-        img_t = pp_t.process(img_t, output_size)
+        img_c_out, img_c = pp_c.process(img_c)
+        img_t_out, img_t = pp_t.process(img_t)
 
         # Do detections and apply non-maximum suppression on BBOXes
         det_c = merge_c.NMS(net_c.detect(img_c.copy()))
@@ -55,13 +53,12 @@ def SALTI(config):
         # Visualize
         #V = Visualize_all(img_c.copy(), img_plt)
         #V.print(RGB_classNames, det_c, det_t, det_m)
-
         
         # Progress window
-        V = ProgressWindow(img_c, img_t, det_c, det_t, det_m, RGB_classNames, data.progress)
+        V = ProgressWindow(img_c, img_t, img_t_out, det_c, det_t, det_m, RGB_classNames, data.progress, config)
 
         # Export data
-        exporter.export(img_t.shape,file_name, file_ext,det_m, img_t)
+        exporter.export(img_t.shape,file_name, file_ext,det_m, img_t_out)
 
 
 
