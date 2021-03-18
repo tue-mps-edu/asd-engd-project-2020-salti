@@ -29,7 +29,7 @@ def SALTI(config):
     # Initialize merger
     merge_c   = Merger( config['dbl_rgb_conf'],     config['dbl_rgb_nms'])
     merge_t   = Merger( config['dbl_thermal_conf'], config['dbl_thermal_nms'])
-    merge_all = Merger( 0.2,                         config['dbl_merge_nms'])
+    merge_all = Merger( 0.0,                         config['dbl_merge_nms'])
 
     label_type = config['str_label']
     exporter = DataExporter(label_type, path_output , RGB_classNames, config['bln_validationcopy'])
