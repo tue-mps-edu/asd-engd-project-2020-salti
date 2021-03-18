@@ -185,7 +185,7 @@ class Validator():
 
 
 
-v = Validator(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.14_18h27m52s',
+v = Validator(r'D:\Courses\Block 2\Inhouse-project\GIT\asd-pdeng-project-2020-developer\SALTI\Data\KAIST_DAY\Output\2021.03.18_15h25m19s',
               '.jpg',
               0.8)
 

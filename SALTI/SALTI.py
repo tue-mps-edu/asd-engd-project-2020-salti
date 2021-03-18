@@ -14,7 +14,7 @@ def SALTI(config):
     path_thermal = config['str_dir_thermal']
     path_output = config['str_dir_output']
 
-    data = DataLoader(path_rgb,path_thermal,debug=True)
+    data = DataLoader(path_rgb,path_thermal,debug=False)
 
     # Preprocessor for RGB image with enhancing = False
     pp_c = Preprocessor(output_size=output_size, enhancing=False)
@@ -29,7 +29,7 @@ def SALTI(config):
     # Initialize merger
     merge_c   = Merger( config['dbl_rgb_conf'],     config['dbl_rgb_nms'])
     merge_t   = Merger( config['dbl_thermal_conf'], config['dbl_thermal_nms'])
-    merge_all = Merger( 0.0,                         config['dbl_merge_nms'])
+    merge_all = Merger( 0.2,                         config['dbl_merge_nms'])
 
     label_type = config['str_label']
     exporter = DataExporter(label_type, path_output , RGB_classNames, config['bln_validationcopy'])
@@ -46,7 +46,7 @@ def SALTI(config):
 
         # Do detections and apply non-maximum suppression on BBOXes
         det_c = merge_c.NMS(net_c.detect(img_c.copy()))
-        det_t = net_t.detect(img_t.copy())
+        det_t = merge_t.NMS(net_t.detect(img_t.copy()))
         det_m = det_c+det_t
         det_m = merge_all.NMS(det_m)
 
@@ -58,7 +58,7 @@ def SALTI(config):
         V = ProgressWindow(img_c, img_t, img_t_out, det_c, det_t, det_m, RGB_classNames, data.progress, config)
 
         # Export data
-        exporter.export(img_t.shape,file_name, file_ext,det_m, img_t_out)
+        exporter.export(output_size,file_name, file_ext,det_m, img_t_out)
 
 
 
