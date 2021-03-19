@@ -86,6 +86,7 @@ class Validator():
 
             # Calculate the IoU (predicted YO box vs ground truth GU box) and set threshold
             IoU = self.get_iou([x_YO_low, y_YO_low, x_YO_high, y_YO_high], [x_GU_low, y_GU_low, x_GU_high, y_GU_high])
+            print(IoU)
             '''
             #compare the minimum with diameter of the larger box
             GUI_diam = np.sqrt( (GU['w'][GUI_min_ind]) **2 + (GU['h'][GUI_min_ind]) **2 )
@@ -181,20 +182,21 @@ class Validator():
         print('Total: TP = {}, FP is {}, FN is {}'.format(TP_tot, FP_tot, FN_tot))
         print('Total: Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision_tot, Recall_tot,
                                                                                          Accuracy_tot, F1_score_tot))
-        return Precision_tot, Recall_tot
+        # return Precision_tot, Recall_tot
 
-Precision_ROC = np.array([])
-Recall_ROC = np.array([])
-validation_threshold = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-j = 0
-for i in validation_threshold:
-    v = Validator(r'D:\Courses\Block 2\Inhouse-project\GIT\asd-pdeng-project-2020-developer\SALTI\Data\KAIST_DAY\Output\2021.03.19_11h18m32s','.jpg', i)
-    precision_roc, recall_roc = v.complete_Validation()
-    Precision_ROC = np.append(Precision_ROC,precision_roc)
-    Recall_ROC = np.append(Recall_ROC,recall_roc)
-    j = j + 1
-
-print(Precision_ROC, Recall_ROC)
+# Precision_ROC = np.array([])
+# Recall_ROC = np.array([])
+# validation_threshold = np.array([0.97, 0.98])
+#
+# for i in validation_threshold:
+v = Validator(r'D:\PDEng2020-2022\Block 2\In-House project\ASD SCRUM\asd-pdeng-project-2020-developer\SALTI\Data\KAIST_NIGHT\Output\2021.03.19_15h19m38s','.jpg', 0.8)
+v.complete_Validation()
+#     precision_roc, recall_roc = v.complete_Validation()
+#     Precision_ROC = np.append(Precision_ROC,precision_roc)
+#     Recall_ROC = np.append(Recall_ROC,recall_roc)
+#
+#
+# print(Precision_ROC, Recall_ROC)
 
 
 

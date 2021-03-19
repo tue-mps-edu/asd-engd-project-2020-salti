@@ -14,7 +14,7 @@ def SALTI(config):
     path_thermal = config['str_dir_thermal']
     path_output = config['str_dir_output']
 
-    data = DataLoader(path_rgb,path_thermal,debug=False)
+    data = DataLoader(path_rgb,path_thermal,debug=True)
 
     # Preprocessor for RGB image with enhancing = False
     pp_c = Preprocessor(output_size=output_size, enhancing=False)

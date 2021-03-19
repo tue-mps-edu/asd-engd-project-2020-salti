@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 
 class Preprocessor():
 
@@ -48,7 +49,7 @@ class Preprocessor():
 
         # The sharpened gray scale image is converted to have 3 channels to prevent dimension mismatch
         img_shr_rgbeq = cv2.cvtColor(img_gray_sharpened, cv2.COLOR_GRAY2RGB)
-
+        cv2.imwrite(os.path.join(r'D:\PDEng2020-2022\Block 2\In-House project\ASD SCRUM\asd-pdeng-project-2020-developer\SALTI\Data\KAIST_NIGHT\saved_pp','saved.jpg'), img_shr_rgbeq)
         return img_shr_rgbeq
 
 

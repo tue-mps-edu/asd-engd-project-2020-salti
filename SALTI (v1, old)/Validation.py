@@ -131,12 +131,12 @@ def UserValidation(Results_directory,img_extention):
         FP_tot+=distances_df.shape[1]
 
         #metrics calculations
-        Precision = TP / (TP + FP)
-        Recall = TP / (TP + FN)
-        Accuracy = TP / (TP + FP + FN)
-        F1_score = (2*(Precision*Recall))/(Precision+Recall)
-        print('Image'+file_name+': TP = {}, FP is {}, FN is {}'.format(TP, FP, FN))
-        print('Image'+file_name+': Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision, Recall, Accuracy, F1_score))
+        # Precision = TP / (TP + FP)
+        # Recall = TP / (TP + FN)
+        # Accuracy = TP / (TP + FP + FN)
+        # F1_score = (2*(Precision*Recall))/(Precision+Recall)
+        # print('Image'+file_name+': TP = {}, FP is {}, FN is {}'.format(TP, FP, FN))
+        # print('Image'+file_name+': Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision, Recall, Accuracy, F1_score))
 
     #Overall metrics calculations
     Precision_tot = TP_tot / (TP_tot + FP_tot)
@@ -147,7 +147,7 @@ def UserValidation(Results_directory,img_extention):
     print('Total: Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision_tot, Recall_tot, Accuracy_tot, F1_score_tot))
 
 img_extention = ['.bmp', '.jpg', '.jpeg', '.png', '.tif', '.dng']
-UserValidation(dir_Validation,img_extention)
+UserValidation(r'D:\PDEng2020-2022\Block 2\In-House project\ASD SCRUM\asd-pdeng-project-2020-developer\SALTI (v1, old)\Results',img_extention)
 
 
 #read_and_display_boxes(dir_Validation, 'I02199')

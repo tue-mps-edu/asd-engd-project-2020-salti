@@ -9,7 +9,7 @@ def initialize():
     parser = argparse.ArgumentParser()
     parser.add_argument('--cfg', type=str, default=cfg_T.dir_cfg, help='cfg file path')
     parser.add_argument('--data', type=str, default=cfg_T.dir_classes, help='coco.data file path')
-    parser.add_argument('--weights', type=str, default='Yolo_config\yolov3-thermal.weights', help='path to weights file')
+    parser.add_argument('--weights', type=str, default=cfg_T.dir_weights, help='path to weights file')
     parser.add_argument('--source', type=str, default=r'C:\Github\asd-pdeng-project-2020-developer\SALTI src\Data\mytestdata\RGB', help='source')  # input file/folder, 0 for webcam
     parser.add_argument('--output', type=str, default='output', help='output folder')  # output folder
     parser.add_argument('--img-size', type=int, default=416, help='inference size (pixels)')
