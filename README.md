@@ -6,14 +6,14 @@ Semi-Automatic Labelling of Thermal Images
 * [SALTI source code](SALTI/)
 
 ## Authors
-* **Abhishek Balakrishna Bhat** - *insert work done* - [Abhishek0895](https://github.com/Abhishek0895)
-* **Alireza Moayyedi** - *insert work done* - [A-Moayyedi](https://github.com/A-Moayyedi)
-* **Arjun Pradeep Kumar** - *insert work done* - [ArjunPradeepGit](https://github.com/ArjunPradeepGit)
-* **Arsel Hasan** - *insert work done* - [arselhasan](https://github.com/arselhasan)
+* **Abhishek Balakrishna Bhat** - Developer - [Abhishek0895](https://github.com/Abhishek0895)
+* **Alireza Moayyedi** - Developer - [A-Moayyedi](https://github.com/A-Moayyedi)
+* **Arjun Pradeep Kumar** - Developer - [ArjunPradeepGit](https://github.com/ArjunPradeepGit)
+* **Arsel Hasan** - Developer - [arselhasan](https://github.com/arselhasan)
 * **Berend van den Berg** - *insert work done* - [vdBerg93](https://github.com/vdBerg93)
-* **Kunal Iyer** - *insert work done* - [KunalASD](https://github.com/KunalASD)
-* **Markos Papadimitriou** - *insert work done* - [Markos0896](https://github.com/Markos0896)
-* **Yash Khetan** - *insert work done* - [yashkhetan1994](https://github.com/yashkhetan1994)
+* **Kunal Iyer** - Developer - [KunalASD](https://github.com/KunalASD)
+* **Markos Papadimitriou** - Developer - [Markos0896](https://github.com/Markos0896)
+* **Yash Khetan** - Developer - [yashkhetan1994](https://github.com/yashkhetan1994)
 
 
 
