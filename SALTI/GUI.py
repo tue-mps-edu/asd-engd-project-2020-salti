@@ -1,4 +1,4 @@
-from tkinter import *
+import tkinter
 from tkinter import filedialog
 from Configurator import *
 from functools import partial

@@ -1,5 +1,6 @@
-import configparser
+from configparser import ConfigParser
 from tkinter import *
+import os
 
 def saveconfig(parser, config):
     for option in config:
