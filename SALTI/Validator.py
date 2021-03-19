@@ -133,11 +133,11 @@ class Validator():
         else:
             F1_score = (2 * (Precision * Recall)) / (Precision + Recall)
 
-        print('Image ' + file_name + ': TP = {}, FP is {}, FN is {}'.format(TP, FP, FN))
-        print('Image ' + file_name + ': Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision,
-                                                                                                          Recall,
-                                                                                                          Accuracy,
-                                                                                                          F1_score))
+        # print('Image ' + file_name + ': TP = {}, FP is {}, FN is {}'.format(TP, FP, FN))
+        # print('Image ' + file_name + ': Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision,
+        #                                                                                                   Recall,
+        #                                                                                                   Accuracy,
+        #                                                                                                   F1_score))
         return TP,FP,FN
 
     def complete_Validation(self):
@@ -181,16 +181,20 @@ class Validator():
         print('Total: TP = {}, FP is {}, FN is {}'.format(TP_tot, FP_tot, FN_tot))
         print('Total: Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision_tot, Recall_tot,
                                                                                          Accuracy_tot, F1_score_tot))
+        return Precision_tot, Recall_tot
 
+Precision_ROC = np.array([])
+Recall_ROC = np.array([])
+validation_threshold = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+j = 0
+for i in validation_threshold:
+    v = Validator(r'D:\Courses\Block 2\Inhouse-project\GIT\asd-pdeng-project-2020-developer\SALTI\Data\KAIST_DAY\Output\2021.03.19_11h18m32s','.jpg', i)
+    precision_roc, recall_roc = v.complete_Validation()
+    Precision_ROC = np.append(Precision_ROC,precision_roc)
+    Recall_ROC = np.append(Recall_ROC,recall_roc)
+    j = j + 1
 
-
-
-v = Validator(r'D:\PDEng2020-2022\Block 2\In-House project\ASD SCRUM\asd-pdeng-project-2020-developer\SALTI\Data\KAIST_NIGHT\Output\2021.03.18_16h47m32s',
-              '.jpg',
-              0.8)
-
-# v.single_Validate('I00120.jpg')
-v.complete_Validation()
+print(Precision_ROC, Recall_ROC)
 
 
 
