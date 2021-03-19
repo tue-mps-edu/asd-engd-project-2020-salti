@@ -134,6 +134,7 @@ def save_and_run(parser,config, salti_processes):
 
 def stop_salti(salti_processes):
     for process in salti_processes:
+        print('Killed SALTI at PID '+str(process.pid))
         process.kill()
 
 def tkinterDict_to_pythonDict(tkinter_dict):

@@ -3,13 +3,13 @@ import numpy as np
 from Detections import Detections
 
 class ProgressWindow():
-    def __init__(self,img_c, img_t, img_t_out, det_c, det_t, det_m, classnames, progress, config):
+    def __init__(self,img_c, img_t, img_t_out, det_c, det_t, det_m, file, classnames, progress, config):
         self.imgs = [img_c.copy(), img_t.copy(), img_t_out.copy()]
         self.dets = [det_c, det_t, det_m]
         if config['bln_dofilter']:
-            self.titles = ['Color', 'Thermal with filter', 'Thermal with merged labels']
+            self.titles = ['Color: '+file, 'Thermal with filter', 'Thermal with merged labels']
         else:
-            self.titles = ['Color', 'Thermal', 'Thermal with merged labels']
+            self.titles = ['Color: '+file, 'Thermal', 'Thermal with merged labels']
         # Add BBOXes to the images
         for img, det, title in zip(self.imgs, self.dets, self.titles):
             self.add_bboxes_to_image(classnames, img, det)

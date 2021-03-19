@@ -46,8 +46,9 @@ def SALTI(config):
         det_m = merge_all.NMS(det_m)
 
         # Progress window
-        V = ProgressWindow(img_c, img_t, img_t_out, det_c, det_t, det_m, RGB_classNames, data.progress, config)
+        V = ProgressWindow(img_c, img_t, img_t_out, det_c, det_t, det_m, file_name+file_ext, RGB_classNames, data.progress, config)
 
         # Export data
         exporter.export(output_size,file_name, file_ext,det_m, img_t_out, img_t, config)
 
+    print('Labeling completed.')
