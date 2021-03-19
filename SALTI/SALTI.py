@@ -22,8 +22,8 @@ def SALTI(config):
     # Preprocessor for thermal image with enhancing = True
     pp_t = Preprocessor(output_size=output_size, enhancing=config['bln_dofilter'])
 
-    net_c = Detector('RGB')
-    net_t = Detector('Thermal', config['dbl_thermal_conf'], config['dbl_thermal_nms'])
+    net_c = Detector('RGB',config['dbl_thermal_conf'])
+    net_t = Detector('Thermal',config['dbl_thermal_conf'])
     RGB_classNames = net_c.get_classes()
 
     # Initialize merger

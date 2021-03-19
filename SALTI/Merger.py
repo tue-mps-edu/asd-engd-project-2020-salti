@@ -7,7 +7,13 @@ class Merger():
         self.nmsThreshold=nms_threshold
 
     def merge(self, detections):
-        return self.NMS(detections)
+        return self.confidence_filter(detections)
+
+    def confidence_filter(self,detections):
+        to_keep = [i for i,conf in enumerate(detections.confidences) if conf>self.confThreshold]
+        return Detections([detections.boxes[i] for i in to_keep],
+                          [detections.classes[i] for i in to_keep],
+                          [detections.confidences[i] for i in to_keep])
 
     def NMS(self, detections):
         # Non maximum suppression, will give indices to keep
