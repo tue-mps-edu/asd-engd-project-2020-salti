@@ -45,13 +45,9 @@ class DataLoader():
             file = ntpath.basename(path_C)
             file_name, file_ext = os.path.splitext(file)
 
-            #file_name, file_ext = os.path.splitext(path_C)
-
-            #assert(len(file_name)<10)
-
-            if self.DEBUG:
-                print('color image: \t'+path_C)
-                print('thermal image: \t'+path_T)
+            file_t = ntpath.basename(path_C)
+            file_name_t, file_ext_t = os.path.splitext(file)
+            assert file_t==file, "Files do not match"
 
             img_C = cv2.imread(path_C)                      # Read color image
             img_T = cv2.imread(path_T)                      # Read thermal image
