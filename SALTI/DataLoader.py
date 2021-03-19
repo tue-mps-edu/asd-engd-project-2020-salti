@@ -46,7 +46,6 @@ class DataLoader():
             file_name, file_ext = os.path.splitext(file)
 
             file_t = ntpath.basename(path_C)
-            file_name_t, file_ext_t = os.path.splitext(file)
             assert file_t==file, "Files do not match"
 
             img_C = cv2.imread(path_C)                      # Read color image
