@@ -51,6 +51,7 @@ def create_gui(root, parser, config, salti_processes):
     # Header
     scale_width = 15
     scale_length = 130
+    #scale_length = 160
     Label(root,text="    Algorithm settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_alg+1,column=0,columnspan=2)
     # Preprocessing check button
     Label(root,text="Filter thermal image:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+2,column=0)
