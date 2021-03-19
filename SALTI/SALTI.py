@@ -8,7 +8,7 @@ import cv2
 
 def SALTI(config):
 
-    output_size = [config['int_output_x_size'], config['int_output_y_size']]
+    output_size = [config['int_output_x_size'], config['int_output_y_size'],3]
 
     path_rgb = config['str_dir_rgb']
     path_thermal = config['str_dir_thermal']

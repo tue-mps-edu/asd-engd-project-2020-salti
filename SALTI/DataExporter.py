@@ -12,19 +12,13 @@ class DataExporter():
         self.save_filtered_img = config['bln_savefiltered'] and config['bln_dofilter']
         self.label_type = config['str_label']
 
-        print('bool='+str(self.save_filtered_img))
-
-        #self.output_path = os.path.join(output_path+datetime.datetime.now().strftime('%Y.%m.%d_%Hh%Mm%Ss'))
-        self.output_path = output_path+str(datetime.datetime.now().strftime('/%Y.%m.%d_%Hh%Mm%Ss'))
+        self.output_path = os.path.join(output_path,datetime.datetime.now().strftime('%Y.%m.%d_%Hh%Mm%Ss'))
         self.classNames = classnames
         self.try_to_make_folder(self.output_path)
         copyfile('config.ini',os.path.join(self.output_path,'config.ini'))
 
         if self.save_filtered_img:
-#            self.path_filtered = os.path.join(self.output_path,'/filtered_images')
-            self.path_filtered = self.output_path+'/filtered_images'
-            print(self.output_path)
-            print(self.path_filtered)
+            self.path_filtered = os.path.join(self.output_path,'filtered_images')
             self.try_to_make_folder(self.path_filtered)
 
         if (self.label_type == 'YOLO'):
@@ -139,6 +133,4 @@ class DataExporter():
         try:
             os.mkdir(folder)
         except:
-            os.mkdir(folder)
             print('Failed to create directory')
-            assert("Folder already exists")
