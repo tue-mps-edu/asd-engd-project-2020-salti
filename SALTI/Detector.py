@@ -1,6 +1,6 @@
 from Detections import *
-from config_thermal.utils_thermal.models_thermal import *  # set ONNX_EXPORT in models.py
-from config_thermal.utils_thermal.datasets import *
+from utils_thermal.models_thermal import *  # set ONNX_EXPORT in models.py
+from utils_thermal.datasets import *
 
 
 class Detector(object):
@@ -88,7 +88,7 @@ class YoloJoeHeller():
         self.__confThreshold = confThreshold  # Confidence threshold for approval of detection
         self.__dir_cfg = 'config_thermal/yolov3-spp-r.cfg'
         self.__dir_data = 'config_thermal/coco-thermal.data'
-        self.__dir_weights='config_thermal/yolov3-thermal-best.pt'
+        self.__dir_weights= 'config_thermal/yolov3-thermal-best.pt'
         self.__img_size=416
         self.__half=False
         self.__device=''
