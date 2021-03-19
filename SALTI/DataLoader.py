@@ -4,7 +4,6 @@ import ntpath
 
 input_formats = ['.png','.jpg','.jpeg']
 
-
 class DataLoader():
     def __init__(self, path_rgb, path_thermal, output_size=[-1,-1], debug=False):
         self.DEBUG = debug                      # Debug flag for skipping images
@@ -17,13 +16,8 @@ class DataLoader():
         assert(os.path.isdir(path_rgb) and os.path.isdir(path_thermal))
 
         # Get the file list
-        #files_rgb = sorted(glob.glob(os.path.join(path_rgb,'*.*')))
-        #files_thermal = sorted(glob.glob(os.path.join(path_thermal, '*.*')))
-        #files_rgb = [x.absolute() for x in pathlib.Path(path_rgb).glob('**/*')]
-        #files_thermal = [x.absolute() for x in pathlib.Path(path_thermal).glob('**/*')]
         files_rgb = [os.path.abspath(os.path.join(path_rgb, p)) for p in os.listdir(path_rgb)]
         files_thermal = [os.path.abspath(os.path.join(path_thermal, p)) for p in os.listdir(path_thermal)]
-
 
         # Get a list of the images
         self.imgs_thermal = [x for x in files_thermal if os.path.splitext(x)[-1].lower() in input_formats]
@@ -57,7 +51,7 @@ class DataLoader():
 
             if self.DEBUG:
                 print('color image: \t'+path_C)
-                print('thermal iamge: \t'+path_T)
+                print('thermal image: \t'+path_T)
 
             img_C = cv2.imread(path_C)                      # Read color image
             img_T = cv2.imread(path_T)                      # Read thermal image
@@ -67,3 +61,4 @@ class DataLoader():
 
 
             yield file_name, file_ext, img_C, img_T
+

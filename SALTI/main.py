@@ -15,6 +15,4 @@ def main():
     root.mainloop()
 
 if __name__ == "__main__":
-    p_gui = Process(target=main)
-    p_gui.start()
-    print('GUI started at PID '+str(p_gui.pid))
+    main()

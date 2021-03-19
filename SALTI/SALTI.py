@@ -4,11 +4,11 @@ from Preprocesser import Preprocessor
 from Visualizer import ProgressWindow
 from Merger import Merger
 from DataExporter import DataExporter
-
+import cv2
 
 def SALTI(config):
 
-    output_size = [config['int_output_x_size'], config['int_output_y_size']]
+    output_size = [config['int_output_x_size'], config['int_output_y_size'],3]
 
     path_rgb = config['str_dir_rgb']
     path_thermal = config['str_dir_thermal']
@@ -31,7 +31,7 @@ def SALTI(config):
     merge_t   = Merger( config['dbl_thermal_conf'], config['dbl_thermal_nms'])
     merge_all = Merger( 0.0,                         config['dbl_merge_nms'])
 
-    exporter = DataExporter(config['str_label'], path_output , RGB_classNames, config['bln_validationcopy'])
+    exporter = DataExporter(config, path_output, RGB_classNames)
 
     for file_name, file_ext, img_c, img_t in data:
 
@@ -49,7 +49,5 @@ def SALTI(config):
         V = ProgressWindow(img_c, img_t, img_t_out, det_c, det_t, det_m, RGB_classNames, data.progress, config)
 
         # Export data
-        exporter.export(output_size,file_name, file_ext,det_m, img_t_out)
-
-
+        exporter.export(output_size,file_name, file_ext,det_m, img_t_out, img_t, config)
 
