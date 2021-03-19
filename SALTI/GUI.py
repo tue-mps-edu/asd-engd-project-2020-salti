@@ -95,8 +95,8 @@ def create_gui(root, parser, config, salti_processes):
     Label(root,text="Create validation labels:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+4,column=0)
     Checkbutton(root, width = 15, variable = config['bln_validationcopy'], justify=LEFT, anchor="w").grid(sticky=W, row=r_out+4, column=1)
     # Output enhanced image
-    #Label(root,text="Enhanced visibility:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+5,column=0)
-    #Checkbutton(root, width = 15, variable = config['bln_enhancevisibility'], justify=LEFT, anchor="w").grid(sticky=W, row=r_out+5, column=1)
+    Label(root,text="Save filtered images:", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+5,column=0)
+    Checkbutton(root, width = 15, variable = config['bln_savefiltered'], justify=LEFT, anchor="w").grid(sticky=W, row=r_out+5, column=1)
     # Padding
     Label(root,text="  ", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+6,column=3)
     Label(root,text="  ", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+5,column=4)

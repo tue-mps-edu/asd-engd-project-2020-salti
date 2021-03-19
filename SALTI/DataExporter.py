@@ -6,21 +6,32 @@ from shutil import copyfile
 import os
 
 class DataExporter():
-    def __init__(self,label_type, output_path, classnames, do_copy=False):
+    def __init__(self, config, output_path, classnames):
         # Initialize variables
-        self.make_validation_copy = do_copy
-        self.label_type = label_type
-        self.output_path = os.path.join(output_path,datetime.datetime.now().strftime('%Y.%m.%d_%Hh%Mm%Ss'))
+        self.make_validation_copy = config['bln_validationcopy']
+        self.save_filtered_img = config['bln_savefiltered'] and config['bln_dofilter']
+        self.label_type = config['str_label']
+
+        print('bool='+str(self.save_filtered_img))
+
+        #self.output_path = os.path.join(output_path+datetime.datetime.now().strftime('%Y.%m.%d_%Hh%Mm%Ss'))
+        self.output_path = output_path+str(datetime.datetime.now().strftime('/%Y.%m.%d_%Hh%Mm%Ss'))
         self.classNames = classnames
         self.try_to_make_folder(self.output_path)
-
         copyfile('config.ini',os.path.join(self.output_path,'config.ini'))
+
+        if self.save_filtered_img:
+#            self.path_filtered = os.path.join(self.output_path,'/filtered_images')
+            self.path_filtered = self.output_path+'/filtered_images'
+            print(self.output_path)
+            print(self.path_filtered)
+            self.try_to_make_folder(self.path_filtered)
 
         if (self.label_type == 'YOLO'):
             df = pd.DataFrame(self.classNames)
             df.to_csv(os.path.join(self.output_path,'classes.txt'), header=None, index=None)
 
-    def export(self, output_size, file_name, file_ext, detections, img):
+    def export(self, output_size, file_name, file_ext, detections, img_raw, img_fil, config):
         self.filename = file_name
         self.output_size = output_size
         self.detections = detections
@@ -37,7 +48,9 @@ class DataExporter():
                 self.save_dataframe_as_txt(self.df_label,self.filename+'_VAL')
 
         # Save the image
-        self.save_opencv_image(img,file_ext)
+        self.save_opencv_image(self.output_path,img_raw,file_ext)
+        if self.save_filtered_img:
+            self.save_opencv_image(self.path_filtered,img_fil,file_ext)
 
     def output_pasval_voc(self, df):
     ### Output Pascal VOC format for GUI
@@ -119,11 +132,13 @@ class DataExporter():
         # Exporting each picture's results to its specific csv file
         df_csv.to_csv(os.path.join(self.output_path, filename + '.csv'), index=False)
 
-    def save_opencv_image(self, img, file_ext):
-        cv2.imwrite(os.path.join(self.output_path,self.filename+file_ext), img)
+    def save_opencv_image(self, path, img, file_ext):
+        cv2.imwrite(os.path.join(path, self.filename+file_ext), img)
 
     def try_to_make_folder(self, folder):
         try:
-            os.mkdir(self.output_path)
+            os.mkdir(folder)
         except:
+            os.mkdir(folder)
+            print('Failed to create directory')
             assert("Folder already exists")

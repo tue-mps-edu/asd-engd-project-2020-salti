@@ -4,7 +4,6 @@ import ntpath
 
 input_formats = ['.png','.jpg','.jpeg']
 
-
 class DataLoader():
     def __init__(self, path_rgb, path_thermal, output_size=[-1,-1], debug=False):
         self.DEBUG = debug                      # Debug flag for skipping images
@@ -67,3 +66,4 @@ class DataLoader():
 
 
             yield file_name, file_ext, img_C, img_T
+
