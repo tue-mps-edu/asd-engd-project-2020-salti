@@ -5,11 +5,11 @@ from config_thermal.utils_thermal.datasets import *
 
 class Detector(object):
     ''' Detector class generator'''
-    def __init__(self, type=None, conf_threshold=None, nms_threshold=None):
+    def __init__(self, type=None, conf_threshold=0):
         if type == 'RGB':               # Select an RGB method
-            self.net = YOLOv3_320()
+            self.net = YOLOv3_320(conf_threshold)
         elif type == 'Thermal':         # Select a Thermal method
-            self.net = YoloJoeHeller(conf_threshold, nms_threshold)
+            self.net = YoloJoeHeller(conf_threshold)
         else:
             raise ValueError(type)
     
@@ -23,7 +23,8 @@ class Detector(object):
 class YOLOv3_320():
     ''' RGB YOLO v3 object detection '''
 
-    def __init__(self):
+    def __init__(self, conf_threshold):
+        self.__conf_threshold = conf_threshold
         self.__dir_classes = 'config_rgb/coco-rgb.names'
         self.__dir_cfg = 'config_rgb/yolov3-rgb.cfg'
         self.__dir_weights = 'config_rgb/yolov3-rgb.weights'
@@ -58,12 +59,12 @@ class YOLOv3_320():
                 scores = det[5:]
                 classId = np.argmax(scores)
                 confidence = scores[classId]
-                # if confidence > conf_threshold:
-                w, h = int(det[2] * wT), int(det[3] * hT)
-                x, y = int((det[0] * wT) - w / 2), int((det[1] * hT) - h / 2)
-                bboxs.append([x, y, w, h])
-                classIds.append(classId)
-                confs.append(float(confidence))
+                if confidence > self.__conf_threshold:
+                    w, h = int(det[2] * wT), int(det[3] * hT)
+                    x, y = int((det[0] * wT) - w / 2), int((det[1] * hT) - h / 2)
+                    bboxs.append([x, y, w, h])
+                    classIds.append(classId)
+                    confs.append(float(confidence))
 
         return bboxs, classIds, confs
 
@@ -82,10 +83,9 @@ class YOLOv3_320():
 
 class YoloJoeHeller():
     ''' Thermal YOLO object detection, Joe Hoeller'''
-    def __init__(self, confThreshold, nmsThreshold):
+    def __init__(self, confThreshold):
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.__confThreshold = confThreshold  # Confidence threshold for approval of detection
-        self.__nmsThreshold = nmsThreshold  # Non-maximum suppresion threshold (lower = less number)
         self.__dir_cfg = 'config_thermal/yolov3-spp-r.cfg'
         self.__dir_data = 'config_thermal/coco-thermal.data'
         self.__dir_weights='config_thermal/yolov3-thermal-best.pt'
@@ -194,7 +194,7 @@ class YoloJoeHeller():
                 pred = pred.float()
 
             # Apply NMS
-            pred = non_max_suppression(pred, 0, 0)
+            pred = non_max_suppression(pred, self.__confThreshold)
             bboxs, confs, classes = self.__convert_tensor_to_lists(pred, img, img0)
 
         return Detections(bboxs, classes, confs)
