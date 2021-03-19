@@ -5,7 +5,7 @@ from config_thermal.utils_thermal.datasets import *
 
 class Detector(object):
     ''' Detector class generator'''
-    def __init__(self, type=None, nms_threshold=None, conf_threshold=None):
+    def __init__(self, type=None, conf_threshold=None, nms_threshold=None):
         if type == 'RGB':               # Select an RGB method
             self.net = YOLOv3_320()
         elif type == 'Thermal':         # Select a Thermal method
@@ -28,7 +28,7 @@ class YOLOv3_320():
         self.__dir_cfg = 'config_rgb/yolov3-rgb.cfg'
         self.__dir_weights = 'config_rgb/yolov3-rgb.weights'
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
-        self.__confThreshold = 0.3     # Confidence threshold for approval of detection
+        #self.__confThreshold = 0.3     # Confidence threshold for approval of detection
 
         self.__net = cv2.dnn.readNetFromDarknet(self.__dir_cfg, self.__dir_weights)
         self.__net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
@@ -194,7 +194,7 @@ class YoloJoeHeller():
                 pred = pred.float()
 
             # Apply NMS
-            pred = non_max_suppression(pred, self.__confThreshold, self.__nmsThreshold)
+            pred = non_max_suppression(pred, 0, 0)
             bboxs, confs, classes = self.__convert_tensor_to_lists(pred, img, img0)
 
         return Detections(bboxs, classes, confs)

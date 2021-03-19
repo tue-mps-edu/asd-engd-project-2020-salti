@@ -184,12 +184,12 @@ class Validator():
                                                                                          Accuracy_tot, F1_score_tot))
 
 
-
-
 #Function to validate the whole given directory
 def Validate(directory,img_ext,IOU_threshold):
     v=Validator(directory,img_ext,IOU_threshold)
     v.complete_Validation()
+
+
 
 
 '''
