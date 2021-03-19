@@ -1,4 +1,5 @@
 from GUI import *
+from multiprocessing import Process
 
 def main():
     # Read the configuration file
@@ -14,4 +15,6 @@ def main():
     root.mainloop()
 
 if __name__ == "__main__":
-    main()
+    p_gui = Process(target=main())
+    p_gui.start()
+    #main()

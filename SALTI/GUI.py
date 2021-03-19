@@ -5,6 +5,7 @@ from functools import partial
 from SALTI import SALTI
 import os
 from sys import platform
+from multiprocessing import Process
 
 def update_dir_rgb(config):
     config['str_dir_rgb'].set(filedialog.askdirectory(initialdir=config['str_dir_rgb'],title="Select RGB images directory"))
@@ -102,8 +103,9 @@ def create_gui(root, parser, config):
     '''
         RUNNING SALTI
     '''
-    Button(root,text="Open output folder",command= partial(open_folder,config),width=15,font='Helvetica 11').grid(row=r_out+4,column=col_button_path)
-    Button(root,text="RUN SALTI",command= partial(save_and_run, parser, config),width=15,font='Helvetica 11 bold').grid(row=r_out+5,column=col_button_path)
+    Button(root,text="Open output folder",command= partial(open_folder,config),width=15,font='Helvetica 11').grid(row=r_out+3,column=col_button_path)
+    Button(root,text="RUN SALTI",command= partial(save_and_run, parser, config),width=15,font='Helvetica 11 bold').grid(row=r_out+4,column=col_button_path)
+    Button(root,text="Stop SALTI",command=stop_salti,width=15,font='Helvetica 11 bold').grid(row=r_out+5,column=col_button_path)
 
 
 def open_folder(config):
@@ -120,7 +122,13 @@ def save_and_run(parser,config):
     saveconfig(parser, config)
 
     config_dict = tkinterDict_to_pythonDict(config)
-    SALTI(config_dict)
+
+    global p_salti
+    p_salti = Process(SALTI, args=(config_dict,))
+
+def stop_salti():
+    global p_salti
+    p_salti.kill()
 
 def tkinterDict_to_pythonDict(tkinter_dict):
     py_dict = {}
