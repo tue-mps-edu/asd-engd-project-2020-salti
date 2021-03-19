@@ -16,7 +16,7 @@ def update_dir_thermal(config):
 def update_dir_output(config):
     config['str_dir_output'].set(filedialog.askdirectory(initialdir=config['str_dir_thermal'], title="Select output directory"))
 
-def create_gui(root, parser, config):
+def create_gui(root, parser, config, salti_processes):
     '''
         PATH SETTINGS
     '''
@@ -104,8 +104,8 @@ def create_gui(root, parser, config):
         RUNNING SALTI
     '''
     Button(root,text="Open output folder",command= partial(open_folder,config),width=15,font='Helvetica 11').grid(row=r_out+3,column=col_button_path)
-    Button(root,text="RUN SALTI",command= partial(save_and_run, parser, config),width=15,font='Helvetica 11 bold').grid(row=r_out+4,column=col_button_path)
-    Button(root,text="Stop SALTI",command=stop_salti,width=15,font='Helvetica 11 bold').grid(row=r_out+5,column=col_button_path)
+    Button(root,text="RUN SALTI",command= partial(save_and_run, parser, config, salti_processes),width=15,font='Helvetica 11 bold').grid(row=r_out+4,column=col_button_path)
+    Button(root,text="Stop SALTI",command=partial(stop_salti,salti_processes),width=15,font='Helvetica 11 bold').grid(row=r_out+5,column=col_button_path)
 
 
 def open_folder(config):
@@ -117,18 +117,23 @@ def open_folder(config):
     except:
         raise NotImplementedError
 
+salti_processes = []
 
-def save_and_run(parser,config):
+def save_and_run(parser,config, salti_processes):
+    # Save the latest Tkinter variables in the configuration file
     saveconfig(parser, config)
-
+    # convert the Tkinter variables to default python
     config_dict = tkinterDict_to_pythonDict(config)
+    # Create a new process for SALTI
+    p_new = Process(target=SALTI, args=(config_dict,))
+    # Log the process in list
+    salti_processes.append(p_new)
+    p_new.start()
+    print('SALTI started at PID '+str(p_new.pid))
 
-    global p_salti
-    p_salti = Process(SALTI, args=(config_dict,))
-
-def stop_salti():
-    global p_salti
-    p_salti.kill()
+def stop_salti(salti_processes):
+    for process in salti_processes:
+        process.kill()
 
 def tkinterDict_to_pythonDict(tkinter_dict):
     py_dict = {}
