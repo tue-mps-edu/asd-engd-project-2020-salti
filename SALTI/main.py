@@ -1,18 +1,21 @@
 from GUI import *
-from multiprocessing import Process, current_process
-import SALTI
+import os
 
 def main():
+    # Chance directory to SALTI
+    SALTI_path = os.path.dirname(__file__)
+    os.chdir(SALTI_path)
+
     # Define configuration file
     config_file = 'config.ini'
-    SALTI_path = os.path.dirname(__file__)
-    config_path = os.path.join(SALTI_path,config_file)
+
     # Read the configuration file
-    if os.path.isfile(config_path):
+    if os.path.isfile(config_file):
         parser = ConfigParser()
-        parser.read(config_path)
+        parser.read(config_file)
     else:
-        print("Config file not found at "+config_file)
+        print("ERROR: Config file not found at "+config_file+'!')
+        raise FileExistsError
 
     salti_processes = []
 
