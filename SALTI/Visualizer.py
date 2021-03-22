@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from Detections import Detections
+from win32api import GetSystemMetrics
 
 class ProgressWindow():
     def __init__(self,img_c, img_t, img_t_out, det_c, det_t, det_m, file, classnames, progress, config):
@@ -17,7 +17,14 @@ class ProgressWindow():
 
         # Shrink the images
         self.imgs_rz = []
-        image_scaling = 0.7
+        im_sz = self.imgs[0].shape
+        if im_sz[0]>=im_sz[1]:
+            screen_height = GetSystemMetrics(1)
+            image_scaling = round((screen_height/2)/im_sz[0],3)
+        else:
+            screen_width = GetSystemMetrics(0)
+            image_scaling = round((screen_width/3.1)/im_sz[1],3)
+
         for img in self.imgs:
             self.imgs_rz.append(cv2.resize(img, (0,0), None, image_scaling, image_scaling))
 
