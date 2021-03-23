@@ -148,7 +148,7 @@ class Validator():
         FN_tot = 0
 
         for file in os.listdir(self.Results_directory):  # loop through directory of images
-            if os.path.splitext(file)[1] not in self.img_extention:
+            if os.path.splitext(file)[1] != self.img_extention:
                 continue
             print('Validating the image: ' + file)
 
@@ -183,12 +183,14 @@ class Validator():
         print('Total: Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision_tot, Recall_tot,
                                                                                          Accuracy_tot, F1_score_tot))
 
+        return Precision_tot,Recall_tot,Accuracy_tot,F1_score_tot
+
 
 #Function to validate the whole given directory
 def Validate(directory,img_ext,IOU_threshold):
     v=Validator(directory,img_ext,IOU_threshold)
-    v.complete_Validation()
-
+    Precision_tot = v.complete_Validation()
+    return Precision_tot
 
 
 
