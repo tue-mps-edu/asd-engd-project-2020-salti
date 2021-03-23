@@ -257,19 +257,45 @@ class LoadStreams:  # multiple IP or RTSP cameras
 class LoadImagesAndLabels(Dataset):  # for training/testing
     def __init__(self, path_img, path_lbl, img_size=416, batch_size=16, augment=False, hyp=None, rect=True, image_weights=False,
                  cache_labels=False, cache_images=False):
-        path = str(Path(path_img))  # os-agnostic
-        with open(path_img, 'r') as f:
-            self.img_files = [x.replace('/', os.sep) for x in f.read().splitlines()  # os-agnostic
-                              if os.path.splitext(x)[-1].lower() in img_formats]
+        # path_img = str(Path(path_img))  # os-agnostic
+        # path_lbl = str(Path(path_lbl))
+        # cwd = os.getcwd()
+        # path_img = os.path.join(cwd, path_img)
+        # path_lbl = os.path.join(cwd, path_lbl)
 
-        with open(path_lbl, 'r') as f:
-            self.lbl_files = [x.replace('/', os.sep) for x in f.read().splitlines()  # os-agnostic
-                              if os.path.splitext(x)[-1].lower() in ".txt"]
+        # with open(path_img, 'r') as f1:
+        #     self.img_files = [x.replace('/', os.sep) for x in f1.read().splitlines()  # os-agnostic
+        #                       if os.path.splitext(x)[-1].lower() in img_formats]
+        #
+        # with open(path_lbl, 'r') as f2:
+        #     self.label_files = [x.replace('/', os.sep) for x in f2.read().splitlines()  # os-agnostic
+        #                       if os.path.splitext(x)[-1].lower() in ".txt"]
+        #     print(self.label_files)
+
+        files1 = []
+        if os.path.isdir(path_img):
+            files1 = sorted(glob.glob(os.path.join(path_img, '*.*')))
+        elif os.path.isfile(path_img):
+            files1 = [path_img]
+
+        self.img_files = [x for x in files1 if os.path.splitext(x)[-1].lower() in img_formats]
+
+        files2 = []
+        if os.path.isdir(path_lbl):
+            files2 = sorted(glob.glob(os.path.join(path_lbl, '*.*')))
+        elif os.path.isfile(path_lbl):
+            files2 = [path_lbl]
+
+        self.label_files = [x for x in files2 if os.path.splitext(x)[-1].lower() in ".txt"]
+
+        # Define labels
+        # self.label_files = [x.replace('images', 'labels').replace(os.path.splitext(x)[-1], '.txt')
+        #                     for x in self.img_files]
 
         n = len(self.img_files)
         bi = np.floor(np.arange(n) / batch_size).astype(np.int)  # batch index
         nb = bi[-1] + 1  # number of batches
-        assert n > 0, 'No images found in %s' % path
+        assert n > 0, 'No images found in %s' % path_img
 
         self.n = n
         self.batch = bi  # batch index of image
@@ -279,42 +305,40 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
         self.image_weights = image_weights
         self.rect = False if image_weights else rect
 
-        # Define labels
-        # self.label_files = [x.replace('images', 'labels').replace(os.path.splitext(x)[-1], '.txt')
-        #                     for x in self.img_files]
 
-        # Rectangular Training  https://github.com/ultralytics/yolov3/issues/232
-        if self.rect:
-            # Read image shapes
-            sp = 'data' + os.sep + path.replace('.txt', '.shapes').split(os.sep)[-1]  # shapefile path
-            try:
-                with open(sp, 'r') as f:  # read existing shapefile
-                    s = [x.split() for x in f.read().splitlines()]
-                    assert len(s) == n, 'Shapefile out of sync'
-            except:
-                s = [exif_size(Image.open(f)) for f in tqdm(self.img_files, desc='Reading image shapes')]
-                np.savetxt(sp, s, fmt='%g')  # overwrites existing (if any)
 
-            # Sort by aspect ratio
-            s = np.array(s, dtype=np.float64)
-            ar = s[:, 1] / s[:, 0]  # aspect ratio
-            i = ar.argsort()
-            self.img_files = [self.img_files[i] for i in i]
-            self.label_files = [self.label_files[i] for i in i]
-            self.shapes = s[i]
-            ar = ar[i]
-
-            # Set training image shapes
-            shapes = [[1, 1]] * nb
-            for i in range(nb):
-                ari = ar[bi == i]
-                mini, maxi = ari.min(), ari.max()
-                if maxi < 1:
-                    shapes[i] = [maxi, 1]
-                elif mini > 1:
-                    shapes[i] = [1, 1 / mini]
-
-            self.batch_shapes = np.ceil(np.array(shapes) * img_size / 32.).astype(np.int) * 32
+        # # Rectangular Training  https://github.com/ultralytics/yolov3/issues/232
+        # if self.rect:
+        #     # Read image shapes
+        #     sp = 'data' + os.sep + path.replace('.txt', '.shapes').split(os.sep)[-1]  # shapefile path
+        #     try:
+        #         with open(sp, 'r') as f:  # read existing shapefile
+        #             s = [x.split() for x in f.read().splitlines()]
+        #             assert len(s) == n, 'Shapefile out of sync'
+        #     except:
+        #         s = [exif_size(Image.open(f)) for f in tqdm(self.img_files, desc='Reading image shapes')]
+        #         np.savetxt(sp, s, fmt='%g')  # overwrites existing (if any)
+        #
+        #     # Sort by aspect ratio
+        #     s = np.array(s, dtype=np.float64)
+        #     ar = s[:, 1] / s[:, 0]  # aspect ratio
+        #     i = ar.argsort()
+        #     self.img_files = [self.img_files[i] for i in i]
+        #     self.label_files = [self.label_files[i] for i in i]
+        #     self.shapes = s[i]
+        #     ar = ar[i]
+        #
+        #     # Set training image shapes
+        #     shapes = [[1, 1]] * nb
+        #     for i in range(nb):
+        #         ari = ar[bi == i]
+        #         mini, maxi = ari.min(), ari.max()
+        #         if maxi < 1:
+        #             shapes[i] = [maxi, 1]
+        #         elif mini > 1:
+        #             shapes[i] = [1, 1 / mini]
+        #
+        #     self.batch_shapes = np.ceil(np.array(shapes) * img_size / 32.).astype(np.int) * 32
 
         # Preload labels (required for weighted CE training)
         self.imgs = [None] * n

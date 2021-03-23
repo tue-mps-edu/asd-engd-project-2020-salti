@@ -1,5 +1,4 @@
 import argparse
-import os
 
 import torch.distributed as dist
 import torch.optim as optim
@@ -10,6 +9,7 @@ from utils_thermal.models_thermal import *
 from utils_thermal.datasets import *
 from utils_thermal.utils import *
 from utils_thermal.parse_config import *
+
 
 mixed_precision = True
 try:  # Mixed precision training https://github.com/NVIDIA/apex
@@ -50,19 +50,7 @@ if f:
         hyp[k] = v
 
 
-def train(path_img_train, path_lbl_train):
-
-    # Create and save file paths for all images in to a text file
-    filee = open(r'./SALTI/Train/Custom_files/training_img_paths.txt', 'w')
-    given_dir = path_img_train
-    print("This is given dir", given_dir)
-    [filee.write(os.path.join(given_dir, i) + '\n') for i in os.listdir(given_dir)]
-
-    # Create and save file paths for all labels in to a text file
-    filee = open(r'./SALTI/Train/Custom_files/training_lbl_paths.txt', 'w')
-    given_dir = path_lbl_train
-    [filee.write(os.path.join(given_dir, i) + '\n') for i in os.listdir(given_dir)]
-
+def train():
     cfg = opt.cfg
     data = opt.data
     img_size = opt.img_size
@@ -85,8 +73,10 @@ def train(path_img_train, path_lbl_train):
 
     # Configure run
     data_dict = parse_data_cfg(data)
-    train_path_img = data_dict['train_img']
-    train_path_lbl = data_dict['train_lbl']
+    path_img_train = "D:\Local_PDEng_ASD\Block-02\In_House_Project\Git_version\my_current_fetch\Train_data_thermal\img_lbl\images"
+    path_lbl_train = "D:\Local_PDEng_ASD\Block-02\In_House_Project\Git_version\my_current_fetch\Train_data_thermal\img_lbl\labels"
+    train_path_img = path_img_train
+    train_path_lbl = path_lbl_train
     nc = int(data_dict['classes'])  # number of classes
 
     # Remove previous results

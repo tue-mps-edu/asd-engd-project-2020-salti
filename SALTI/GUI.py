@@ -8,6 +8,7 @@ import os
 from sys import platform
 from multiprocessing import Process
 
+
 def update_dir_rgb(config):
     config['str_dir_rgb'].set(filedialog.askdirectory(initialdir=config['str_dir_rgb'],title="Select RGB images directory"))
 
@@ -143,7 +144,7 @@ def create_gui(root, parser, config, salti_processes):
                                                                                                 columnspan=span)
     Button(root, text="Set label path", command=partial(update_dir_lbl_train, config), width=15).grid(row=r_train + 2,
                                                                                                       column=col_button_path)
-    Button(root, text="TRAIN SALTI", command=partial(train_salti, parser, config, salti_processes), width=15,
+    Button(root, text="TRAIN SALTI", command=partial(train_salti,parser,config, salti_processes), width=15,
            font='Helvetica 11 bold').grid(row=r_train + 3, column=col_button_path)
 
     Label(root, text=" ").grid(row=r_train + 4, columnspan=3)
@@ -189,10 +190,13 @@ def train_salti(parser,config, salti_processes):
     # convert the Tkinter variables to default python
     config_dict = tkinterDict_to_pythonDict(config)
     # Create a new process for SALTI
-    path_img_train = str(config['str_dir_img_train'])
-    path_lbl_train = str(config['str_dir_lbl_train'])
-    p_new = Process(target=train(path_img_train, path_lbl_train), args=(config_dict,))
+    # path_img_train = str(config['str_dir_img_train'].get())
+    # path_lbl_train = str(config['str_dir_lbl_train'].get())
+    p_new = Process(target=train_file())
     # Log the process in list
     salti_processes.append(p_new)
     p_new.start()
     print('SALTI started to train ' + str(p_new.pid))
+
+def run_train():
+    exec(open("train.py").read())
