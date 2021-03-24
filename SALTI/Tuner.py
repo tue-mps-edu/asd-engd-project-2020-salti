@@ -23,14 +23,21 @@ else:
 config = ConfigSectionMapPythonvars(parser, 'Config')
 #config = tkinterDict_to_pythonDict (config)
 
-intervals=3
-rgb_conf_list=np.linspace(0.1,1,intervals,endpoint=False)
-rgb_nms_list=np.linspace(0.1,1,intervals,endpoint=False)
-thermal_conf_list=np.linspace(0.1,1,intervals,endpoint=False)
-thermal_nms_list=np.linspace(0.1,1,intervals,endpoint=False)
-merge_nms_list=np.linspace(0.1,1,intervals,endpoint=False)
+# intervals=3
+# rgb_conf_list=np.linspace(0.1,1,intervals,endpoint=False)
+# rgb_nms_list=np.linspace(0.1,1,intervals,endpoint=False)
+# thermal_conf_list=np.linspace(0.1,1,intervals,endpoint=False)
+# thermal_nms_list=np.linspace(0.1,1,intervals,endpoint=False)
+# merge_nms_list=np.linspace(0.1,1,intervals,endpoint=False)
 
-CL = ["RGB conf", "RGB NMS", "Thermal conf", "Thermal NMS", "Merge NMS", "Precision","Recall","Accuracy","F1"]
+intervals=1
+rgb_conf_list=np.linspace(0.1,0.2,intervals)
+rgb_nms_list=np.linspace(0.2,0.6,intervals)
+thermal_conf_list=np.linspace(0.05,0.25,intervals)
+thermal_nms_list=np.linspace(0.2,0.6,intervals)
+merge_nms_list=np.linspace(0.05,0.25,intervals)
+
+CL = ["RGB conf", "RGB NMS", "Thermal conf", "Thermal NMS", "Merge NMS", "TP", "FP", "FN" ,"Precision","Recall","Accuracy","F1"]
 df = pd.DataFrame(columns=CL)
 
 for rgb_conf in rgb_conf_list:
@@ -50,14 +57,14 @@ for rgb_conf in rgb_conf_list:
 
                     recent_subfolder = max(glob.glob(os.path.join(config['str_dir_output'], '*/')), key=os.path.getmtime)
 
-                    for root, dirs, files in os.walk(r"D:\Tuner\KAIST_DAY\GT_KAIST_DAY", topdown=False):
+                    for root, dirs, files in os.walk(r"D:\Tuner2\test_images\labels", topdown=False):
                         for name in files:
                             source_file=os.path.join(root, name)
                             shutil.copy(source_file, recent_subfolder)
 
-                    Precision,Recall,Accuracy,F1 = Validate(recent_subfolder,'.jpg',0.9)
+                    TP,FP,FN,Precision,Recall,Accuracy,F1 = Validate(recent_subfolder,'.jpg',0.9)
 
-                    df = df.append(pd.Series([rgb_conf,rgb_nms,thermal_conf,thermal_nms,merge_nms,Precision,Recall,Accuracy,F1],
+                    df = df.append(pd.Series([rgb_conf,rgb_nms,thermal_conf,thermal_nms,merge_nms,TP,FP,FN,Precision,Recall,Accuracy,F1],
                                              index=df.columns), ignore_index=True)
                     print(df)
 

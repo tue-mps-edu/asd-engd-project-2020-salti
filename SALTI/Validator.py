@@ -183,7 +183,7 @@ class Validator():
         print('Total: Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision_tot, Recall_tot,
                                                                                          Accuracy_tot, F1_score_tot))
 
-        return Precision_tot,Recall_tot,Accuracy_tot,F1_score_tot
+        return TP_tot,FP_tot,FN_tot,Precision_tot,Recall_tot,Accuracy_tot,F1_score_tot
 
 
 #Function to validate the whole given directory
