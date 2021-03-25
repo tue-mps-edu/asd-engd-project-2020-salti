@@ -1,4 +1,6 @@
 # Ignored files
-.idea
 SALTI src
+"SALTI (v1, old)"
+.idea
+__pycache__
 src experimental

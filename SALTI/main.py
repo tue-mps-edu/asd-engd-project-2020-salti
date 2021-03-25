@@ -3,7 +3,8 @@ import os
 
 def main():
     # Change directory to SALTI
-    SALTI_path = os.path.dirname(__file__)
+    SALTI_path = os.path.join(os.getcwd(),os.path.dirname(__file__))
+
     os.chdir(SALTI_path)
 
     # Define configuration file

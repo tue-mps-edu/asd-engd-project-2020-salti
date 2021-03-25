@@ -148,7 +148,7 @@ class Validator():
         FN_tot = 0
 
         for file in os.listdir(self.Results_directory):  # loop through directory of images
-            if os.path.splitext(file)[1] not in self.img_extention:
+            if os.path.splitext(file)[1] != self.img_extention:
                 continue
             print('Validating the image: ' + file)
 
@@ -183,12 +183,14 @@ class Validator():
         print('Total: Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision_tot, Recall_tot,
                                                                                          Accuracy_tot, F1_score_tot))
 
+        return TP_tot,FP_tot,FN_tot,Precision_tot,Recall_tot,Accuracy_tot,F1_score_tot
+
 
 #Function to validate the whole given directory
 def Validate(directory,img_ext,IOU_threshold):
     v=Validator(directory,img_ext,IOU_threshold)
-    v.complete_Validation()
-
+    Results = v.complete_Validation()
+    return Results
 
 
 
@@ -197,10 +199,10 @@ If you want to run the validator directly from your IDE then uncomment the block
 the directory, image extension and IOU_threshold.
 Remember to comment the windows command line section as well. 
 '''
-#Initializing the validator
-# v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.14_18h27m52s',
-#               '.jpg',
-#               0.8)
+# Initializing the validator
+#v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.14_18h27m52s',
+              #'.jpg',
+              #0.8)
 
 
 '''
