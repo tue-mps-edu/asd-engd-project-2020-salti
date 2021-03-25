@@ -26,3 +26,26 @@ def ConfigSectionMap(parser, section):
             raise NotImplementedError
         dict[option].set(parser.get(section, option))
     return dict
+
+
+def ConfigSectionMapPythonvars(parser, section):
+    dict = {}
+    options = parser.options(section)
+    for option in options:
+        type = option[0:3]
+        if type == 'str':
+            dict[option] = str(parser.get(section, option))
+        elif type == 'dbl':
+            dict[option] = float(str(parser.get(section, option)))
+        elif type == 'int':
+            dict[option] = int(parser.get(section, option))
+        elif type == 'bln':
+            if parser.get(section, option) == "True":
+                dict[option] = True
+            else:
+                dict[option] = False
+            # dict[option] = bool(parser.get(section, option))
+        else:
+            raise NotImplementedError
+    return dict
+
