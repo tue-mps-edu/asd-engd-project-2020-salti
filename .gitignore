@@ -1,4 +1,5 @@
 # Ignored files
 .idea
 SALTI src
+"SALTI (v1, old)"
 src experimental
