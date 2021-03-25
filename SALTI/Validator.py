@@ -1,16 +1,16 @@
 import numpy as np
 import os
 import pandas as pd
-import sys
-
 import xml.etree.ElementTree as ET
 
 
 class Validator():
-    def __init__(self,Results_directory, img_extention,iou_threshold):
+    def __init__(self,Results_directory, img_extention,iou_threshold,label_type):
         self.Results_directory=Results_directory
         self.img_extention=img_extention
         self.iou_threshold=iou_threshold
+        self.classNames = self.read_classes_txt(os.path.join(self.Results_directory, 'classes.txt'))
+        self.label_type = label_type
 
     def get_iou(self,pred_box, gt_box):
         """
@@ -41,24 +41,90 @@ class Validator():
         iou = inters / uni
         return iou
 
+    # Function to read the class names from classes.txt file in the results folder
+    def read_classes_txt(self,classes_txt_file):
+        with open(classes_txt_file) as classes:
+            classNames = classes.readlines()
+        # you may also want to remove whitespace characters like `\n` at the end of each line
+        classNames = [x.strip() for x in classNames]
+        return classNames
 
-    def single_Validate(self,file):
+
+
+    def read_xml_label(self,xml_file):
+
+
+        tree = ET.parse(xml_file)
+        root = tree.getroot()
+
+        # list_with_all_boxes = []
+
+        tot_width = int(root.find("size/width").text)
+        tot_height = int(root.find("size/height").text)
+
+        CL = ["classes", "x_c", "y_c", "w", "h"]
+        df = pd.DataFrame(columns=CL)
+
+        for boxes in root.iter('object'):
+            # filename = root.find('filename').text
+
+            # ymin, xmin, ymax, xmax = None, None, None, None #Why?!
+
+            object = boxes.find("name").text
+            object_index = self.classNames.index(object)
+
+            ymin = int(boxes.find("bndbox/ymin").text)
+            xmin = int(boxes.find("bndbox/xmin").text)
+            ymax = int(boxes.find("bndbox/ymax").text)
+            xmax = int(boxes.find("bndbox/xmax").text)
+
+            x_c = (xmin + xmax) / 2 / tot_width
+            y_c = (ymin + ymax) / 2 / tot_height
+            box_width = (xmax - xmin) / tot_width
+            box_height = (ymax - ymin) / tot_height
+
+            df = df.append(pd.Series(
+                [object_index, x_c, y_c, box_width, box_height],
+                index=df.columns), ignore_index=True)
+
+            # list_with_single_boxes = [object, xmin, ymin, xmax, ymax]
+            # list_with_all_boxes.append(list_with_single_boxes)
+        return df
+
+    def read_txt_label(self,txt_file):
+
+        df = pd.read_csv(txt_file, delim_whitespace=True,
+                         names=["classes", "x_c", "y_c", "w", "h"])
+        # GU['filename'] = file_name
+        return df
+
+
+
+    def single_Validate(self,img_file):
         #Initializing the TP, FP and FN values
         TP = 0
         FP = 0
         FN = 0
 
-        file_name = os.path.splitext(file)[0]
-        # GUI
-        GU = pd.read_csv(os.path.join(self.Results_directory, file_name + ".txt"), delim_whitespace=True,
-                         names=["classes", "x_c", "y_c", "w", "h"])
-        GU['filename'] = file_name
+        file_name = os.path.splitext(img_file)[0]
+        # # GUI
+        # GU = pd.read_csv(os.path.join(self.Results_directory, file_name + ".txt"), delim_whitespace=True,
+        #                  names=["classes", "x_c", "y_c", "w", "h"])
+        # GU['filename'] = file_name
+        #
+        # # Yolo
+        # YO = pd.read_csv(os.path.join(self.Results_directory, file_name + "_VAL.txt"), delim_whitespace=True,
+        #                  names=["classes", "x_c", "y_c", "w", "h"])
+        # YO['filename'] = file_name
 
-        # Yolo
-        YO = pd.read_csv(os.path.join(self.Results_directory, file_name + "_VAL.txt"), delim_whitespace=True,
-                         names=["classes", "x_c", "y_c", "w", "h"])
-        YO['filename'] = file_name
-
+        if self.label_type == 'Yolo':
+            GU = self.read_txt_label(os.path.join(self.Results_directory, file_name + ".txt"))
+            YO = self.read_txt_label(os.path.join(self.Results_directory, file_name + "_VAL.txt"))
+        elif self.label_type == 'PascalVOC':
+            GU = self.read_xml_label(os.path.join(self.Results_directory, file_name + ".xml"))
+            YO = self.read_xml_label(os.path.join(self.Results_directory, file_name + "_VAL.xml"))
+        else:
+            print("Label type not included")
 
         distances_mat = np.zeros((GU.shape[0], YO.shape[0]))
 
@@ -190,8 +256,8 @@ class Validator():
 
 
 #Function to validate the whole given directory
-def Validate(directory,img_ext,IOU_threshold):
-    v=Validator(directory,img_ext,IOU_threshold)
+def Validate(directory,img_ext,IOU_threshold,label_type):
+    v=Validator(directory,img_ext,IOU_threshold,label_type)
     Results = v.complete_Validation()
     return Results
 
@@ -203,9 +269,10 @@ the directory, image extension and IOU_threshold.
 Remember to comment the windows command line section as well. 
 '''
 # Initializing the validator
-# v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.14_18h27m52s',
-#               '.jpg',
-#               0.8)
+v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.25_16h17m52s',
+              '.jpg',
+              0.8,
+             'PascalVOC')
 
 
 '''
@@ -224,43 +291,67 @@ If you want to use the windows command line using arguments you need to:
 #     directory = sys.argv[1]
 #     img_ext = sys.argv[2]
 #     IOU_threshold= float(sys.argv[3])
-#     Validate(directory, img_ext, IOU_threshold)
+#     label_type = sys.argv[4]
+#     Validate(directory, img_ext, IOU_threshold,label_type)
 
 
 
-def read_content(xml_file: str, classes_txt):
-
-    classNames = read_classes_txt(classes_txt)
-
-    tree = ET.parse(xml_file)
-    root = tree.getroot()
-
-    list_with_all_boxes = []
-
-    for boxes in root.iter('object'):
-
-        filename = root.find('filename').text
-
-        ymin, xmin, ymax, xmax = None, None, None, None
 
 
-        object = boxes.find("name").text
-        ymin = int(boxes.find("bndbox/ymin").text)
-        xmin = int(boxes.find("bndbox/xmin").text)
-        ymax = int(boxes.find("bndbox/ymax").text)
-        xmax = int(boxes.find("bndbox/xmax").text)
-
-        list_with_single_boxes = [object, xmin, ymin, xmax, ymax]
-        list_with_all_boxes.append(list_with_single_boxes)
-
-    return filename, list_with_all_boxes
-
-name, boxes = read_content(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.25_11h46m55s\I00004_val.xml')
-print(name,boxes)
-
-#Function to read the class names from classes.txt file in the results folder
-def read_classes_txt(classes_txt):
-    with open(classes_txt) as classes:
-        content = classes.readlines()
-    # you may also want to remove whitespace characters like `\n` at the end of each line
-    content = [x.strip() for x in content]
+ #Delete all later
+# classes_txt = r"C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.25_11h37m28s\classes.txt"
+# xml_file = r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.25_11h46m55s\I00004_val.xml'
+#
+# #Function to read the class names from classes.txt file in the results folder
+# def read_classes_txt(classes_txt):
+#     with open(classes_txt) as classes:
+#         classNames = classes.readlines()
+#     # you may also want to remove whitespace characters like `\n` at the end of each line
+#     classNames = [x.strip() for x in classNames]
+#     return classNames
+#
+# def read_xml(xml_file: str, classes_txt):
+#
+#     classNames = read_classes_txt(classes_txt)
+#
+#     tree = ET.parse(xml_file)
+#     root = tree.getroot()
+#
+#     # list_with_all_boxes = []
+#
+#     tot_width = int(root.find("size/width").text)
+#     tot_height = int(root.find("size/height").text)
+#
+#     CL = ["classes", "x_c", "y_c", "w", "h"]
+#     df = pd.DataFrame(columns=CL)
+#
+#     for boxes in root.iter('object'):
+#
+#         # filename = root.find('filename').text
+#
+#         # ymin, xmin, ymax, xmax = None, None, None, None #Why?!
+#
+#         object = boxes.find("name").text
+#         object_index=classNames.index(object)
+#
+#         ymin = int(boxes.find("bndbox/ymin").text)
+#         xmin = int(boxes.find("bndbox/xmin").text)
+#         ymax = int(boxes.find("bndbox/ymax").text)
+#         xmax = int(boxes.find("bndbox/xmax").text)
+#
+#         x_c = (xmin+xmax)/2/tot_width
+#         y_c = (ymin+ymax)/2/tot_height
+#         box_width = (xmax-xmin)/tot_width
+#         box_height = (ymax-ymin)/tot_height
+#
+#         df = df.append(pd.Series(
+#             [object_index,x_c,y_c,box_width,box_height],
+#             index=df.columns), ignore_index=True)
+#
+#         # list_with_single_boxes = [object, xmin, ymin, xmax, ymax]
+#         # list_with_all_boxes.append(list_with_single_boxes)
+#     return df
+#
+# df = read_xml(xml_file,classes_txt)
+# print(df)
+#

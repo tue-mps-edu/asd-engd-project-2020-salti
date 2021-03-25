@@ -75,7 +75,7 @@ class DataExporter():
         try:
             writer.save(self.output_path + '\\' + self.filename + '.xml')
             if self.make_validation_copy:
-                writer.save(self.output_path + '\\' +  self.filename+'_val' + '.xml')
+                writer.save(self.output_path + '\\' +  self.filename+'_VAL' + '.xml')
         except:
             print('stop here ')
 
