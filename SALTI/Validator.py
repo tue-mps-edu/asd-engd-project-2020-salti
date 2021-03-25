@@ -3,6 +3,9 @@ import os
 import pandas as pd
 import sys
 
+import xml.etree.ElementTree as ET
+
+
 class Validator():
     def __init__(self,Results_directory, img_extention,iou_threshold):
         self.Results_directory=Results_directory
@@ -200,9 +203,9 @@ the directory, image extension and IOU_threshold.
 Remember to comment the windows command line section as well. 
 '''
 # Initializing the validator
-#v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.14_18h27m52s',
-              #'.jpg',
-              #0.8)
+# v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.14_18h27m52s',
+#               '.jpg',
+#               0.8)
 
 
 '''
@@ -217,8 +220,47 @@ If you want to use the windows command line using arguments you need to:
 
 '''
 #Windows command line using arguments
-if __name__ == "__main__":
-    directory = sys.argv[1]
-    img_ext = sys.argv[2]
-    IOU_threshold= float(sys.argv[3])
-    Validate(directory, img_ext, IOU_threshold)
+# if __name__ == "__main__":
+#     directory = sys.argv[1]
+#     img_ext = sys.argv[2]
+#     IOU_threshold= float(sys.argv[3])
+#     Validate(directory, img_ext, IOU_threshold)
+
+
+
+def read_content(xml_file: str, classes_txt):
+
+    classNames = read_classes_txt(classes_txt)
+
+    tree = ET.parse(xml_file)
+    root = tree.getroot()
+
+    list_with_all_boxes = []
+
+    for boxes in root.iter('object'):
+
+        filename = root.find('filename').text
+
+        ymin, xmin, ymax, xmax = None, None, None, None
+
+
+        object = boxes.find("name").text
+        ymin = int(boxes.find("bndbox/ymin").text)
+        xmin = int(boxes.find("bndbox/xmin").text)
+        ymax = int(boxes.find("bndbox/ymax").text)
+        xmax = int(boxes.find("bndbox/xmax").text)
+
+        list_with_single_boxes = [object, xmin, ymin, xmax, ymax]
+        list_with_all_boxes.append(list_with_single_boxes)
+
+    return filename, list_with_all_boxes
+
+name, boxes = read_content(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.25_11h46m55s\I00004_val.xml')
+print(name,boxes)
+
+#Function to read the class names from classes.txt file in the results folder
+def read_classes_txt(classes_txt):
+    with open(classes_txt) as classes:
+        content = classes.readlines()
+    # you may also want to remove whitespace characters like `\n` at the end of each line
+    content = [x.strip() for x in content]
