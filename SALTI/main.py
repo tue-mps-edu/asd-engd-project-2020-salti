@@ -2,8 +2,9 @@ from GUI import *
 import os
 
 def main():
-    # Chance directory to SALTI
+    # Change directory to SALTI
     SALTI_path = os.path.join(os.getcwd(),os.path.dirname(__file__))
+
     os.chdir(SALTI_path)
 
     # Define configuration file

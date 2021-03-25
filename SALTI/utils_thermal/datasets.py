@@ -255,17 +255,29 @@ class LoadStreams:  # multiple IP or RTSP cameras
 
 
 class LoadImagesAndLabels(Dataset):  # for training/testing
-    def __init__(self, path, img_size=416, batch_size=16, augment=False, hyp=None, rect=True, image_weights=False,
+    def __init__(self, path_img, path_lbl, img_size=416, batch_size=16, augment=False, hyp=None, rect=False, image_weights=False,
                  cache_labels=False, cache_images=False):
-        path = str(Path(path))  # os-agnostic
-        with open(path, 'r') as f:
-            self.img_files = [x.replace('/', os.sep) for x in f.read().splitlines()  # os-agnostic
-                              if os.path.splitext(x)[-1].lower() in img_formats]
+
+        files1 = []
+        if os.path.isdir(path_img):
+            files1 = sorted(glob.glob(os.path.join(path_img, '*.*')))
+        elif os.path.isfile(path_img):
+            files1 = [path_img]
+
+        self.img_files = [x for x in files1 if os.path.splitext(x)[-1].lower() in img_formats]
+
+        files2 = []
+        if os.path.isdir(path_lbl):
+            files2 = sorted(glob.glob(os.path.join(path_lbl, '*.*')))
+        elif os.path.isfile(path_lbl):
+            files2 = [path_lbl]
+
+        self.label_files = [x for x in files2 if os.path.splitext(x)[-1].lower() in ".txt"]
 
         n = len(self.img_files)
         bi = np.floor(np.arange(n) / batch_size).astype(np.int)  # batch index
         nb = bi[-1] + 1  # number of batches
-        assert n > 0, 'No images found in %s' % path
+        assert n > 0, 'No images found in %s' % path_img
 
         self.n = n
         self.batch = bi  # batch index of image
@@ -275,14 +287,13 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
         self.image_weights = image_weights
         self.rect = False if image_weights else rect
 
-        # Define labels
-        self.label_files = [x.replace('images', 'labels').replace(os.path.splitext(x)[-1], '.txt')
-                            for x in self.img_files]
 
+        # NOTE: Rectangular training has been currently set to False in the function argument 'rect'.
+        # For performing rectangular training set the 'rect' argument to True and also have the necessary .shapes files.
         # Rectangular Training  https://github.com/ultralytics/yolov3/issues/232
         if self.rect:
             # Read image shapes
-            sp = 'data' + os.sep + path.replace('.txt', '.shapes').split(os.sep)[-1]  # shapefile path
+            sp = 'data' + os.sep + path_img.replace('.txt', '.shapes').split(os.sep)[-1]  # shapefile path
             try:
                 with open(sp, 'r') as f:  # read existing shapefile
                     s = [x.split() for x in f.read().splitlines()]
