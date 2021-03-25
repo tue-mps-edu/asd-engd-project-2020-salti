@@ -25,9 +25,8 @@ class DataExporter():
             self.path_filtered = os.path.join(self.output_path,'filtered_images')
             self.try_to_make_folder(self.path_filtered)
 
-        if (self.label_type == 'YOLO'):
-            df = pd.DataFrame(self.classNames)
-            df.to_csv(os.path.join(self.output_path,'classes.txt'), header=None, index=None)
+        df = pd.DataFrame(self.classNames)
+        df.to_csv(os.path.join(self.output_path,'classes.txt'), header=None, index=None)
 
     def export(self, output_size, file_name, file_ext, detections, img_raw, img_fil, config):
         self.filename = file_name
@@ -72,7 +71,7 @@ class DataExporter():
         try:
             writer.save(self.output_path + '\\' + self.filename + '.xml')
             if self.make_validation_copy:
-                writer.save(self.output_path + '\\' +  self.filename+'_val' + '.xml')
+                writer.save(self.output_path + '\\' +  self.filename+'_VAL' + '.xml')
         except:
             print('stop here ')
 
