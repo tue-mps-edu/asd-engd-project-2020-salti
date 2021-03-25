@@ -4,10 +4,8 @@ from Validator import *
 import shutil
 from Configurator import ConfigSectionMapPythonvars
 
-# Define configuration file
-config_file = 'config.ini'
-
 # Read the configuration file
+config_file = 'config.ini'
 if os.path.isfile(config_file):
     parser = ConfigParser()
     parser.read(config_file)
@@ -15,8 +13,10 @@ else:
     print("ERROR: Config file not found at " + config_file + '!')
     raise FileExistsError
 
+# Create dictionary of variables
 config = ConfigSectionMapPythonvars(parser, 'Config')
 
+# Overwrite the paths
 config['str_dir_rgb'] = r"D:\test_images\color"
 config['str_dir_thermal'] = r"D:\test_images\thermal"
 config['str_dir_output'] = r"D:\test_images\output"
