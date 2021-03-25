@@ -1,2 +1,5 @@
 yolov3-spp_CUSTOM.cfg
 CUSTOM_weights.pt
+custom_trained.pt
+custom_trained_best.pt
+results.txt

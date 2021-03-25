@@ -10,7 +10,7 @@ from utils_thermal.utils import *
 from utils_thermal.parse_config import *
 
 
-def test(cfg,
+def test_weight(cfg,
          data,
          weights=None,
          batch_size=16,
@@ -223,7 +223,7 @@ if __name__ == '__main__':
     print(opt)
 
     with torch.no_grad():
-        test(opt.cfg,
+        test_weight(opt.cfg,
              opt.data,
              opt.weights,
              opt.batch_size,

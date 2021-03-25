@@ -4,7 +4,7 @@ import torch.distributed as dist
 import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
 
-import test  # import test.py to get mAP after each epoch
+import test_weight  # import test.py to get mAP after each epoch
 from utils_thermal.models_thermal import *
 from utils_thermal.datasets import *
 from utils_thermal.utils import *
@@ -17,7 +17,7 @@ try:  # Mixed precision training https://github.com/NVIDIA/apex
 except:
     mixed_precision = False  # not installed
 
-wdir = os.getcwd() + '/Train/Custom_files/'  # weights dir
+wdir = os.getcwd() + '/train/Custom_files/'  # weights dir
 last = wdir + 'custom_trained.pt'
 best = wdir + 'custom_trained_best.pt'
 results_file = wdir + 'results.txt'
@@ -286,7 +286,7 @@ def train():
             # Calculate mAP (always test final epoch, skip first 10 if opt.nosave)
             if not (opt.notest or (opt.nosave and epoch < 10)) or final_epoch:
                 with torch.no_grad():
-                    results, maps = test.test(cfg,
+                    results, maps = test_weight.test_weight(cfg,
                                               data,
                                               batch_size=batch_size,
                                               img_size=opt.img_size,
