@@ -2,6 +2,7 @@ import numpy as np
 import os
 import pandas as pd
 import xml.etree.ElementTree as ET
+import sys
 
 
 class Validator():
@@ -49,15 +50,10 @@ class Validator():
         classNames = [x.strip() for x in classNames]
         return classNames
 
-
-
     def read_xml_label(self,xml_file):
-
 
         tree = ET.parse(xml_file)
         root = tree.getroot()
-
-        # list_with_all_boxes = []
 
         tot_width = int(root.find("size/width").text)
         tot_height = int(root.find("size/height").text)
@@ -66,9 +62,6 @@ class Validator():
         df = pd.DataFrame(columns=CL)
 
         for boxes in root.iter('object'):
-            # filename = root.find('filename').text
-
-            # ymin, xmin, ymax, xmax = None, None, None, None #Why?!
 
             object = boxes.find("name").text
             object_index = self.classNames.index(object)
@@ -87,15 +80,12 @@ class Validator():
                 [object_index, x_c, y_c, box_width, box_height],
                 index=df.columns), ignore_index=True)
 
-            # list_with_single_boxes = [object, xmin, ymin, xmax, ymax]
-            # list_with_all_boxes.append(list_with_single_boxes)
         return df
 
     def read_txt_label(self,txt_file):
 
         df = pd.read_csv(txt_file, delim_whitespace=True,
                          names=["classes", "x_c", "y_c", "w", "h"])
-        # GU['filename'] = file_name
         return df
 
 
@@ -107,29 +97,20 @@ class Validator():
         FN = 0
 
         file_name = os.path.splitext(img_file)[0]
-        # # GUI
-        # GU = pd.read_csv(os.path.join(self.Results_directory, file_name + ".txt"), delim_whitespace=True,
-        #                  names=["classes", "x_c", "y_c", "w", "h"])
-        # GU['filename'] = file_name
-        #
-        # # Yolo
-        # YO = pd.read_csv(os.path.join(self.Results_directory, file_name + "_VAL.txt"), delim_whitespace=True,
-        #                  names=["classes", "x_c", "y_c", "w", "h"])
-        # YO['filename'] = file_name
 
         if self.label_type == 'Yolo':
-            GU = self.read_txt_label(os.path.join(self.Results_directory, file_name + ".txt"))
-            YO = self.read_txt_label(os.path.join(self.Results_directory, file_name + "_VAL.txt"))
+            GU = self.read_txt_label(os.path.join(self.Results_directory, file_name + ".txt"))  #Dataframe corresponding to user-modiphied GUI predictions
+            YO = self.read_txt_label(os.path.join(self.Results_directory, file_name + "_VAL.txt")) #Dataframe corresponding to initial Yolo predictions
         elif self.label_type == 'PascalVOC':
-            GU = self.read_xml_label(os.path.join(self.Results_directory, file_name + ".xml"))
-            YO = self.read_xml_label(os.path.join(self.Results_directory, file_name + "_VAL.xml"))
+            GU = self.read_xml_label(os.path.join(self.Results_directory, file_name + ".xml")) #Dataframe corresponding to user-modiphied GUI predictions
+            YO = self.read_xml_label(os.path.join(self.Results_directory, file_name + "_VAL.xml")) #Dataframe corresponding to initial Yolo predictions
         else:
             print("Label type not included")
 
         distances_mat = np.zeros((GU.shape[0], YO.shape[0]))
 
-        for index_GU in range(GU.shape[0]):  # 0 to 2 (along columns of gui)
-            for index_YO in range(YO.shape[0]):  # 0 to 3 (along columns of yolo)
+        for index_GU in range(GU.shape[0]):  #along columns of gui
+            for index_YO in range(YO.shape[0]):  #along columns of yolo
                 centroid_distances = np.sqrt((GU['x_c'][index_GU] - YO['x_c'][index_YO]) ** 2 + (
                         GU['y_c'][index_GU] - YO['y_c'][index_YO]) ** 2)
                 distances_mat[index_GU][index_YO] = centroid_distances
@@ -262,17 +243,16 @@ def Validate(directory,img_ext,IOU_threshold,label_type):
     return Results
 
 
-
 '''
 If you want to run the validator directly from your IDE then uncomment the block below and put as input
 the directory, image extension and IOU_threshold.
 Remember to comment the windows command line section as well. 
 '''
 # Initializing the validator
-v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.25_16h17m52s',
-              '.jpg',
-              0.8,
-             'PascalVOC')
+# v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.25_16h33m07s',
+#               '.jpg',
+#               0.8,
+#              'Yolo')
 
 
 '''
@@ -287,71 +267,11 @@ If you want to use the windows command line using arguments you need to:
 
 '''
 #Windows command line using arguments
-# if __name__ == "__main__":
-#     directory = sys.argv[1]
-#     img_ext = sys.argv[2]
-#     IOU_threshold= float(sys.argv[3])
-#     label_type = sys.argv[4]
-#     Validate(directory, img_ext, IOU_threshold,label_type)
+if __name__ == "__main__":
+    directory = sys.argv[1]
+    img_ext = sys.argv[2]
+    IOU_threshold= float(sys.argv[3])
+    label_type = sys.argv[4]
+    Validate(directory, img_ext, IOU_threshold,label_type)
 
 
-
-
-
- #Delete all later
-# classes_txt = r"C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.25_11h37m28s\classes.txt"
-# xml_file = r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.25_11h46m55s\I00004_val.xml'
-#
-# #Function to read the class names from classes.txt file in the results folder
-# def read_classes_txt(classes_txt):
-#     with open(classes_txt) as classes:
-#         classNames = classes.readlines()
-#     # you may also want to remove whitespace characters like `\n` at the end of each line
-#     classNames = [x.strip() for x in classNames]
-#     return classNames
-#
-# def read_xml(xml_file: str, classes_txt):
-#
-#     classNames = read_classes_txt(classes_txt)
-#
-#     tree = ET.parse(xml_file)
-#     root = tree.getroot()
-#
-#     # list_with_all_boxes = []
-#
-#     tot_width = int(root.find("size/width").text)
-#     tot_height = int(root.find("size/height").text)
-#
-#     CL = ["classes", "x_c", "y_c", "w", "h"]
-#     df = pd.DataFrame(columns=CL)
-#
-#     for boxes in root.iter('object'):
-#
-#         # filename = root.find('filename').text
-#
-#         # ymin, xmin, ymax, xmax = None, None, None, None #Why?!
-#
-#         object = boxes.find("name").text
-#         object_index=classNames.index(object)
-#
-#         ymin = int(boxes.find("bndbox/ymin").text)
-#         xmin = int(boxes.find("bndbox/xmin").text)
-#         ymax = int(boxes.find("bndbox/ymax").text)
-#         xmax = int(boxes.find("bndbox/xmax").text)
-#
-#         x_c = (xmin+xmax)/2/tot_width
-#         y_c = (ymin+ymax)/2/tot_height
-#         box_width = (xmax-xmin)/tot_width
-#         box_height = (ymax-ymin)/tot_height
-#
-#         df = df.append(pd.Series(
-#             [object_index,x_c,y_c,box_width,box_height],
-#             index=df.columns), ignore_index=True)
-#
-#         # list_with_single_boxes = [object, xmin, ymin, xmax, ymax]
-#         # list_with_all_boxes.append(list_with_single_boxes)
-#     return df
-#
-# df = read_xml(xml_file,classes_txt)
-# print(df)
-#
