@@ -12,7 +12,10 @@ class DataExporter():
         self.save_filtered_img = config['bln_savefiltered'] and config['bln_dofilter']
         self.label_type = config['str_label']
 
-        self.try_to_make_folder(output_path)
+        #If the output root folder does not exist a new one is created accordingly
+        if not os.path.isdir(output_path):
+            self.try_to_make_folder(output_path)
+
         self.output_path = os.path.join(output_path,datetime.datetime.now().strftime('%Y.%m.%d_%Hh%Mm%Ss'))
         self.classNames = classnames
         self.try_to_make_folder(self.output_path)
@@ -134,4 +137,4 @@ class DataExporter():
         try:
             os.mkdir(folder)
         except:
-            print('Failed to create directory')
+            print('Failed to create directory: '+folder)
