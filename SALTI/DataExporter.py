@@ -25,10 +25,6 @@ class DataExporter():
             self.path_filtered = os.path.join(self.output_path,'filtered_images')
             self.try_to_make_folder(self.path_filtered)
 
-        # if (self.label_type == 'YOLO'):
-        #     df = pd.DataFrame(self.classNames)
-        #     df.to_csv(os.path.join(self.output_path,'classes.txt'), header=None, index=None)
-
         df = pd.DataFrame(self.classNames)
         df.to_csv(os.path.join(self.output_path,'classes.txt'), header=None, index=None)
 
