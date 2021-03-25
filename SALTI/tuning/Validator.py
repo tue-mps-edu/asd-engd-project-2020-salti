@@ -189,8 +189,8 @@ class Validator():
 #Function to validate the whole given directory
 def Validate(directory,img_ext,IOU_threshold):
     v=Validator(directory,img_ext,IOU_threshold)
-    Precision_tot = v.complete_Validation()
-    return Precision_tot
+    Results = v.complete_Validation()
+    return Results
 
 
 
@@ -199,10 +199,10 @@ If you want to run the validator directly from your IDE then uncomment the block
 the directory, image extension and IOU_threshold.
 Remember to comment the windows command line section as well. 
 '''
-#Initializing the validator
-# v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.14_18h27m52s',
-#               '.jpg',
-#               0.8)
+# Initializing the validator
+v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.14_18h27m52s',
+              '.jpg',
+              0.8)
 
 
 '''
@@ -217,8 +217,8 @@ If you want to use the windows command line using arguments you need to:
 
 '''
 #Windows command line using arguments
-if __name__ == "__main__":
-    directory = sys.argv[1]
-    img_ext = sys.argv[2]
-    IOU_threshold= float(sys.argv[3])
-    Validate(directory, img_ext, IOU_threshold)
+# if __name__ == "__main__":
+#     directory = sys.argv[1]
+#     img_ext = sys.argv[2]
+#     IOU_threshold= float(sys.argv[3])
+#     Validate(directory, img_ext, IOU_threshold)
