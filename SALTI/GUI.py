@@ -4,6 +4,8 @@ from Configurator import *
 from functools import partial
 from SALTI import SALTI
 from train import *
+from subprocess import call
+
 import os
 from sys import platform
 from multiprocessing import Process
@@ -17,12 +19,6 @@ def update_dir_thermal(config):
 
 def update_dir_output(config):
     config['str_dir_output'].set(filedialog.askdirectory(initialdir=config['str_dir_thermal'], title="Select output directory"))
-
-def update_dir_img_train(config):
-    config['str_dir_img_train'].set(filedialog.askdirectory(initialdir=config['str_dir_img_train'],title="Select directory containing the images for training"))
-
-def update_dir_lbl_train(config):
-    config['str_dir_lbl_train'].set(filedialog.askdirectory(initialdir=config['str_dir_lbl_train'],title="Select directory containing the labels for training"))
 
 def create_gui(root, parser, config, salti_processes):
     '''
@@ -117,38 +113,6 @@ def create_gui(root, parser, config, salti_processes):
     Button(root,text="Stop SALTI",command=partial(stop_salti,salti_processes),width=15,font='Helvetica 11 bold').grid(row=r_out+5,column=col_button_path)
 
 
-    '''
-         TRAINING SALTI
-    '''
-
-    Label(root, text=" ").grid(row=r_out + 6, columnspan=3)
-    r_train = r_out + 7
-    # Header
-    Label(root, text="    Train settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,
-                                                                                                     row=r_train,
-                                                                                                     column=0,
-                                                                                                     columnspan=2)
-    # Setting the Image directory
-    Label(root, text="Train data directory:", justify=LEFT, anchor="w").grid(sticky=W, row=r_train + 1,
-                                                                            column=col_label_path)
-    Label(root, textvariable=config['str_dir_img_train'], justify=LEFT, anchor="w", padx=15).grid(sticky=W, row=r_train + 1,
-                                                                                            column=col_text_path,
-                                                                                            columnspan=span)
-    Button(root, text="Set image path", command=partial(update_dir_img_train, config), width=15).grid(row=r_train + 1,
-                                                                                              column=col_button_path)
-    # Setting the Label directory
-    Label(root, text="Train label directory:", justify=LEFT).grid(sticky=W, row=r_train + 2, column=col_label_path)
-    Label(root, textvariable=config['str_dir_lbl_train'], justify=LEFT, anchor="w", padx=15).grid(sticky=W,
-                                                                                                row=r_train + 2,
-                                                                                                column=col_text_path,
-                                                                                                columnspan=span)
-    Button(root, text="Set label path", command=partial(update_dir_lbl_train, config), width=15).grid(row=r_train + 2,
-                                                                                                      column=col_button_path)
-    Button(root, text="TRAIN SALTI", command=partial(train_salti,parser,config, salti_processes), width=15,
-           font='Helvetica 11 bold').grid(row=r_train + 3, column=col_button_path)
-
-    Label(root, text=" ").grid(row=r_train + 4, columnspan=3)
-
 
 def open_folder(config):
     # Only tested for Windows!
@@ -184,19 +148,3 @@ def tkinterDict_to_pythonDict(tkinter_dict):
         py_dict[option]=tkinter_dict[option].get()
     return py_dict
 
-def train_salti(parser,config, salti_processes):
-    # Save the latest Tkinter variables in the configuration file
-    saveconfig(parser, config)
-    # convert the Tkinter variables to default python
-    config_dict = tkinterDict_to_pythonDict(config)
-    # Create a new process for SALTI
-    # path_img_train = str(config['str_dir_img_train'].get())
-    # path_lbl_train = str(config['str_dir_lbl_train'].get())
-    p_new = Process(target=train_file())
-    # Log the process in list
-    salti_processes.append(p_new)
-    p_new.start()
-    print('SALTI started to train ' + str(p_new.pid))
-
-def run_train():
-    exec(open("train.py").read())

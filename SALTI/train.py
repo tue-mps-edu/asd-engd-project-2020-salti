@@ -17,10 +17,10 @@ try:  # Mixed precision training https://github.com/NVIDIA/apex
 except:
     mixed_precision = False  # not installed
 
-wdir = 'weights' + os.sep  # weights dir
-last = wdir + 'last.pt'
-best = wdir + 'best.pt'
-results_file = 'results.txt'
+wdir = os.getcwd() + '/Train/Custom_files/'  # weights dir
+last = wdir + 'custom_trained.pt'
+best = wdir + 'custom_trained_best.pt'
+results_file = wdir + 'results.txt'
 
 # Hyperparameters (results68: 59.2 mAP@0.5 yolov3-spp-416) https://github.com/ultralytics/yolov3/issues/310
 hyp = {'giou': 3.31,  # giou loss gain
@@ -58,6 +58,7 @@ def train():
     batch_size = opt.batch_size
     accumulate = opt.accumulate  # effective bs = batch_size * accumulate = 16 * 4 = 64
     weights = opt.weights  # initial training weights
+    nc = opt.nc
 
     if 'pw' not in opt.arc:  # remove BCELoss positive weights
         hyp['cls_pw'] = 1.
@@ -70,14 +71,6 @@ def train():
         img_sz_max = round(img_size / 32 * 1.5)
         img_size = img_sz_max * 32  # initiate with maximum multi_scale size
         print('Using multi-scale %g - %g' % (img_sz_min * 32, img_size))
-
-    # Configure run
-    data_dict = parse_data_cfg(data)
-    path_img_train = "D:\Local_PDEng_ASD\Block-02\In_House_Project\Git_version\my_current_fetch\Train_data_thermal\img_lbl\images"
-    path_lbl_train = "D:\Local_PDEng_ASD\Block-02\In_House_Project\Git_version\my_current_fetch\Train_data_thermal\img_lbl\labels"
-    train_path_img = path_img_train
-    train_path_lbl = path_lbl_train
-    nc = int(data_dict['classes'])  # number of classes
 
     # Remove previous results
     for f in glob.glob('*_batch*.jpg') + glob.glob(results_file):
@@ -159,24 +152,10 @@ def train():
                 p.requires_grad = False
 
     # Scheduler https://github.com/ultralytics/yolov3/issues/238
-    # lf = lambda x: 1 - x / epochs  # linear ramp to zero
-    # lf = lambda x: 10 ** (hyp['lrf'] * x / epochs)  # exp ramp
-    # lf = lambda x: 1 - 10 ** (hyp['lrf'] * (1 - x / epochs))  # inverse exp ramp
     # scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda=lf)
     # scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=range(59, 70, 1), gamma=0.8)  # gradual fall to 0.1*lr0
     scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[round(opt.epochs * x) for x in [0.8, 0.9]], gamma=0.1)
     scheduler.last_epoch = start_epoch - 1
-
-    # # Plot lr schedule
-    # y = []
-    # for _ in range(epochs):
-    #     scheduler.step()
-    #     y.append(optimizer.param_groups[0]['lr'])
-    # plt.plot(y, label='LambdaLR')
-    # plt.xlabel('epoch')
-    # plt.ylabel('LR')
-    # plt.tight_layout()
-    # plt.savefig('LR.png', dpi=300)
 
     # Mixed precision training https://github.com/NVIDIA/apex
     if mixed_precision:
@@ -192,12 +171,12 @@ def train():
         model.yolo_layers = model.module.yolo_layers  # move yolo layer indices to top level
 
     # Dataset
-    dataset = LoadImagesAndLabels(train_path_img, train_path_lbl,
+    dataset = LoadImagesAndLabels(opt.train_path_img, opt.train_path_lbl,
                                   img_size,
                                   batch_size,
                                   augment=True,
                                   hyp=hyp,  # augmentation hyperparameters
-                                  rect=opt.rect,  # rectangular training
+                                  rect=False,  # rectangular training
                                   image_weights=opt.img_weights,
                                   cache_labels=True if epochs > 10 else False,
                                   cache_images=False if opt.prebias else opt.cache_images)
@@ -262,17 +241,6 @@ def train():
                 plot_images(imgs=imgs, targets=targets, paths=paths, fname=fname)
                 if tb_writer:
                     tb_writer.add_image(fname, cv2.imread(fname)[:, :, ::-1], dataformats='HWC')
-
-            # Hyperparameter burn-in
-            # n_burn = nb - 1  # min(nb // 5 + 1, 1000)  # number of burn-in batches
-            # if ni <= n_burn:
-            #     for m in model.named_modules():
-            #         if m[0].endswith('BatchNorm2d'):
-            #             m[1].momentum = 1 - i / n_burn * 0.99  # BatchNorm2d momentum falls from 1 - 0.01
-            #     g = (i / n_burn) ** 4  # gain rises from 0 - 1
-            #     for x in optimizer.param_groups:
-            #         x['lr'] = hyp['lr0'] * g
-            #         x['weight_decay'] = hyp['weight_decay'] * g
 
             # Run model
             pred = model(imgs)
@@ -407,11 +375,21 @@ def prebias():
 
 
 if __name__ == '__main__':
+
+    # Add our parser
+    config_train_file = '../SALTI/Train/Custom_files/custom.data'
+    # # Read the configuration file
+    config_train_dict = parse_data_cfg(config_train_file)
+
+
     parser = argparse.ArgumentParser()
-    parser.add_argument('--epochs', type=int, default=2)  # 500200 batches at bs 16, 117263 images = 273 epochs
-    parser.add_argument('--batch-size', type=int, default=4)  # effective bs = batch_size * accumulate = 16 * 4 = 64
+    parser.add_argument('--nc', type=int, default=config_train_dict['classes'])
+    parser.add_argument('--train_path_img', type=str, default=config_train_dict['training_img_path'])
+    parser.add_argument('--train_path_lbl', type=str, default=config_train_dict['training_label_path'])
+    parser.add_argument('--epochs', type=int, default=config_train_dict['epochs'])  # 500200 batches at bs 16, 117263 images = 273 epochs
+    parser.add_argument('--batch-size', type=int, default=config_train_dict['batch_size'])  # effective bs = batch_size * accumulate = 16 * 4 = 64
     parser.add_argument('--accumulate', type=int, default=4, help='batches to accumulate before optimizing')
-    parser.add_argument('--cfg', type=str, default='Train/Custom_files/yolov3-spp_CUSTOM.cfg', help='cfg file path')
+    parser.add_argument('--cfg', type=str, default=config_train_dict['configuration'], help='cfg file path')
     parser.add_argument('--data', type=str, default='Train/Custom_files/custom.data', help='*.data file path')
     parser.add_argument('--multi-scale', action='store_true', help='adjust (67% - 150%) img_size every 10 batches')
     parser.add_argument('--img-size', type=int, default=416, help='inference size (pixels)')
@@ -424,7 +402,7 @@ if __name__ == '__main__':
     parser.add_argument('--bucket', type=str, default='', help='gsutil bucket')
     parser.add_argument('--img-weights', action='store_true', help='select training images by weight')
     parser.add_argument('--cache-images', action='store_true', help='cache images for faster training')
-    parser.add_argument('--weights', type=str, default='Train/Custom_files/CUSTOM_weights.pt', help='initial weights')
+    parser.add_argument('--weights', type=str, default=config_train_dict['weights'], help='initial weights')
     parser.add_argument('--arc', type=str, default='default', help='yolo architecture')  # defaultpw, uCE, uBCE
     parser.add_argument('--prebias', action='store_true', help='transfer-learn yolo biases prior to training')
     parser.add_argument('--name', default='', help='renames results.txt to results_name.txt if supplied')
@@ -494,6 +472,3 @@ if __name__ == '__main__':
 
             # Write mutation results
             print_mutation(hyp, results, opt.bucket)
-
-            # Plot results
-            # plot_evolution_results(hyp)
