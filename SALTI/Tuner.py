@@ -4,12 +4,6 @@ from Validator import *
 import shutil
 from Configurator import ConfigSectionMapPythonvars
 
-
-# SALTI_path = os.path.join(os.getcwd(), os.path.dirname(__file__))
-dir = os.chdir("..")
-print(os.getcwd())
-# os.chdir(SALTI_path)
-
 # Define configuration file
 config_file = 'config.ini'
 
@@ -23,9 +17,9 @@ else:
 
 config = ConfigSectionMapPythonvars(parser, 'Config')
 
-config['str_dir_rgb'] = "D:/Tuner2/test_images/color"
-config['str_dir_thermal'] = "D:/Tuner2/test_images/thermal"
-config['str_dir_output'] = "D:/Tuner2/test_images/Output"
+config['str_dir_rgb'] = r"D:\test_images\color"
+config['str_dir_thermal'] = r"D:\test_images\thermal"
+config['str_dir_output'] = r"D:\test_images\output"
 
 #Setup the grid search variables
 Steps=1
