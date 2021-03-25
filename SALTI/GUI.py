@@ -3,9 +3,13 @@ from tkinter import filedialog
 from Configurator import *
 from functools import partial
 from SALTI import SALTI
+from train import *
+from subprocess import call
+
 import os
 from sys import platform
 from multiprocessing import Process
+
 
 def update_dir_rgb(config):
     config['str_dir_rgb'].set(filedialog.askdirectory(initialdir=config['str_dir_rgb'],title="Select RGB images directory"))
@@ -109,6 +113,7 @@ def create_gui(root, parser, config, salti_processes):
     Button(root,text="Stop SALTI",command=partial(stop_salti,salti_processes),width=15,font='Helvetica 11 bold').grid(row=r_out+5,column=col_button_path)
 
 
+
 def open_folder(config):
     # Only tested for Windows!
     try:
@@ -142,3 +147,4 @@ def tkinterDict_to_pythonDict(tkinter_dict):
     for option in tkinter_dict:
         py_dict[option]=tkinter_dict[option].get()
     return py_dict
+
