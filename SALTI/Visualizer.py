@@ -4,18 +4,27 @@ from win32api import GetSystemMetrics
 
 class ProgressWindow():
     def __init__(self,img_c, img_t, img_t_out, det_c, det_t, det_m, file, classnames, progress, config):
-        self.imgs = [img_c.copy(), img_t.copy(), img_t_out.copy()]
+        '''
+        This class produces a progress window upon running SALTI that shows the three RGB, Thermal and Merged images side by side.
+        Additionally, under the window a progress bar shows percentage of the work process done.
+        '''
+
+        # Detections and images are stacked together in a list
+        self.imgs = [img_c.copy(), img_t.copy(), img_t_out.copy()] # A copy of each image is used so that detections are not incorporated on original images
         self.dets = [det_c, det_t, det_m]
+
+        # Title of the thermal image changes if filtering is being used for them
         if config['bln_dofilter']:
             self.titles = ['Color: '+file, 'Thermal with filter', 'Thermal with merged labels']
         else:
             self.titles = ['Color: '+file, 'Thermal', 'Thermal with merged labels']
+
         # Add BBOXes to the images
         for img, det, title in zip(self.imgs, self.dets, self.titles):
             self.add_bboxes_to_image(classnames, img, det)
             cv2.putText(img=img, text=title, org=(25,50),fontFace=1, fontScale=2, color=(255,255,255), thickness=2)
 
-        # Shrink the images
+        # Depending on the monitor screen resolution, the images for visual purposes are rescaled to fit within the screen
         self.imgs_rz = []
         im_sz = self.imgs[0].shape
         if im_sz[0]>=im_sz[1]:
@@ -32,6 +41,9 @@ class ProgressWindow():
         self.create_window(progress, classnames)
 
     def add_bboxes_to_image(self,classNames, img, detection):
+        '''
+        This function draws a box around detected objects along with the prediction labels on top of them
+        '''
         for i in range(len(detection.boxes)):
             box, conf, name = detection.boxes[i], detection.confidences[i], detection.classes[i]
             x, y, w, h = box[0], box[1], box[2], box[3]
@@ -41,6 +53,9 @@ class ProgressWindow():
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
 
     def create_window(self, progress, classnames):
+        '''
+        Function to create a window for showing images stacked together
+        '''
         stacked_imgs = np.hstack((self.imgs_rz[0], self.imgs_rz[1], self.imgs_rz[2]))
         self.create_bar_from_img(stacked_imgs, progress)
         self.window = np.concatenate((stacked_imgs, self.bar_progress),axis=0)
@@ -48,6 +63,9 @@ class ProgressWindow():
         cv2.waitKey(1)
 
     def create_bar_from_img(self, stacked_imgs, progress):
+        '''
+        Function to make a progress Bar to be shown at bottom of the visualizer window
+        '''
         # Get size of the stacked images
         img_size = stacked_imgs.shape
         # Define size of progress bar
