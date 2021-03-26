@@ -3,6 +3,7 @@ import shutil
 import pandas as pd
 import numpy as np
 import os
+from configparser import ConfigParser
 
 from . import SALTI
 from . import GUI
@@ -10,9 +11,10 @@ from . import Validator
 from . import Configurator
 
 # Read the configuration file
-config_file = 'config.ini'
+package_directory = os.path.dirname(os.path.abspath(__file__))
+config_file = os.path.join(package_directory,'config.ini')
 if os.path.isfile(config_file):
-    parser = Configurator.ConfigParser()
+    parser = ConfigParser()
     parser.read(config_file)
 else:
     print("ERROR: Config file not found at " + config_file + '!')
@@ -64,7 +66,7 @@ for rgb_conf in rgb_conf_list:
                             shutil.copy(source_file, recent_subfolder)
 
                     #Running the Validator on the most recent subfolder
-                    TP,FP,FN,Precision,Recall,Accuracy,F1 = Validate(recent_subfolder,'.jpg',0.9)
+                    TP,FP,FN,Precision,Recall,Accuracy,F1 = Validator.Validate(recent_subfolder,'.jpg',0.9)
 
                     df = df.append(pd.Series([rgb_conf,rgb_nms,thermal_conf,thermal_nms,merge_nms,TP,FP,FN,Precision,Recall,Accuracy,F1],
                                              index=df.columns), ignore_index=True)
