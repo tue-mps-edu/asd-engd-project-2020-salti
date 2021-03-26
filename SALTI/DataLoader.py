@@ -51,6 +51,11 @@ class DataLoader():
             img_C = cv2.imread(path_C)                      # Read color image
             img_T = cv2.imread(path_T)                      # Read thermal image
 
+            sz_c = img_C.shape
+            sz_t = img_T.shape
+            assert sz_c[0] == sz_t[0], "Height of images do not match!"
+            assert sz_c[1] == sz_t[1], "Width of images do not match!"
+
             self.count = self.count + 1                     # Update to next image
             self.progress = (self.count/self.nr_imgs)   # Update progress
 
