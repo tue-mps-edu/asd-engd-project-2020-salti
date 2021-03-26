@@ -53,10 +53,12 @@ class YOLOv3_320():
         self.__classnames = self.__load_classes()
 
     def get_classes(self):
+        """Get classes from private variable"""
         return self.__classnames
 
     # Get classes
     def __load_classes(self):
+        '''Load classnames from file'''
         classNames = []
         with open(self.__dir_classes, 'r') as f:  # using WITH function takes away the need to use CLOSE file function
             classNames = f.read().rstrip('\n').split(
@@ -64,16 +66,27 @@ class YOLOv3_320():
         return classNames
 
     def __getobjects(self,outputs, img_rgb):
+        '''
+        Get objets from detector outputs
+
+        Arguments:
+            outputs from detector
+            (opencv img) image
+        Returns:
+            (list) Bounding Boxes
+            (list) class identifiers
+            (list) confidences
+        '''
         hT, wT, cT = img_rgb.shape
-        bboxs = []
-        classIds = []
-        confs = []
+        bboxs, classIds, confs = [], [], []
 
         for output in outputs:
             for det in output:
                 scores = det[5:]
+                # Select class with highest confidence level
                 classId = np.argmax(scores)
                 confidence = scores[classId]
+                # Filter detections based on confidence threshold
                 if confidence > self.__conf_threshold:
                     w, h = int(det[2] * wT), int(det[3] * hT)
                     x, y = int((det[0] * wT) - w / 2), int((det[1] * hT) - h / 2)
@@ -84,6 +97,13 @@ class YOLOv3_320():
         return bboxs, classIds, confs
 
     def detect(self, image):
+        '''
+        Detect objects in RGB image
+        Arguments:
+            (opencv image) image to perform detection on
+        Returns:
+            (Detections) Output detections from algorithm
+        '''
         # Send image through OpenCV neural net
         blob = cv2.dnn.blobFromImage(image, 1 / 255, (self.__whT, self.__whT), [0, 0, 0], 1, False)
         self.__net.setInput(blob)
