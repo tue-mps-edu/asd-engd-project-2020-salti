@@ -1,20 +1,25 @@
 import glob
-from GUI import *
-from Validator import *
 import shutil
-from Configurator import ConfigSectionMapPythonvars
+import pandas as pd
+import numpy as np
+import os
+
+from . import SALTI
+from . import GUI
+from . import Validator
+from . import Configurator
 
 # Read the configuration file
 config_file = 'config.ini'
 if os.path.isfile(config_file):
-    parser = ConfigParser()
+    parser = Configurator.ConfigParser()
     parser.read(config_file)
 else:
     print("ERROR: Config file not found at " + config_file + '!')
     raise FileExistsError
 
 # Create dictionary of variables
-config = ConfigSectionMapPythonvars(parser, 'Config')
+config = Configurator.ConfigSectionMapPythonvars(parser, 'Config')
 
 # Overwrite the paths
 config['str_dir_rgb'] = r"D:\test_images\color"

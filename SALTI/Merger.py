@@ -1,5 +1,5 @@
 #from Detections import Detections
-from Detections import Detections
+from . import Detections
 import cv2
 
 class Merger():

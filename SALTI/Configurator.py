@@ -1,4 +1,4 @@
-from tkinter import *
+import tkinter as tk
 
 def saveconfig(parser, config):
     '''
@@ -35,13 +35,13 @@ def ConfigSectionMap(parser, section):
     for option in options:
         type = option[0:3]
         if type == 'str':
-            dict[option] = StringVar()
+            dict[option] = tk.StringVar()
         elif type == 'dbl':
-            dict[option] = DoubleVar()
+            dict[option] = tk.DoubleVar()
         elif type == 'int':
-            dict[option] = IntVar()
+            dict[option] = tk.IntVar()
         elif type == 'bln':
-            dict[option] = BooleanVar()
+            dict[option] = tk.BooleanVar()
         else:
             raise NotImplementedError
         dict[option].set(parser.get(section, option))

@@ -1,4 +1,6 @@
-from GUI import *
+import tkinter as tk
+from . import GUI
+from . import Configurator
 from configparser import ConfigParser
 import os
 
@@ -24,12 +26,12 @@ def main():
     salti_processes = []
 
     # Initialize the GUI
-    root = Tk()     # Initialize widget
+    root = tk.Tk()     # Initialize widget
     root.title("SALTI")
     # Initialize configuration dict as TKinter variables
-    config = ConfigSectionMap(parser, 'Config')
+    config = Configurator.ConfigSectionMap(parser, 'Config')
     # Fill the GUI & run
-    create_gui(root,parser,config, salti_processes)
+    GUI.create_gui(root,parser,config, salti_processes)
     root.mainloop()
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
-from Detections import *
-from utils_thermal.models_thermal import *  # set ONNX_EXPORT in models.py
-from utils_thermal.datasets import *
+import numpy as np
+from . import Detections
+from . import utils_thermal # set ONNX_EXPORT in models.py
+from . import utils_thermal
 
 
 class Detector(object):
