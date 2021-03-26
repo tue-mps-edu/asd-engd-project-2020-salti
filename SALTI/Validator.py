@@ -14,13 +14,18 @@ class Validator():
         self.label_type = label_type
 
     def get_iou(self,pred_box, gt_box):
-        """
+        '''
+        Reference: https://github.com/Treesfive/calculate-iou/blob/master/get_iou.py
+
+        This function takes asn an input the predicted bounding box and the ground truth bounding box
+        and evaluates the Intersection over Union (IoU) between the two:
+
         pred_box : the coordinate for predict bounding box
         gt_box :   the coordinate for ground truth bounding box
         return :   the iou score
         the  left-down coordinate of  pred_box:(pred_box[0], pred_box[1])
         the  right-up coordinate of  pred_box:(pred_box[2], pred_box[3])
-        """
+        '''
         # 1.get the coordinate of inters
         ixmin = max(pred_box[0], gt_box[0])
         ixmax = min(pred_box[2], gt_box[2])
@@ -91,6 +96,9 @@ class Validator():
 
 
     def single_Validate(self,img_file):
+        '''
+        This function takes as an input an image file
+        '''
         #Initializing the TP, FP and FN values
         TP = 0
         FP = 0
@@ -263,7 +271,7 @@ If you want to use the windows command line using arguments you need to:
 3. set the current directory to the folder you have the script in with:
             cd your_directory
 4. run the Validotor script along with the input arguments as the following:
-            python Validor.py "directory" "image_extension" IOU_threshold
+            python Validor.py "directory" "image_extension" IOU_threshold "label format (Yolo or PascalVOC)"
 
 '''
 #Windows command line using arguments
