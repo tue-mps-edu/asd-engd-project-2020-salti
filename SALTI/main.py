@@ -1,4 +1,5 @@
-from .GUI import *
+from GUI import *
+from configparser import ConfigParser
 import os
 
 def main():
