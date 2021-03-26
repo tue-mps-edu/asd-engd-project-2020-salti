@@ -25,43 +25,43 @@ def SALTI(config):
         - (optional) Filtered images
     '''
 
-    output_size = [config['int_output_x_size'], config['int_output_y_size'],3]
+    output_size = [config['int_output_x_size'], config['int_output_y_size'],3]  #Desired output size (width and height) is read from the config file
 
-    path_rgb = config['str_dir_rgb']
-    path_thermal = config['str_dir_thermal']
-    path_output = config['str_dir_output']
+    path_rgb = config['str_dir_rgb'] # Directory where RGB images are stored
+    path_thermal = config['str_dir_thermal'] # Directory where Thermal images are stored
+    path_output = config['str_dir_output'] # Directory where results will be stored
 
     # Initialize class that loads all images
     data = DataLoader(path_rgb,path_thermal,debug=False)
     # Preprocessor for RGB image with enhancing = False
     pp_c = Preprocessor(output_size=output_size, enhancing=False)
-    # Preprocessor for thermal image with enhancing = True
+    # Preprocessor for thermal image with enhancing specified by the user (through config file)
     pp_t = Preprocessor(output_size=output_size, enhancing=config['bln_dofilter'])
 
     # Initialize Object Detection classes
-    net_c = Detector('RGB',config['dbl_thermal_conf'])
-    net_t = Detector('Thermal',config['dbl_thermal_conf'])
-    RGB_classNames = net_c.get_classes()
+    net_c = Detector('RGB',config['dbl_thermal_conf']) # RGB detector class
+    net_t = Detector('Thermal',config['dbl_thermal_conf']) # Thermal detector class
+    RGB_classNames = net_c.get_classes() # Yolo classnames are loaded through the RGB detector class
 
     # Initialize merger class for merging detections
-    merge_c   = Merger( config['dbl_rgb_conf'],     config['dbl_rgb_nms'])
-    merge_t   = Merger( config['dbl_thermal_conf'], config['dbl_thermal_nms'])
-    merge_all = Merger( 0.0,                        config['dbl_merge_nms'])
+    merge_c   = Merger( config['dbl_rgb_conf'],     config['dbl_rgb_nms']) # Merger for RGB image detections
+    merge_t   = Merger( config['dbl_thermal_conf'], config['dbl_thermal_nms']) # Merger for Thermal image detections
+    merge_all = Merger( 0.0,                        config['dbl_merge_nms']) # Merger for combining both RGB and Thermal image detections
 
     # Class for exporting the images & detections
     exporter = DataExporter(config, path_output, RGB_classNames)
 
     for file_name, file_ext, img_c, img_t in data:
 
-        # Output size added as an additional argument to define condition for resizing
-        img_c_out, img_c = pp_c.process(img_c)
-        img_t_out, img_t = pp_t.process(img_t)
+        # Preprocessing
+        img_c_out, img_c = pp_c.process(img_c) #R GB image getting preprocessed
+        img_t_out, img_t = pp_t.process(img_t) # Thermal image getting preprocessed
 
         # Do detections and apply non-maximum suppression on BBOXes
-        det_c = merge_c.NMS(net_c.detect(img_c.copy()))
-        det_t = merge_t.NMS(net_t.detect(img_t.copy()))
-        det_m = det_c+det_t
-        det_m = merge_all.NMS(det_m)
+        det_c = merge_c.NMS(net_c.detect(img_c.copy())) # RGB detections going through NMS function
+        det_t = merge_t.NMS(net_t.detect(img_t.copy())) # Thermal detections going through NMS function
+        det_m = det_c+det_t # RGB and Thermal detections are concatenated
+        det_m = merge_all.NMS(det_m) # Concatenated detections going through NMS Function
 
         # Progress window
         V = ProgressWindow(img_c, img_t, img_t_out, det_c, det_t, det_m, file_name+file_ext, RGB_classNames, data.progress, config)
