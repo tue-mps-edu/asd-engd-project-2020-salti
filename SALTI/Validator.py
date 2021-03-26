@@ -270,8 +270,8 @@ If you want to use the windows command line using arguments you need to:
             conda activate thermal-joe
 3. set the current directory to the folder you have the script in with:
             cd your_directory
-4. run the Validotor script along with the input arguments as the following:
-            python Validor.py "directory" "image_extension" IOU_threshold "label format (Yolo or PascalVOC)"
+4. run the Validator script along with the input arguments as the following:
+            python Validator.py "directory" "image_extension" IOU_threshold "label format (Yolo or PascalVOC)"
 '''
 #Windows command line using arguments
 if __name__ == "__main__":
