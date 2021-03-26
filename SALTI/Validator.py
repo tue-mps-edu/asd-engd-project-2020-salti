@@ -51,10 +51,12 @@ class Validator():
     def read_classes_txt(self,classes_txt_file):
         with open(classes_txt_file) as classes:
             classNames = classes.readlines()
-        # you may also want to remove whitespace characters like `\n` at the end of each line
+
+        # To remove whitespace characters like `\n` at the end of each line
         classNames = [x.strip() for x in classNames]
         return classNames
 
+    # Function to read information from the xml file (PASCALVOC label format) and store the information in a dataframe
     def read_xml_label(self,xml_file):
 
         tree = ET.parse(xml_file)
@@ -87,6 +89,7 @@ class Validator():
 
         return df
 
+    # Function to read information from the text file (YOLO label format) and store the information in a dataframe
     def read_txt_label(self,txt_file):
 
         df = pd.read_csv(txt_file, delim_whitespace=True,
@@ -94,7 +97,7 @@ class Validator():
         return df
 
 
-
+    # Function to perform validation for a single image
     def single_Validate(self,img_file):
         '''
         This function takes as an input an image file
@@ -104,24 +107,23 @@ class Validator():
         FP = 0
         FN = 0
 
-        file_name = os.path.splitext(img_file)[0]
+        file_name = os.path.splitext(img_file)[0]   # Obtain the filename of the current image to be validated
 
-        if self.label_type == 'Yolo':
-            GU = self.read_txt_label(os.path.join(self.Results_directory, file_name + ".txt"))  #Dataframe corresponding to user-modiphied GUI predictions
-            YO = self.read_txt_label(os.path.join(self.Results_directory, file_name + "_VAL.txt")) #Dataframe corresponding to initial Yolo predictions
-        elif self.label_type == 'PascalVOC':
-            GU = self.read_xml_label(os.path.join(self.Results_directory, file_name + ".xml")) #Dataframe corresponding to user-modiphied GUI predictions
-            YO = self.read_xml_label(os.path.join(self.Results_directory, file_name + "_VAL.xml")) #Dataframe corresponding to initial Yolo predictions
+        if self.label_type == 'Yolo':   # Check for label type
+            GU = self.read_txt_label(os.path.join(self.Results_directory, file_name + ".txt"))  # Dataframe corresponding to user-modiphied GUI predictions
+            YO = self.read_txt_label(os.path.join(self.Results_directory, file_name + "_VAL.txt")) # Dataframe corresponding to initial Yolo predictions
+        elif self.label_type == 'PascalVOC': # Check for label type
+            GU = self.read_xml_label(os.path.join(self.Results_directory, file_name + ".xml")) # Dataframe corresponding to user-modiphied GUI predictions
+            YO = self.read_xml_label(os.path.join(self.Results_directory, file_name + "_VAL.xml")) # Dataframe corresponding to initial Yolo predictions
         else:
             print("Label type not included")
 
-        distances_mat = np.zeros((GU.shape[0], YO.shape[0]))
+        distances_mat = np.zeros((GU.shape[0], YO.shape[0]))      # Initialize the distance matrix
 
-        for index_GU in range(GU.shape[0]):  #along columns of gui
-            for index_YO in range(YO.shape[0]):  #along columns of yolo
-                centroid_distances = np.sqrt((GU['x_c'][index_GU] - YO['x_c'][index_YO]) ** 2 + (
-                        GU['y_c'][index_GU] - YO['y_c'][index_YO]) ** 2)
-                distances_mat[index_GU][index_YO] = centroid_distances
+        for index_GU in range(GU.shape[0]):  # Along columns of gui
+            for index_YO in range(YO.shape[0]):  # Along columns of yolo
+                centroid_distances = np.sqrt((GU['x_c'][index_GU] - YO['x_c'][index_YO]) ** 2 + (GU['y_c'][index_GU] - YO['y_c'][index_YO]) ** 2) # Compute the centroid distances
+                distances_mat[index_GU][index_YO] = centroid_distances  # Assign the centroid distance information in the distance matrix
 
         # Creating a dataframe for distances between GUI (in rows) boxes and Yolo (in column) boxes
         distances_df = pd.DataFrame(data=distances_mat)
@@ -132,7 +134,7 @@ class Validator():
             GUI_min_ind = distances_df.min(axis=1).idxmin()
             YO_min_ind = distances_df.min().idxmin()
 
-            # calculate the edges of the YOLO and GUI boxes
+            # Calculate the edges of the YOLO and GUI boxes
             x_GU_low = GU['x_c'][GUI_min_ind] - (GU['w'][GUI_min_ind]) * 1 / 2
             y_GU_low = GU['y_c'][GUI_min_ind] - (GU['h'][GUI_min_ind]) * 1 / 2
             x_GU_high = GU['x_c'][GUI_min_ind] + (GU['w'][GUI_min_ind]) * 1 / 2
@@ -145,13 +147,7 @@ class Validator():
 
             # Calculate the IoU (predicted YO box vs ground truth GU box) and set threshold
             IoU = self.get_iou([x_YO_low, y_YO_low, x_YO_high, y_YO_high], [x_GU_low, y_GU_low, x_GU_high, y_GU_high])
-            '''
-            #compare the minimum with diameter of the larger box
-            GUI_diam = np.sqrt( (GU['w'][GUI_min_ind]) **2 + (GU['h'][GUI_min_ind]) **2 )
-            YO_diam = np.sqrt((YO['w'][YO_min_ind]) ** 2 + (YO['h'][YO_min_ind]) ** 2)
-            bigger_diameter = max(GUI_diam, YO_diam)
-            #if distances_df[GUI_min_ind][YO_min_ind] < bigger_diameter:
-            '''
+
             if IoU > self.iou_threshold:
                 # They are the same boxes
 
@@ -171,7 +167,7 @@ class Validator():
         FN += distances_df.shape[0]
         FP += distances_df.shape[1]
 
-        # metrics calculations
+        # Metrics calculations
         if TP + FP == 0:
             Precision = 1
         else:
@@ -197,19 +193,20 @@ class Validator():
                                                                                                           Recall,
                                                                                                           Accuracy,
                                                                                                           F1_score))
-        return TP,FP,FN
+        return TP,FP,FN     # Return the TP,FP,FN information for the current image
 
+    # Function to perform single validation script for each image in the directory
     def complete_Validation(self):
-        # this is code for reading output files from YOlO and from the GUI
         TP_tot = 0
         FP_tot = 0
         FN_tot = 0
 
-        for file in os.listdir(self.Results_directory):  # loop through directory of images
+        for file in os.listdir(self.Results_directory):  # Loop through files in the validation directory
             if os.path.splitext(file)[1] != self.img_extention:
                 continue
             print('Validating the image: ' + file)
 
+            # Run the single validate function for the current file
             TP,FP,FN = self.single_Validate(file)
 
             TP_tot += TP
@@ -241,14 +238,17 @@ class Validator():
         print('Total: Precision is {}, Recall is {}, Accuracy is {} and F1 is {}'.format(Precision_tot, Recall_tot,
                                                                                          Accuracy_tot, F1_score_tot))
 
-        return TP_tot,FP_tot,FN_tot,Precision_tot,Recall_tot,Accuracy_tot,F1_score_tot
-
 
 #Function to validate the whole given directory
 def Validate(directory,img_ext,IOU_threshold,label_type):
+    """
+            directory : the directory that contains the files needed to be validated
+            img_ext :   the image extension (for example : '.jpg')
+            IOU_threshold :   the iou threshold that determines how much overlap is to be considered as a true positive (TP)
+            label_type : the type of labels to be validated (for example : 'YOLO' or 'PascalVOC'
+    """
     v=Validator(directory,img_ext,IOU_threshold,label_type)
-    Results = v.complete_Validation()
-    return Results
+    v.complete_Validation()
 
 
 '''
@@ -259,7 +259,7 @@ Remember to comment the windows command line section as well.
 # Initializing the validator
 # v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.25_16h33m07s',
 #               '.jpg',
-#               0.8,
+#               0.9,
 #              'Yolo')
 
 
@@ -272,7 +272,6 @@ If you want to use the windows command line using arguments you need to:
             cd your_directory
 4. run the Validotor script along with the input arguments as the following:
             python Validor.py "directory" "image_extension" IOU_threshold "label format (Yolo or PascalVOC)"
-
 '''
 #Windows command line using arguments
 if __name__ == "__main__":
