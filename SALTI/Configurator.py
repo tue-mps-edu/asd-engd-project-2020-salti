@@ -1,8 +1,18 @@
-from configparser import ConfigParser
 from tkinter import *
-import os
 
 def saveconfig(parser, config):
+    '''
+    Saves the parser configuration to the config.ini file
+
+    Inputs:
+    - (parser): configuration parser
+    - (dict): config dictionary with Tkinter variables
+
+    Outputs:
+    - (config.ini): configuration file
+    '''
+
+    # Loop over the config dictionary and get TKinter variables
     for option in config:
         parser.set('Config',option,str(config[option].get()))
     cfgfile = open('config.ini','w')
@@ -10,6 +20,16 @@ def saveconfig(parser, config):
     cfgfile.close()
 
 def ConfigSectionMap(parser, section):
+    '''
+    Generates a dictionary with TKinter variables from the config parser
+
+    Inputs:
+    - (parser): configuration parser object
+    - (str): section name to generate map for
+
+    Outputs:
+    - (dict): dictionary with configuration
+    '''
     dict = {}
     options = parser.options(section)
     for option in options:
@@ -29,6 +49,16 @@ def ConfigSectionMap(parser, section):
 
 
 def ConfigSectionMapPythonvars(parser, section):
+    '''
+    Generates a dictionary with default Python variables from the config parser
+
+    Inputs:
+    - (parser): configuration parser object
+    - (str): section name to generate map for
+
+    Outputs:
+    - (dict): dictionary with configuration
+    '''
     dict = {}
     options = parser.options(section)
     for option in options:
@@ -44,7 +74,6 @@ def ConfigSectionMapPythonvars(parser, section):
                 dict[option] = True
             else:
                 dict[option] = False
-            # dict[option] = bool(parser.get(section, option))
         else:
             raise NotImplementedError
     return dict

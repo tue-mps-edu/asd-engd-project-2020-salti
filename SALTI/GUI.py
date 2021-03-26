@@ -3,32 +3,41 @@ from tkinter import filedialog
 from Configurator import *
 from functools import partial
 from SALTI import SALTI
-from train import *
-from subprocess import call
-
 import os
-from sys import platform
 from multiprocessing import Process
 
 
 def update_dir_rgb(config):
+    '''Update TKinter variable that contains the RGB image directory'''
     config['str_dir_rgb'].set(filedialog.askdirectory(initialdir=config['str_dir_rgb'],title="Select RGB images directory"))
 
 def update_dir_thermal(config):
+    '''Update TKinter variable that contains the Thermal image directory'''
     config['str_dir_thermal'].set(filedialog.askdirectory(initialdir=config['str_dir_thermal'], title="Select Thermal images directory"))
 
 def update_dir_output(config):
+    '''Update TKinter variable that contains the output directory'''
     config['str_dir_output'].set(filedialog.askdirectory(initialdir=config['str_dir_thermal'], title="Select output directory"))
 
 def create_gui(root, parser, config, salti_processes):
     '''
-        PATH SETTINGS
+    Add all GUI components to the root window
+    Arguments:
+        (tkinter window) Root window
+        (parser) Configuration parser object
+        (dict) configuration file with TKinter variables
+        (list) log of active SALTI processes
     '''
+
+
+    # Variables for grid alignment
+    ''' Adding buttons for paths '''
     r_path = 1
     col_label_path = 0
     col_text_path = 1
     col_button_path = 3
     span = 2
+
     # Header
     Label(root,text="    Image directories", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_path,columnspan=4)
     # Setting the RGB directory
@@ -43,19 +52,16 @@ def create_gui(root, parser, config, salti_processes):
     Label(root,text="Output directory:", justify=LEFT).grid(sticky = W,row=r_path+3,column=col_label_path)
     Label(root,textvariable=config['str_dir_output'], justify=LEFT, anchor="w",padx=15).grid(sticky = W,row=r_path+3,column=col_text_path, columnspan=span)
     Button(root,text="Set output path",command=partial(update_dir_output, config),width=15).grid(row=r_path+3,column=col_button_path)
-    '''
-        ONE LINE SPACING
-    '''
+
+    # Add spacing between sections
     r_empty = r_path+4
     Label(root,text=" ").grid(row=r_empty,columnspan=3)
-    '''
-        ALGORITHM SETTINGS
-    '''
+
+    ''' ALGORITHM SETTINGS SECTION '''
     r_alg = r_empty+1
     # Header
     scale_width = 15
     scale_length = 130
-    #scale_length = 160
     Label(root,text="    Algorithm settings", font='Helvetica 18 bold', justify=LEFT, anchor="w").grid(sticky=W,row=r_alg+1,column=0,columnspan=2)
     # Preprocessing check button
     Label(root,text="Filter thermal image:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+2,column=0)
@@ -73,10 +79,8 @@ def create_gui(root, parser, config, salti_processes):
     # Merge sliders
     Label(root,text="Merge NMS level:", justify=LEFT, anchor="w").grid(sticky = W,row=r_alg+7,column=0)
     Scale(root,variable=config['dbl_merge_nms'],resolution=0.05,to=1,width=scale_width, length=scale_length,showvalue=True,orient=HORIZONTAL).grid(sticky = W,row=r_alg+7,column=1)
-    '''
-        OUTPUT SETTINGS
-    '''
-    #Label(root,text=" ").grid(row=r_empty,columnspan=2)
+
+    ''' OUTPUT SETTINGS '''
     Label(root,text=" ").grid(row=r_alg+8,columnspan=3)
     r_out = r_alg+9
     # Header
@@ -105,9 +109,7 @@ def create_gui(root, parser, config, salti_processes):
     Label(root,text="  ", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+6,column=3)
     Label(root,text="  ", justify=LEFT, anchor="w").grid(sticky = W,row=r_out+5,column=4)
 
-    '''
-        RUNNING SALTI
-    '''
+    ''' ADD RUNNING SALTI BUTTONS '''
     Button(root,text="Open output folder",command= partial(open_folder,config),width=15,font='Helvetica 11').grid(row=r_out+3,column=col_button_path)
     Button(root,text="RUN SALTI",command= partial(save_and_run, parser, config, salti_processes),width=15,font='Helvetica 11 bold').grid(row=r_out+4,column=col_button_path)
     Button(root,text="Stop SALTI",command=partial(stop_salti,salti_processes),width=15,font='Helvetica 11 bold').grid(row=r_out+5,column=col_button_path)
@@ -115,7 +117,7 @@ def create_gui(root, parser, config, salti_processes):
 
 
 def open_folder(config):
-    # Only tested for Windows!
+    '''Function for opening a folder when clicking button in GUI'''
     try:
         path = str(config['str_dir_output'].get())
         path_w = path.replace(r"/", "\\")
@@ -123,9 +125,9 @@ def open_folder(config):
     except:
         raise NotImplementedError
 
-salti_processes = []
-
 def save_and_run(parser,config, salti_processes):
+    '''Function that is called when user presses RUN SALTI'''
+
     # Save the latest Tkinter variables in the configuration file
     saveconfig(parser, config)
     # convert the Tkinter variables to default python
@@ -138,11 +140,13 @@ def save_and_run(parser,config, salti_processes):
     print('SALTI started at PID '+str(p_new.pid))
 
 def stop_salti(salti_processes):
+    '''Function that is called when user presses STOP SALTI'''
     for process in salti_processes:
         print('Killed SALTI at PID '+str(process.pid))
         process.kill()
 
 def tkinterDict_to_pythonDict(tkinter_dict):
+    '''Converting the configuration dictionary from TKinter to Python variables'''
     py_dict = {}
     for option in tkinter_dict:
         py_dict[option]=tkinter_dict[option].get()
