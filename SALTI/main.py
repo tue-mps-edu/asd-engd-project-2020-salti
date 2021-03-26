@@ -3,6 +3,10 @@ from configparser import ConfigParser
 import os
 
 def main():
+    '''
+    Main function of the SALTI package.
+    It initiates the configuration parser and sets up the GUI.
+    '''
     # Change path to SALTI
     SALTI_path = os.path.join(os.getcwd(),os.path.dirname(__file__))
     os.chdir(SALTI_path)
