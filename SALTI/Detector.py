@@ -4,33 +4,48 @@ from utils_thermal.datasets import *
 
 
 class Detector(object):
-    ''' Detector class generator'''
     def __init__(self, type=None, conf_threshold=0):
+        '''
+        Detector class generator
+
+        Arguments:
+            (str) algorithm to create detector for
+            (float) confidence threshold for approving detections
+        '''
+
         if type == 'RGB':               # Select an RGB method
             self.net = YOLOv3_320(conf_threshold)
         elif type == 'Thermal':         # Select a Thermal method
             self.net = YoloJoeHeller(conf_threshold)
         else:
             raise ValueError(type)
-    
+
+
     def detect(self, img):
+        '''Detect the objects in a single image'''
         return self.net.detect(img)
 
     def get_classes(self):
+        '''Get the classes file used in the detector'''
         return self.net.get_classes()
 
 
 class YOLOv3_320():
-    ''' RGB YOLO v3 object detection '''
-
     def __init__(self, conf_threshold):
+        '''
+        RGB YOLO v3 object detection from:
+
+        YOLO V3 tutorial:
+        https://www.youtube.com/watch?v=GGeF_3QOHGE&list=PLMoSUbG1Q_r8nz4C5Yvd17KaXy8p0ufPH&index=1
+
+        Links to weights:
+        https://pjreddie.com/darknet/yolo/
+        '''
         self.__conf_threshold = conf_threshold
         self.__dir_classes = 'config_rgb/coco-rgb.names'
         self.__dir_cfg = 'config_rgb/yolov3-rgb.cfg'
         self.__dir_weights = 'config_rgb/yolov3-rgb.weights'
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
-        #self.__confThreshold = 0.3     # Confidence threshold for approval of detection
-
         self.__net = cv2.dnn.readNetFromDarknet(self.__dir_cfg, self.__dir_weights)
         self.__net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
         self.__net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
@@ -82,8 +97,14 @@ class YOLOv3_320():
 
 
 class YoloJoeHeller():
-    ''' Thermal YOLO object detection, Joe Hoeller'''
     def __init__(self, confThreshold):
+        '''
+        Thermal YOLO BBOX object detection by Joe Hoeller:
+        https://github.com/joehoeller/Object-Detection-on-Thermal-Images
+
+        Arguments:
+            (flt) confidence threshold for approving bboxs
+        '''
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.__confThreshold = confThreshold  # Confidence threshold for approval of detection
         self.__dir_cfg = 'config_thermal/yolov3-spp-r.cfg'
@@ -99,13 +120,13 @@ class YoloJoeHeller():
             320, 192) if ONNX_EXPORT else self.__img_size  # (320, 192) or (416, 256) or (608, 352) for (height, width)
             weights, half, view_img = self.__dir_weights, self.__half, self.__view_img
 
-            # Initialize
+            # Initialize the device you're running on
             device = torch_utils.select_device(device='cpu' if ONNX_EXPORT else self.__device)
 
-            # Initialize model
+            # Initialize detection model
             model = Darknet(self.__dir_cfg, img_size)
 
-            # Load weights
+            # Load weights from harddrive as specified in configuration file
             attempt_download(weights)
             if weights.endswith('.pt'):  # pytorch format
                 model.load_state_dict(torch.load(weights, map_location=device)['model'])
@@ -119,10 +140,7 @@ class YoloJoeHeller():
                 modelc.load_state_dict(torch.load('weights/resnet101.pt', map_location=device)['model'])  # load weights
                 modelc.to(device).eval()
 
-            # Fuse Conv2d + BatchNorm2d layers
-            # model.fuse()
-
-            # Eval mode
+            # Evaluation mode
             model.to(device).eval()
 
             # Export mode
@@ -154,6 +172,8 @@ class YoloJoeHeller():
             return self.__classnames
 
     def __padd_and_normalize_image(self,img0):
+        '''Add padding to the image'''
+
         # Padded resize
         img = letterbox(img0, new_shape=self.__img_size)[0]
 
@@ -167,12 +187,15 @@ class YoloJoeHeller():
         return img, img0
 
     def __convert_tensor_to_lists(self,preds, img, im0):
+        '''Convert the detections from Tensor into a list as used by SALTI'''
+
         bboxs, confs, classes = [], [], []
         for i, det in enumerate(preds):
             if det is not None and len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
-                for *xyxy, conf, _, cls in det:  # Save the bounding box coordinates [Top left coordinates, width, height]
+                # Save the bounding box coordinates [Top left coordinates, width, height]
+                for *xyxy, conf, _, cls in det:
                     t = np.squeeze(xyxy)  # xyxy is x_topLeft,y_topLeft,x_bottomRight,y_bottomRight
                     bboxs.append([int(t[0]), int(t[1]), int(abs(t[0] - t[2])), int(abs(t[1] - t[3]))])
                     confs.append(float(conf))  # Confidence factor
@@ -180,9 +203,18 @@ class YoloJoeHeller():
         return bboxs, confs, classes
 
     def detect(self, img):
-        # Run inference
+        '''
+        Run single image through the detection algorithm
+
+        Arguments:
+            (opencv img) image to label
+
+        Outputs:
+            (Detections) Detections filtered on Confidence
+        '''
+
         with torch.no_grad():
-            # Get detections
+
             img, img0 = self.__padd_and_normalize_image(img)
 
             if img.ndimension() == 3:
