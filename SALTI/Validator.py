@@ -7,6 +7,22 @@ import sys
 
 class Validator():
     def __init__(self,Results_directory, img_extention,iou_threshold,label_type):
+        '''
+        Validator class that compares a set of labels to see what differences there are in the boxes.
+        Using the IOU value of the boxes, statistics are calculated:
+        Accuracy, Precision, F1, Recall
+
+        For the validator the work, a folder needs to contain:
+        1. the images (e.g. I00000.jpg)
+        2. a label file that is corrected by human (e.g. I00000.txt / I00000.xml)
+        3. a validation label file provided optionally by SALTI (e.g. I00000_val.txt)
+
+        argument 1: directory to labels and images
+        argument 2: image extension (e.g. .jpg)
+        argument 3: IOU threshold (default=0.9)
+        argument 4: label type, Yolo/PascalVOC
+        '''
+
         self.Results_directory=Results_directory
         self.img_extention=img_extention
         self.iou_threshold=iou_threshold
@@ -47,8 +63,8 @@ class Validator():
         iou = inters / uni
         return iou
 
-    # Function to read the class names from classes.txt file in the results folder
     def read_classes_txt(self,classes_txt_file):
+        '''Read the class names from classes.txt file in the results folder'''
         with open(classes_txt_file) as classes:
             classNames = classes.readlines()
 
@@ -56,8 +72,8 @@ class Validator():
         classNames = [x.strip() for x in classNames]
         return classNames
 
-    # Function to read information from the xml file (PASCALVOC label format) and store the information in a dataframe
     def read_xml_label(self,xml_file):
+        '''Read information from the xml file (PASCALVOC label format) and store the information in a dataframe'''
 
         tree = ET.parse(xml_file)
         root = tree.getroot()
@@ -89,19 +105,17 @@ class Validator():
 
         return df
 
-    # Function to read information from the text file (YOLO label format) and store the information in a dataframe
     def read_txt_label(self,txt_file):
+        '''Read information from the text file (YOLO label format) and store the information in a dataframe'''
 
         df = pd.read_csv(txt_file, delim_whitespace=True,
                          names=["classes", "x_c", "y_c", "w", "h"])
         return df
 
 
-    # Function to perform validation for a single image
     def single_Validate(self,img_file):
-        '''
-        This function takes as an input an image file
-        '''
+        ''' Function to perform validation for a single image '''
+
         #Initializing the TP, FP and FN values
         TP = 0
         FP = 0
@@ -109,10 +123,10 @@ class Validator():
 
         file_name = os.path.splitext(img_file)[0]   # Obtain the filename of the current image to be validated
 
-        if self.label_type == 'Yolo':   # Check for label type
+        if self.label_type.lower() == 'yolo':   # Check for label type
             GU = self.read_txt_label(os.path.join(self.Results_directory, file_name + ".txt"))  # Dataframe corresponding to user-modiphied GUI predictions
             YO = self.read_txt_label(os.path.join(self.Results_directory, file_name + "_VAL.txt")) # Dataframe corresponding to initial Yolo predictions
-        elif self.label_type == 'PascalVOC': # Check for label type
+        elif self.label_type.lower() == 'pascalvoc': # Check for label type
             GU = self.read_xml_label(os.path.join(self.Results_directory, file_name + ".xml")) # Dataframe corresponding to user-modiphied GUI predictions
             YO = self.read_xml_label(os.path.join(self.Results_directory, file_name + "_VAL.xml")) # Dataframe corresponding to initial Yolo predictions
         else:
@@ -195,8 +209,8 @@ class Validator():
                                                                                                           F1_score))
         return TP,FP,FN     # Return the TP,FP,FN information for the current image
 
-    # Function to perform single validation script for each image in the directory
     def complete_Validation(self):
+        '''Function to perform single validation script for each image in the directory'''
         TP_tot = 0
         FP_tot = 0
         FN_tot = 0
@@ -239,9 +253,10 @@ class Validator():
                                                                                          Accuracy_tot, F1_score_tot))
 
 
-#Function to validate the whole given directory
+
 def Validate(directory,img_ext,IOU_threshold,label_type):
     """
+        Function to validate the whole given directory
             directory : the directory that contains the files needed to be validated
             img_ext :   the image extension (for example : '.jpg')
             IOU_threshold :   the iou threshold that determines how much overlap is to be considered as a true positive (TP)
@@ -256,11 +271,11 @@ If you want to run the validator directly from your IDE then uncomment the block
 the directory, image extension and IOU_threshold.
 Remember to comment the windows command line section as well. 
 '''
-# Initializing the validator
-# v = Validate(r'C:\Users\20204916\Documents\GitHub\asd-pdeng-project-2020-developer\SALTI\Output\2021.03.25_16h33m07s',
+# #Initializing the validator
+# v = Validate(r'C:\Github\asd-pdeng-project-2020-developer\test_images\outputs\2021.03.26_15h36m33s',
 #               '.jpg',
 #               0.9,
-#              'Yolo')
+#              'PasCalVoc')
 
 
 '''
