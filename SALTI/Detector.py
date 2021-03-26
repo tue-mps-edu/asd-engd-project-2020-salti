@@ -1,7 +1,5 @@
-import numpy as np
 from . import Detections
-from . import utils_thermal # set ONNX_EXPORT in models.py
-from . import utils_thermal
+from .utils_thermal import *  # set ONNX_EXPORT in models.py
 
 
 class Detector(object):
@@ -42,10 +40,11 @@ class YOLOv3_320():
         Links to weights:
         https://pjreddie.com/darknet/yolo/
         '''
+        package_directory = os.path.dirname(os.path.abspath(__file__))
         self.__conf_threshold = conf_threshold
-        self.__dir_classes = 'config_rgb/coco-rgb.names'
-        self.__dir_cfg = 'config_rgb/yolov3-rgb.cfg'
-        self.__dir_weights = 'config_rgb/yolov3-rgb.weights'
+        self.__dir_classes = os.path.join(package_directory,'config_rgb/coco-rgb.names')
+        self.__dir_cfg = os.path.join(package_directory,'config_rgb/yolov3-rgb.cfg')
+        self.__dir_weights = os.path.join(package_directory,'config_rgb/yolov3-rgb.weights')
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.__net = cv2.dnn.readNetFromDarknet(self.__dir_cfg, self.__dir_weights)
         self.__net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
@@ -126,11 +125,12 @@ class YoloJoeHeller():
         Arguments:
             (flt) confidence threshold for approving bboxs
         '''
+        package_directory = os.path.dirname(os.path.abspath(__file__))
         self.__whT = 320  # width & height of the image input into YOLO (standard resolution, square)
         self.__confThreshold = confThreshold  # Confidence threshold for approval of detection
-        self.__dir_cfg = 'config_thermal/yolov3-spp-r.cfg'
-        self.__dir_data = 'config_thermal/coco-thermal.data'
-        self.__dir_weights= 'config_thermal/yolov3-thermal-best.pt'
+        self.__dir_cfg = os.path.join(package_directory,'config_thermal\yolov3-spp-r.cfg')
+        self.__dir_data = os.path.join(package_directory,'config_thermal\coco-thermal.data')
+        self.__dir_weights= os.path.join(package_directory,'config_thermal\yolov3-thermal-best.pt')
         self.__img_size=416
         self.__half=False
         self.__device=''

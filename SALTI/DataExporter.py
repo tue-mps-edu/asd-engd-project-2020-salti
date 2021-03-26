@@ -32,7 +32,8 @@ class DataExporter():
         self.try_to_make_folder(self.output_subfolder_path)
 
         # Save configuration for this run into the results folder
-        copyfile('config.ini',os.path.join(self.output_subfolder_path,'config.ini'))
+        package_directory = os.path.dirname(os.path.abspath(__file__))
+        copyfile(os.path.join(package_directory,'config.ini'),os.path.join(self.output_subfolder_path,'config.ini'))
 
         # Create a subfolder for saving filtered images if user wants this
         if self.save_filtered_img:
@@ -198,4 +199,4 @@ class DataExporter():
         try:
             os.mkdir(folder)
         except:
-            print('Failed to create directory: '+folder)
+            print('Failed to create directory: '+os.path.abspath(folder))

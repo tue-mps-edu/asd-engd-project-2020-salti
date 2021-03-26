@@ -1,0 +1,26 @@
+<annotation>
+    <folder>outputs</folder>
+    <filename>2021.03.26_17h20m20s</filename>
+    <path>C:\Github\asd-pdeng-project-2020-developer\test_images\color\outputs\2021.03.26_17h20m20s</path>
+    <source>
+        <database>Unknown</database>
+    </source>
+    <size>
+        <width>640</width>
+        <height>512</height>
+        <depth>3</depth>
+    </size>
+    <segmented>0</segmented>
+    <object>
+        <name>car</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>200</xmin>
+            <ymin>200</ymin>
+            <xmax>500</xmax>
+            <ymax>500</ymax>
+        </bndbox>
+    </object>
+</annotation>
