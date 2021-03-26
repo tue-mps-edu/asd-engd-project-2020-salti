@@ -7,6 +7,9 @@ import sys
 
 class Validator():
     def __init__(self,Results_directory, img_extention,iou_threshold,label_type):
+        '''
+        Clss descr
+        '''
         self.Results_directory=Results_directory
         self.img_extention=img_extention
         self.iou_threshold=iou_threshold
