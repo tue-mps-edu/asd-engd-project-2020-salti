@@ -1,3 +1,10 @@
+# The below script is used to run the retrained weights on a test set
+# The script has been taken from Joe Hoeller's project: https://github.com/joehoeller/Object-Detection-on-Thermal-Images
+# All the necessary paths for the test set can be defined through the custom.data file
+# The test_weights.py shall be called during the retraining by the train.py file
+# For more detailed information regarding the same, please refer to the ASD Projects Wiki page:
+# https://github.com/tue-mps-edu/asd-pdeng-project-2020-developer/wiki/Retraining-of-Thermal-Neural-Network
+
 import argparse
 import json
 
@@ -20,6 +27,9 @@ def test_weight(cfg,
          nms_thres=0.5,
          save_json=False,
          model=None):
+
+    '''Function to test the performance of the retrained weights on the test set. The function takes arguments from the custom.data file'''
+
     # Initialize/load model and set device
     if model is None:
         device = torch_utils.select_device(opt.device, batch_size=batch_size)
@@ -52,6 +62,9 @@ def test_weight(cfg,
     names = load_classes(config_train_dict['names'])  # class names
 
     # Dataloader
+    # The 'test_path_img' and 'test_path_lbl' are the paths containing the images and labels respectively used to
+    # test the retrained weights on a test set
+
     dataset = LoadImagesAndLabels(test_path_img,test_path_lbl, img_size, batch_size)
     batch_size = min(batch_size, len(dataset))
     dataloader = DataLoader(dataset,
@@ -202,7 +215,9 @@ def test_weight(cfg,
 
 
 if __name__ == '__main__':
-
+    # The arguments to the test function can be defined in two ways:
+    # Method-1: Make changes to the arguments in the parser below
+    # Method-2: Open the custom.data file and change the necessary paths for the test images and test labels
 
     config_train_file = '../SALTI/Train/Custom_files/custom.data'
     # # Read the configuration file

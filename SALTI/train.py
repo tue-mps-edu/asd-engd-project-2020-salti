@@ -1,3 +1,10 @@
+# The below script is used to retrain the thermal neural network
+# The script has been taken from Joe Hoeller's project: https://github.com/joehoeller/Object-Detection-on-Thermal-Images
+# All the necessary paths and parameters for retraining can be defined through the custom.data file
+# Once all parameters are defined, run the train.py file
+# For more detailed information regarding retraining, please refer to the ASD Projects Wiki page:
+# https://github.com/tue-mps-edu/asd-pdeng-project-2020-developer/wiki/Retraining-of-Thermal-Neural-Network
+
 import argparse
 
 import torch.distributed as dist
@@ -17,10 +24,10 @@ try:  # Mixed precision training https://github.com/NVIDIA/apex
 except:
     mixed_precision = False  # not installed
 
-wdir = os.getcwd() + '/train/Custom_files/'  # weights dir
-last = wdir + 'custom_trained.pt'
-best = wdir + 'custom_trained_best.pt'
-results_file = wdir + 'results.txt'
+wdir = os.getcwd() + '/train/Custom_files/'  # Path to store the retrained weights
+last = wdir + 'custom_trained.pt'  # Save the retrained weight from the last checkpoint
+best = wdir + 'custom_trained_best.pt'  # Save the retrained weight from the best checkpoint
+results_file = wdir + 'results.txt'  # Save the results containing the performance parameters of different epochs
 
 # Hyperparameters (results68: 59.2 mAP@0.5 yolov3-spp-416) https://github.com/ultralytics/yolov3/issues/310
 hyp = {'giou': 3.31,  # giou loss gain
@@ -51,6 +58,7 @@ if f:
 
 
 def train():
+    '''Function to train the thermal neural network that takes arguments from the custom.data file'''
     cfg = opt.cfg
     data = opt.data
     img_size = opt.img_size
@@ -171,6 +179,8 @@ def train():
         model.yolo_layers = model.module.yolo_layers  # move yolo layer indices to top level
 
     # Dataset
+    # The 'train_path_img' and 'train_path_lbl' are the paths containing the images and labels respectively used to
+    # train the thermal neural network
     dataset = LoadImagesAndLabels(opt.train_path_img, opt.train_path_lbl,
                                   img_size,
                                   batch_size,
@@ -343,10 +353,10 @@ def train():
 
     # end training
     if len(opt.name) and not opt.prebias:
-        fresults, flast, fbest = 'results%s.txt' % opt.name, 'last%s.pt' % opt.name, 'best%s.pt' % opt.name
+        fresults, flast, fbest = 'results%s.txt' % opt.name, 'custom_trained%s.pt' % opt.name, 'custom_trained_best%s.pt' % opt.name
         os.rename('results.txt', fresults)
-        os.rename(wdir + 'last.pt', wdir + flast) if os.path.exists(wdir + 'last.pt') else None
-        os.rename(wdir + 'best.pt', wdir + fbest) if os.path.exists(wdir + 'best.pt') else None
+        os.rename(wdir + 'custom_trained.pt', wdir + flast) if os.path.exists(wdir + 'custom_trained.pt') else None
+        os.rename(wdir + 'custom_trained_best.pt', wdir + fbest) if os.path.exists(wdir + 'custom_trained_best.pt') else None
 
         # save to cloud
         if opt.bucket:
@@ -361,7 +371,7 @@ def train():
 
 
 def prebias():
-    # trains output bias layers for 1 epoch and creates new backbone
+    ''' Trains output bias layers for 1 epoch and creates new backbone '''
     if opt.prebias:
         a = opt.img_weights  # save settings
         opt.img_weights = False  # disable settings
@@ -375,12 +385,14 @@ def prebias():
 
 
 if __name__ == '__main__':
+    # The arguments to the train function can be defined in two ways:
+    # Method-1: Make changes to the arguments in the parser below
+    # Method-2: Open the custom.data file and change the necessary parameters and paths
 
     # Add our parser
     config_train_file = '../SALTI/Train/Custom_files/custom.data'
-    # # Read the configuration file
+    # Read the configuration file
     config_train_dict = parse_data_cfg(config_train_file)
-
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--nc', type=int, default=config_train_dict['classes'])
